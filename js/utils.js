@@ -1,0 +1,187 @@
+/* =========================================================
+   SiteLens — כלי עזר: רשת, גיאומטריה, עיצוב מספרים
+   ========================================================= */
+window.SA = window.SA || {};
+
+(function (SA) {
+  const U = (SA.util = {});
+
+  /* ---------- DOM ---------- */
+  U.$ = (sel, root = document) => root.querySelector(sel);
+  U.$$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
+  U.esc = (s) =>
+    String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
+  U.debounce = (fn, ms) => {
+    let t;
+    return (...a) => { clearTimeout(t); t = setTimeout(() => fn(...a), ms); };
+  };
+
+  /* ---------- storage (per-viewer conveniences only) ---------- */
+  U.store = {
+    get(k, def) { try { const v = localStorage.getItem(k); return v == null ? def : JSON.parse(v); } catch (e) { return def; } },
+    set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { /* ignore */ } }
+  };
+  const memCache = new Map();
+  U.cache = {
+    get(k) {
+      if (memCache.has(k)) return memCache.get(k);
+      try { const v = sessionStorage.getItem('sl:' + k); return v ? JSON.parse(v) : undefined; } catch (e) { return undefined; }
+    },
+    set(k, v) {
+      memCache.set(k, v);
+      try { sessionStorage.setItem('sl:' + k, JSON.stringify(v)); } catch (e) { /* quota — memory only */ }
+    }
+  };
+
+  /* ---------- network ---------- */
+  U.fetchJSON = async function (url, opts = {}) {
+    const { timeout = 25000, ...rest } = opts;
+    const ctrl = new AbortController();
+    const t = setTimeout(() => ctrl.abort(), timeout);
+    try {
+      const res = await fetch(url, { ...rest, signal: ctrl.signal });
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      const txt = await res.text();
+      try { return JSON.parse(txt); } catch (e) { throw new Error('תשובה לא תקינה מהשרת'); }
+    } catch (e) {
+      if (e.name === 'AbortError') throw new Error('תם הזמן להמתנה לשרת');
+      throw e;
+    } finally {
+      clearTimeout(t);
+    }
+  };
+
+  let jsonpSeq = 0;
+  U.jsonp = function (url, { timeout = 20000, param = 'callback' } = {}) {
+    return new Promise((resolve, reject) => {
+      const name = '__sl_jsonp_' + Date.now() + '_' + jsonpSeq++;
+      const s = document.createElement('script');
+      const cleanup = () => { delete window[name]; s.remove(); clearTimeout(t); };
+      const t = setTimeout(() => { cleanup(); reject(new Error('תם הזמן (JSONP)')); }, timeout);
+      window[name] = (data) => { cleanup(); resolve(data); };
+      s.onerror = () => { cleanup(); reject(new Error('JSONP נכשל')); };
+      s.src = url + (url.includes('?') ? '&' : '?') + param + '=' + name;
+      document.head.appendChild(s);
+    });
+  };
+
+  /** fetch עם ניסיון חוזר דרך פרוקסי CORS (אם הוגדר) */
+  U.fetchViaProxy = async function (url, opts) {
+    try {
+      return await U.fetchJSON(url, opts);
+    } catch (e) {
+      const proxy = SA.config.corsProxy;
+      if (!proxy) throw e;
+      return U.fetchJSON(proxy + encodeURIComponent(url), opts);
+    }
+  };
+
+  /** בקשת ArcGIS REST — fetch, ואם נחסם ב-CORS אז פרוקסי ואז JSONP */
+  U.arcgis = async function (url, params = {}) {
+    const qs = new URLSearchParams({ ...params, f: 'json' }).toString();
+    const full = url + '?' + qs;
+    const key = 'arc:' + full;
+    const hit = U.cache.get(key);
+    if (hit) return hit;
+    let data;
+    try {
+      data = await U.fetchViaProxy(full, { timeout: 20000 });
+    } catch (e) {
+      data = await U.jsonp(full, { timeout: 20000 });
+    }
+    if (data && data.error) throw new Error(data.error.message || 'שגיאת ArcGIS');
+    U.cache.set(key, data);
+    return data;
+  };
+
+  /* ---------- coordinates ---------- */
+  if (window.proj4) {
+    proj4.defs(
+      'EPSG:2039',
+      '+proj=tmerc +lat_0=31.7343936111111 +lon_0=35.2045169444444 +k=1.0000067 +x_0=219529.584 +y_0=626907.39 ' +
+        '+ellps=GRS80 +towgs84=-24.0024,-17.1032,-17.8444,-0.33077,-1.85269,1.66969,5.4248 +units=m +no_defs'
+    );
+  }
+  U.toITM = (lat, lon) => {
+    if (!window.proj4) return null;
+    const [x, y] = proj4('EPSG:4326', 'EPSG:2039', [lon, lat]);
+    return { x: Math.round(x), y: Math.round(y) };
+  };
+  U.fromITM = (x, y) => {
+    const [lon, lat] = proj4('EPSG:2039', 'EPSG:4326', [x, y]);
+    return { lat, lon };
+  };
+
+  /* ---------- geometry ---------- */
+  const R = 6371008.8;
+  const rad = (d) => (d * Math.PI) / 180;
+  U.haversine = (a, b) => {
+    const dLat = rad(b.lat - a.lat), dLon = rad(b.lon - a.lon);
+    const h = Math.sin(dLat / 2) ** 2 + Math.cos(rad(a.lat)) * Math.cos(rad(b.lat)) * Math.sin(dLon / 2) ** 2;
+    return 2 * R * Math.asin(Math.sqrt(h));
+  };
+  /** הקרנה מקומית שטוחה (מטרים) סביב נקודת ייחוס */
+  U.localProj = (origin) => {
+    const kx = Math.cos(rad(origin.lat)) * R * (Math.PI / 180);
+    const ky = R * (Math.PI / 180);
+    return (p) => [(p.lon - origin.lon) * kx, (p.lat - origin.lat) * ky];
+  };
+  /** מרחק מינימלי מנקודה לקו שבור (מערך {lat,lon}) */
+  U.distToLine = (pt, line) => {
+    const P = U.localProj(pt);
+    let best = Infinity;
+    for (let i = 0; i < line.length - 1; i++) {
+      const [ax, ay] = P(line[i]), [bx, by] = P(line[i + 1]);
+      const dx = bx - ax, dy = by - ay;
+      const len2 = dx * dx + dy * dy;
+      let t = len2 ? -(ax * dx + ay * dy) / len2 : 0;
+      t = Math.max(0, Math.min(1, t));
+      const x = ax + t * dx, y = ay + t * dy;
+      best = Math.min(best, Math.hypot(x, y));
+    }
+    if (line.length === 1) best = U.haversine(pt, line[0]);
+    return best;
+  };
+  /** שטח פוליגון במ"ר */
+  U.areaM2 = (ring) => {
+    if (!ring || ring.length < 3) return 0;
+    const P = U.localProj(ring[0]);
+    let s = 0;
+    for (let i = 0; i < ring.length; i++) {
+      const [x1, y1] = P(ring[i]), [x2, y2] = P(ring[(i + 1) % ring.length]);
+      s += x1 * y2 - x2 * y1;
+    }
+    return Math.abs(s) / 2;
+  };
+  /** נקודה בתוך פוליגון — ring: [[x,y],...] */
+  U.pointInRing = (x, y, ring) => {
+    let inside = false;
+    for (let i = 0, j = ring.length - 1; i < ring.length; j = i++) {
+      const [xi, yi] = ring[i], [xj, yj] = ring[j];
+      if (yi > y !== yj > y && x < ((xj - xi) * (y - yi)) / (yj - yi) + xi) inside = !inside;
+    }
+    return inside;
+  };
+  U.bearing = (a, b) => {
+    const y = Math.sin(rad(b.lon - a.lon)) * Math.cos(rad(b.lat));
+    const x = Math.cos(rad(a.lat)) * Math.sin(rad(b.lat)) - Math.sin(rad(a.lat)) * Math.cos(rad(b.lat)) * Math.cos(rad(b.lon - a.lon));
+    return ((Math.atan2(y, x) * 180) / Math.PI + 360) % 360;
+  };
+  /** נקודת יעד לפי כיוון ומרחק */
+  U.destination = (p, bearingDeg, dist) => {
+    const d = dist / R, b = rad(bearingDeg), la = rad(p.lat), lo = rad(p.lon);
+    const la2 = Math.asin(Math.sin(la) * Math.cos(d) + Math.cos(la) * Math.sin(d) * Math.cos(b));
+    const lo2 = lo + Math.atan2(Math.sin(b) * Math.sin(d) * Math.cos(la), Math.cos(d) - Math.sin(la) * Math.sin(la2));
+    return { lat: (la2 * 180) / Math.PI, lon: (lo2 * 180) / Math.PI };
+  };
+
+  /* ---------- formatting ---------- */
+  const nf = new Intl.NumberFormat('he-IL');
+  U.num = (n, digits = 0) =>
+    n == null || isNaN(n) ? '—' : new Intl.NumberFormat('he-IL', { maximumFractionDigits: digits, minimumFractionDigits: 0 }).format(n);
+  U.int = (n) => (n == null || isNaN(n) ? '—' : nf.format(Math.round(n)));
+  U.dist = (m) => (m == null || !isFinite(m) ? '—' : m < 1000 ? `${Math.round(m / 10) * 10} מ'` : `${U.num(m / 1000, 1)} ק"מ`);
+  U.walk = (m) => `${Math.max(1, Math.round(m / 80))} דק' הליכה`;
+  U.dir8 = (deg) => ['צפון', 'צפון-מזרח', 'מזרח', 'דרום-מזרח', 'דרום', 'דרום-מערב', 'מערב', 'צפון-מערב'][Math.round(deg / 45) % 8];
+  U.time = (d) => (d instanceof Date && !isNaN(d) ? d.toLocaleTimeString('he-IL', { hour: '2-digit', minute: '2-digit', timeZone: 'Asia/Jerusalem' }) : '—');
+})(window.SA);

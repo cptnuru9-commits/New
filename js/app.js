@@ -16,6 +16,7 @@
     poi: ['overview', 'transport', 'services', 'sources'],
     env: ['overview', 'transport', 'population', 'environment', 'sources'],
     elev: ['overview', 'environment', 'sources'],
+    contours: ['environment', 'sources'],
     climate: ['overview', 'environment', 'sources'],
     iso: ['transport', 'sources'],
     pop: ['overview', 'population', 'sources'],
@@ -95,6 +96,10 @@
 
   function loadRadiusDependent(token) {
     const S = SA.state;
+    run(token, 'contours', SA.topo.contours(S.lat, S.lon, S.r), (c) => {
+      S.contours = c;
+      SA.map.showContours(c);
+    });
     run(token, 'poi', API.poi(S.lat, S.lon, S.r), (v) => {
       S.poi = v;
       SA.map.showPOI(v.items, v.parks);
@@ -112,7 +117,7 @@
       lat, lon, r: radius, addr: label ? label.split(',')[0] : '', label,
       city: '', status: {}, errors: {}, sun: SA.charts.sunData(lat, lon)
     });
-    ['addr', 'parcel', 'plans', 'poi', 'env', 'elev', 'climate', 'iso', 'pop'].forEach((k) => (S.status[k] = 'loading'));
+    ['addr', 'parcel', 'plans', 'poi', 'env', 'elev', 'contours', 'climate', 'iso', 'pop'].forEach((k) => (S.status[k] = 'loading'));
 
     $('#emptyState').hidden = true;
     $('#results').hidden = false;
@@ -328,7 +333,7 @@
     SA.map.setRadius(S.lat, S.lon, radius);
     SA.map.fly(S.lat, S.lon, radius);
     history.replaceState(null, '', `#${S.lat.toFixed(6)},${S.lon.toFixed(6)},${radius}`);
-    S.status.poi = S.status.plans = 'loading';
+    S.status.poi = S.status.plans = S.status.contours = 'loading';
     renderPanes(['overview', 'planning', 'transport', 'services']);
     loadRadiusDependent(seq);
   });
@@ -341,13 +346,15 @@
       return `<button class="lg ${hidden.has(k) ? 'off' : ''}" data-cat="${k}" aria-pressed="${!hidden.has(k)}" style="--c:${c.color}"><span>${c.icon}</span>${c.label}<b>${SA.state && SA.state.poi ? n : ''}</b></button>`;
     }).join('');
   }
-  $('#legend').addEventListener('click', (e) => {
-    const b = e.target.closest('[data-cat]');
-    if (!b) return;
-    const k = b.dataset.cat;
+  function togglePoiCat(k) {
     if (hidden.has(k)) hidden.delete(k); else hidden.add(k);
     SA.map.togglePOI(k, !hidden.has(k));
     updateLegend();
+  }
+  SA.map.onPoiToggle = togglePoiCat;
+  $('#legend').addEventListener('click', (e) => {
+    const b = e.target.closest('[data-cat]');
+    if (b) togglePoiCat(b.dataset.cat);
   });
 
   /* ---------- פעולות בתוך הפאנל ---------- */

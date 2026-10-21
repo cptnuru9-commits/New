@@ -342,6 +342,12 @@ window.SA = window.SA || {};
       topo = `<div class="kpis">${R.kpi('גובה', `${U.int(t.elevation)} מ'`, 'מעל פני הים')}${R.kpi('שיפוע', `${U.num(t.slopePct, 1)}%`, t.slopePct < 2 ? 'כמעט מישורי' : t.slopePct < 8 ? 'מתון' : t.slopePct < 15 ? 'בינוני' : 'תלול')}${R.kpi('מפנה', U.dir8(t.aspect), `${Math.round(t.aspect)}°`)}${R.kpi('הפרש גבהים', `${U.int(t.max - t.min)} מ'`, 'ברדיוס 120 מ׳')}</div>
         <p class="muted small">מודל גבהים דיגיטלי (Copernicus DEM, ~90 מ׳) דרך Open-Meteo. לתכנון מפורט נדרשת מדידה טופוגרפית.</p>`;
     }
+    const cn = S.contours;
+    topo += st.contours === 'ok'
+      ? `<div class="contour-info"><span class="key-sw">〰️</span><span><b>קווי גובה מוצגים במפה</b> · כל ${cn.interval} מ׳, קו ראשי (עבה, עם ערך) כל ${cn.major} מ׳ · טווח ${Math.round(cn.min)}–${Math.round(cn.max)} מ׳</span></div>`
+      : st.contours === 'error'
+        ? `<p class="small">⚠️ לא ניתן לחשב קווי גובה (${esc(S.errors.contours || '')}). אפשר לבחור "מפה טופוגרפית" בכפתור השכבות.</p>`
+        : '<p class="muted small">מחשב קווי גובה למפה…</p>';
 
     const sun = S.sun;
     const sunHtml = `<div class="chart-box sq">${SA.charts.sunPath(S.lat, S.lon, sun)}</div>
@@ -393,6 +399,7 @@ window.SA = window.SA || {};
       ['דרכים, מים, מבנים', 'OpenStreetMap · Overpass API', st.env, 'https://overpass-api.de/'],
       ['אוכלוסייה', 'למ״ס דרך Wikidata · data.gov.il', st.pop, L.cbs],
       ['טופוגרפיה', 'Copernicus DEM · Open-Meteo', st.elev, 'https://open-meteo.com/'],
+      ['קווי גובה', 'SRTM · AWS Terrain Tiles', st.contours, 'https://registry.opendata.aws/terrain-tiles/'],
       ['רוח ואקלים', 'ERA5 · Open-Meteo Archive', st.climate, 'https://open-meteo.com/'],
       ['איזוכרונים', 'Valhalla · FOSSGIS', st.iso, 'https://valhalla.github.io/valhalla/'],
       ['שמש', 'SunCalc (חישוב מקומי)', 'ok', 'https://github.com/mourner/suncalc']

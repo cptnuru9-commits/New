@@ -39,6 +39,9 @@ window.SA = window.SA || {};
     // איזוכרונים (זמני הליכה)
     valhalla: 'https://valhalla1.openstreetmap.de',
 
+    // אריחי גבהים (Terrarium) — לחישוב קווי גובה על המפה
+    terrainTiles: 'https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png',
+
     // GIS עירוני — תל אביב-יפו (היתרי בנייה ועוד)
     telAvivGis: 'https://gisn.tel-aviv.gov.il/arcgis/rest/services/IView2/MapServer',
 

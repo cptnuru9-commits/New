@@ -42,7 +42,10 @@ window.SA = window.SA || {};
       light: osm('base-light'),
       dark: osm('base-dark'),
       sat: esri('World_Imagery', 'Esri World Imagery'),
-      osm: esri('World_Street_Map', 'Esri World Street Map')
+      osm: esri('World_Street_Map', 'Esri World Street Map'),
+      topo: L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
+        maxZoom: 20, maxNativeZoom: 17, subdomains: 'abc', attribution: '© OpenTopoMap (CC-BY-SA) · © OpenStreetMap'
+      })
     };
     currentBaseKey = isDark() ? 'dark' : 'light';
     bases[currentBaseKey].addTo(map);
@@ -52,11 +55,14 @@ window.SA = window.SA || {};
     groups.parcelsWms = L.tileLayer.wms(SA.config.govmapWms, {
       layers: SA.config.parcelLayer, format: 'image/png', transparent: true, minZoom: 14, maxZoom: 20, attribution: 'המרכז למיפוי ישראל'
     });
-    ['plan', 'parcel', 'iso', 'sun', 'water', 'roads', 'buildings', 'parks'].forEach((k) => (groups[k] = L.layerGroup()));
-    ['plan', 'parcel', 'iso', 'water', 'buildings', 'parks'].forEach((k) => groups[k].addTo(map));
+    groups.hillshade = esri('Elevation/World_Hillshade', 'Esri World Hillshade');
+    groups.hillshade.options.className = 'hillshade';
+    groups.hillshade.options.maxNativeZoom = 16;
+    ['plan', 'parcel', 'iso', 'sun', 'water', 'roads', 'buildings', 'parks', 'contours'].forEach((k) => (groups[k] = L.layerGroup()));
+    ['plan', 'parcel', 'iso', 'water', 'buildings', 'parks', 'contours'].forEach((k) => groups[k].addTo(map));
 
     ctrlLayers = L.control.layers(
-      { 'מפה': bases[currentBaseKey], 'תצלום אוויר': bases.sat, 'מפת רחובות (Esri)': bases.osm },
+      { 'מפה': bases[currentBaseKey], 'תצלום אוויר': bases.sat, 'מפה טופוגרפית': bases.topo, 'מפת רחובות (Esri)': bases.osm },
       {
         'תכניות — קווים כחולים (מנהל התכנון)': groups.plansWms,
         'גושים וחלקות (GovMap)': groups.parcelsWms,
@@ -67,7 +73,9 @@ window.SA = window.SA || {};
         'פארקים וגינות': groups.parks,
         'מים וקו חוף': groups.water,
         'דרכים עיקריות': groups.roads,
-        'כיווני זריחה ושקיעה': groups.sun
+        'כיווני זריחה ושקיעה': groups.sun,
+        'קווי גובה (טופוגרפיה)': groups.contours,
+        'הצללת תבליט (Hillshade)': groups.hillshade
       },
       { position: 'topleft', collapsed: true }
     ).addTo(map);
@@ -76,6 +84,9 @@ window.SA = window.SA || {};
       poiGroups[k] = L.layerGroup();
       if (k !== 'parking') poiGroups[k].addTo(map);
     });
+
+    M.legend = new MapKey({ position: 'topright' }).addTo(map);
+    map.on('overlayadd overlayremove baselayerchange', () => M.legend.refresh());
 
     map.on('click', (e) => {
       const { lat, lng } = e.latlng;
@@ -104,6 +115,7 @@ window.SA = window.SA || {};
       ctrlLayers.addBaseLayer(bases[want], 'מפה');
       currentBaseKey = want;
     }
+    if (M._contours) M.showContours(M._contours);
   };
 
   /* ---------- אתר ---------- */
@@ -127,7 +139,7 @@ window.SA = window.SA || {};
 
   M.clear = function () {
     Object.values(poiGroups).forEach((g) => g.clearLayers());
-    ['plan', 'parcel', 'iso', 'sun', 'water', 'roads', 'buildings', 'parks'].forEach((k) => groups[k].clearLayers());
+    ['plan', 'parcel', 'iso', 'sun', 'water', 'roads', 'buildings', 'parks', 'contours'].forEach((k) => groups[k].clearLayers());
   };
 
   /* ---------- שירותים ---------- */
@@ -158,6 +170,7 @@ window.SA = window.SA || {};
   M.togglePOI = function (cat, on) {
     if (on) poiGroups[cat].addTo(map);
     else poiGroups[cat].remove();
+    if (M.legend) M.legend.refresh();
   };
 
   M.focus = function (it) {
@@ -238,4 +251,116 @@ window.SA = window.SA || {};
       });
     });
   };
+  /* ---------- קווי גובה ---------- */
+  M.showContours = function (res) {
+    groups.contours.clearLayers();
+    M._contours = res;
+    if (!res) return;
+    const color = isDark() ? '#e2b77a' : '#8b5a2b';
+    for (const ln of res.lines) {
+      L.polyline(ln.coords, {
+        renderer: canvas, color, weight: ln.major ? 1.7 : 0.8, opacity: ln.major ? 0.9 : 0.55, smoothFactor: 1.5
+      }).bindTooltip(`${Math.round(ln.level)} מ'`, { sticky: true, className: 'contour-tip' }).addTo(groups.contours);
+    }
+    // תוויות גובה על קווים ראשיים ארוכים
+    res.lines.filter((l) => l.major && l.coords.length > 25).forEach((l) => {
+      const p = l.coords[Math.floor(l.coords.length / 2)];
+      L.marker(p, {
+        interactive: false, keyboard: false,
+        icon: L.divIcon({ className: 'contour-label', html: `<span>${Math.round(l.level)}</span>`, iconSize: [36, 16], iconAnchor: [18, 8] })
+      }).addTo(groups.contours);
+    });
+  };
+
+  /* =========================================================
+     מקרא — הסבר לכל סימון במפה, לחיצה מדליקה/מכבה שכבה
+     ========================================================= */
+  const sw = {
+    line: (c, w = 3, dash = '') => `<svg viewBox="0 0 30 14"><line x1="3" y1="7" x2="27" y2="7" stroke="${c}" stroke-width="${w}" ${dash ? `stroke-dasharray="${dash}"` : ''} stroke-linecap="round"/></svg>`,
+    poly: (c, fill, op = 0.25, dash = '', w = 2) => `<svg viewBox="0 0 30 18"><rect x="3" y="2" width="24" height="14" rx="2" fill="${fill}" fill-opacity="${op}" stroke="${c}" stroke-width="${w}" ${dash ? `stroke-dasharray="${dash}"` : ''}/></svg>`,
+    site: () => '<svg viewBox="0 0 30 18"><circle cx="15" cy="9" r="8" fill="#ea580c" opacity=".3"/><circle cx="15" cy="9" r="5" fill="#ea580c" stroke="#fff" stroke-width="2"/></svg>',
+    ring: () => '<svg viewBox="0 0 30 18"><circle cx="15" cy="9" r="7" fill="none" stroke="var(--accent)" stroke-width="1.5" stroke-dasharray="3 3"/></svg>',
+    icon: (cat) => `<span class="key-ico" style="--c:${SA.CATS[cat].color}">${SA.CATS[cat].icon}</span>`,
+    contour: () => '<svg viewBox="0 0 30 18"><path d="M2 14 C10 4, 20 4, 28 12" fill="none" stroke="#8b5a2b" stroke-width="1.7"/><path d="M2 17 C10 9, 20 9, 28 16" fill="none" stroke="#8b5a2b" stroke-width=".8" opacity=".6"/></svg>',
+    shade: () => '<svg viewBox="0 0 30 18"><defs><linearGradient id="hs" x1="0" x2="1"><stop offset="0" stop-color="#fff"/><stop offset="1" stop-color="#555"/></linearGradient></defs><rect x="3" y="2" width="24" height="14" rx="2" fill="url(#hs)"/></svg>'
+  };
+
+  function keySections() {
+    const S = [
+      ['האתר והתכנון', [
+        { sw: sw.site(), label: 'האתר הנבחר (ניתן לגרירה)' },
+        { sw: sw.ring(), label: 'רדיוס הניתוח' },
+        { g: 'parcel', sw: sw.poly('#ea580c', '#fb923c', 0.3), label: 'החלקה (גוש/חלקה)' },
+        { g: 'plan', sw: sw.poly('#1d4ed8', '#1d4ed8', 0.05, '', 2.5), label: 'תב״ע החלה על האתר' },
+        { g: 'plan', sw: sw.poly('#1d4ed8', '#1d4ed8', 0.05, '5 3', 1.5), label: 'תכנית נוספת החלה על האתר' },
+        { g: 'plansWms', sw: sw.poly('#2563eb', '#93c5fd', 0.3, '', 1), label: 'קווים כחולים — כל התכניות (מנהל התכנון)' },
+        { g: 'parcelsWms', sw: sw.poly('#64748b', '#fff', 0, '', 1), label: 'גבולות גושים וחלקות (GovMap)' }
+      ]],
+      ['שירותים (אייקונים)', Object.keys(SA.CATS).map((k) => ({ poi: k, sw: sw.icon(k), label: SA.CATS[k].label }))],
+      ['טופוגרפיה', [
+        { g: 'contours', sw: sw.contour(), label: 'קווי גובה — עבה: קו ראשי עם ערך במטרים' },
+        { g: 'hillshade', sw: sw.shade(), label: 'הצללת תבליט' }
+      ]],
+      ['ירוק ומים', [
+        { g: 'parks', sw: sw.poly('#16a34a', '#16a34a', 0.3, '', 1), label: 'פארק / גינה / גן שעשועים' },
+        { g: 'water', sw: sw.line('#0284c7', 4), label: 'קו החוף (קו המים)' },
+        { g: 'water', sw: sw.line('#38bdf8', 2.5), label: 'נהר / תעלה' },
+        { g: 'water', sw: sw.line('#38bdf8', 2.5, '5 4'), label: 'נחל / ערוץ' },
+        { g: 'water', sw: sw.poly('#0ea5e9', '#0ea5e9', 0.4, '', 1), label: 'גוף מים' }
+      ]],
+      ['תנועה ונגישות', [
+        { g: 'roads', sw: sw.line('#b91c1c', 5), label: 'כביש מהיר' },
+        { g: 'roads', sw: sw.line('#ea580c', 5), label: 'דרך ראשית' },
+        { g: 'roads', sw: sw.line('#d97706', 5), label: 'עורק ראשי' },
+        { g: 'roads', sw: sw.line('#ca8a04', 5), label: 'עורק משני' },
+        { g: 'iso', sw: sw.line('#0d9488', 2, '4 3'), label: 'טווח הליכה 5 דק׳' },
+        { g: 'iso', sw: sw.line('#0ea5e9', 2, '4 3'), label: 'טווח הליכה 10 דק׳' },
+        { g: 'iso', sw: sw.line('#6366f1', 2, '4 3'), label: 'טווח הליכה 15 דק׳' }
+      ]],
+      ['גובה מבנים (קומות)', M.levelColors.map(([l, c]) => ({ g: 'buildings', sw: sw.poly('#334155', c, 0.85, '', 0.6), label: l }))],
+      ['שמש', [
+        { g: 'sun', sw: sw.line('#f59e0b', 3, '6 4'), label: 'זריחה/שקיעה — היפוך קיץ (21.6)' },
+        { g: 'sun', sw: sw.line('#3b82f6', 3, '6 4'), label: 'זריחה/שקיעה — היפוך חורף (21.12)' }
+      ]]
+    ];
+    return S;
+  }
+
+  const MapKey = L.Control.extend({
+    onAdd() {
+      const el = L.DomUtil.create('div', 'map-key');
+      L.DomEvent.disableClickPropagation(el);
+      L.DomEvent.disableScrollPropagation(el);
+      this._el = el;
+      let open = U.store.get('sitelens.keyOpen', window.innerWidth > 900);
+      el.innerHTML = `<button class="key-toggle" aria-expanded="${open}"><svg viewBox="0 0 24 24"><path d="M4 6h2M4 12h2M4 18h2M10 6h10M10 12h10M10 18h10"/></svg>מקרא</button><div class="key-body" ${open ? '' : 'hidden'}></div>`;
+      this._body = el.querySelector('.key-body');
+      el.querySelector('.key-toggle').addEventListener('click', (e) => {
+        open = this._body.hidden;
+        this._body.hidden = !open;
+        e.currentTarget.setAttribute('aria-expanded', open);
+        U.store.set('sitelens.keyOpen', open);
+      });
+      this._body.addEventListener('click', (e) => {
+        const b = e.target.closest('[data-g],[data-poi]');
+        if (!b) return;
+        if (b.dataset.poi) { M.onPoiToggle && M.onPoiToggle(b.dataset.poi); return; }
+        const layer = groups[b.dataset.g];
+        if (map.hasLayer(layer)) map.removeLayer(layer); else map.addLayer(layer);
+        this.refresh();
+      });
+      this.refresh();
+      return el;
+    },
+    refresh() {
+      if (!this._body) return;
+      this._body.innerHTML = keySections().map(([title, items]) => `<section><h5>${title}</h5><ul>${items.map((it) => {
+        const on = it.g ? map.hasLayer(groups[it.g]) : it.poi ? map.hasLayer(poiGroups[it.poi]) : true;
+        const attr = it.g ? `data-g="${it.g}"` : it.poi ? `data-poi="${it.poi}"` : '';
+        const tag = attr ? 'button' : 'div';
+        return `<li><${tag} class="key-item ${on ? '' : 'off'}" ${attr} ${attr ? `aria-pressed="${on}" title="${on ? 'לחצו להסתרה' : 'לחצו להצגה'}"` : ''}><span class="key-sw">${it.sw}</span><span>${it.label}</span></${tag}></li>`;
+      }).join('')}</ul></section>`).join('') + '<p class="key-note">לחיצה על פריט מציגה או מסתירה את השכבה</p>';
+    }
+  });
+
 })(window.SA);

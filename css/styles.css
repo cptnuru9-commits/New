@@ -510,3 +510,44 @@ button.key-item:hover { background: var(--surface-3); }
   .key-body { max-height: 38vh; }
 }
 @media print { .map-key { display: none; } }
+
+/* ---------- מגרש וקווי בניין ---------- */
+.kind { font-size: 11.5px; font-weight: 700; padding: 1px 8px; border-radius: 99px; }
+.kind-front { background: #ffedd5; color: #c2410c; }
+.kind-side { background: var(--surface-3); color: var(--text-2); }
+.kind-rear { background: #e0e7ff; color: #4338ca; }
+:root[data-theme='dark'] .kind-front { background: #3a1e0c; color: #fdba74; }
+:root[data-theme='dark'] .kind-rear { background: #1e1b4b; color: #a5b4fc; }
+.sb-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; margin: 8px 0 10px; }
+.sb-grid label { display: grid; gap: 3px; font-size: 11.5px; color: var(--muted); }
+.sb-grid input { width: 100%; border: 1px solid var(--line); background: var(--surface-2); border-radius: 8px; padding: 6px 6px; font-size: 14px; font-weight: 700; text-align: center; font-variant-numeric: tabular-nums; }
+.sb-grid input:focus { outline: none; border-color: var(--accent); background: var(--surface); }
+.ok-note { color: var(--ok); }
+.dim-label span {
+  display: inline-block; font-size: 11px; font-weight: 800; padding: 0 5px; border-radius: 5px; white-space: nowrap;
+  background: #fff; color: #9a3412; border: 1px solid #fdba74; box-shadow: 0 1px 3px rgb(0 0 0 / 20%); font-variant-numeric: tabular-nums;
+}
+.dim-label span.dim-front { background: #ea580c; color: #fff; border-color: #ea580c; }
+.key-sw .dim-label span { font-size: 9.5px; }
+
+/* ---------- ייעודי קרקע ---------- */
+.lu-sw { width: 14px; height: 14px; border-radius: 4px; display: inline-block; flex: none; border: 1px solid rgb(0 0 0 / 15%); }
+.lu-site { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 11px; background: var(--surface-2); border: 1px solid var(--line); margin-bottom: 10px; }
+.lu-site .lu-sw { width: 26px; height: 26px; border-radius: 7px; }
+.lu-site small { display: block; color: var(--muted); font-size: 12px; }
+.lu-site b { font-size: 15px; }
+.lu-list, .age-list { list-style: none; padding: 0; margin: 0; display: grid; gap: 5px; font-size: 13px; }
+.lu-list li { display: grid; grid-template-columns: 14px 110px 1fr 38px; gap: 8px; align-items: center; }
+.lu-list .bar, .age-list .bar { height: 9px; }
+.age-list li { display: grid; grid-template-columns: 52px 1fr 44px; gap: 8px; align-items: center; font-variant-numeric: tabular-nums; }
+.bar.age i { background: linear-gradient(90deg, #a855f7, #6366f1); }
+.lu-list small, .age-list small { text-align: end; color: var(--text-2); }
+.upload { display: inline-flex; align-items: center; gap: 6px; margin-top: 10px; padding: 7px 12px; border: 1.5px dashed var(--line-strong); border-radius: 10px; font-size: 13px; cursor: pointer; color: var(--text-2); }
+.upload:hover { border-color: var(--accent); color: var(--accent); }
+.upload input { display: none; }
+.pick { display: flex; align-items: center; gap: 8px; font-size: 13px; margin-bottom: 10px; color: var(--text-2); }
+.pick select { flex: 1; min-width: 0; border: 1px solid var(--line); background: var(--surface-2); border-radius: 8px; padding: 6px 8px; font: inherit; color: var(--text); }
+@media (max-width: 480px) {
+  .sb-grid { grid-template-columns: repeat(3, 1fr); }
+  .lu-list li { grid-template-columns: 14px 90px 1fr 34px; }
+}

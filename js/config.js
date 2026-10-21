@@ -22,6 +22,17 @@ window.SA = window.SA || {};
     // מנהל התכנון — תכניות (קווים כחולים / XPLAN)
     xplan: 'https://ags.iplan.gov.il/arcgisiplan/rest/services/PlanningPublic/Xplan/MapServer',
 
+    // תיקיית שירותי התכנון — סריקה אוטומטית לשכבות ייעודי קרקע / קווי בניין / מגרשים
+    planFolder: 'https://ags.iplan.gov.il/arcgisiplan/rest/services/PlanningPublic',
+    // שירותי MapServer נוספים (למשל GIS עירוני) לסריקה — שורה לכל כתובת
+    extraPlanServices: [],
+
+    // למ"ס — שורשי שירותי GIS לסריקת שכבת אזורים סטטיסטיים (מפקד)
+    statRoots: [
+      'https://gis.cbs.gov.il/arcgis/rest/services',
+      'https://gis.cbs.gov.il/server/rest/services'
+    ],
+
     // GovMap / המרכז למיפוי ישראל — שכבות פתוחות (גושים וחלקות)
     govmapWfs: 'https://open.govmap.gov.il/geoserver/opendata/wfs',
     govmapWms: 'https://open.govmap.gov.il/geoserver/opendata/wms',

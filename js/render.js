@@ -113,7 +113,8 @@ window.SA = window.SA || {};
       ['מיקום וכתובת', st.addr], ['גוש וחלקה', st.parcel], ['תב״ע ותכניות', st.plans], ['תחבורה ציבורית', st.poi],
       ['דרכי הגעה', st.env], ['מוסדות חינוך', st.poi], ['גנים ופארקים', st.poi], ['אוכלוסייה', st.pop],
       ['קו המים / חוף', st.env], ['טופוגרפיה', st.elev], ['שמש והצללה', 'ok'], ['רוח ואקלים', st.climate],
-      ['מרקם בנוי וגובה', st.env], ['היסטוריה ושימור', 'manual'], ['רעש ומטרדים', 'manual'], ['צילום וסיור באתר', 'manual']
+      ['מרקם בנוי וגובה', st.env], ['גבול מגרש', st.lot], ['קווי בניין', st.lot === 'ok' ? (S.pdetail && S.pdetail.lines.length ? 'ok' : 'manual') : st.lot],
+      ['ייעודי קרקע ושצ״פ', st.pdetail], ['פרופיל גילאים', st.ages], ['היסטוריה ושימור', 'manual'], ['רעש ומטרדים', 'manual'], ['צילום וסיור באתר', 'manual']
     ];
     const ico = { ok: '✓', error: '!', loading: '…', manual: '✎' };
     const checklist = `<ul class="checklist">${check.map(([l, s]) => `<li class="ck ck-${s || 'loading'}"><span>${ico[s] || '…'}</span>${l}</li>`).join('')}</ul>
@@ -181,9 +182,104 @@ window.SA = window.SA || {};
       <div class="quick">${R.link(L.muniGis, `GIS הנדסה — ${esc(S.city || 'הרשות')}`, 'qbtn')}${/תל.?אביב/.test(S.city || '') ? R.link(L.taGis, 'GIS תל אביב', 'qbtn') : ''}${R.link(L.iplan, 'מנהל התכנון', 'qbtn')}</div>`;
 
     return R.card('גוש וחלקה', parcel, { icon: '🧾', status: st.parcel }) +
+      R.card('גבול המגרש וקווי בניין', R.lotHtml(S), { icon: '📏', status: S.status.lot }) +
+      R.card('ייעודי קרקע ושצ״פ', R.landuseHtml(S), { icon: '🟩', status: S.status.pdetail }) +
       R.card('תב״ע — תכניות החלות על האתר', plans, { icon: '📐', status: st.plans }) +
       permits +
       R.card('מסמכים ואישורים לאסוף', docs, { icon: '🗂️' });
+  };
+
+  /* =========================================================
+     גבול מגרש וקווי בניין
+     ========================================================= */
+  const KIND = { front: 'חזית', side: 'צד', rear: 'אחור' };
+  R.lotHtml = (S) => {
+    const st = S.status.lot;
+    if (st === 'loading' || (!st && S.status.parcel === 'loading')) return R.sk(4);
+    if (!S.lot) return R.err(S.errors.lot || 'אין גבול חלקה לחישוב — נדרשים נתוני גוש/חלקה', `<div class="quick">${R.link(R.links(S).govmapParcel, 'GovMap', 'qbtn')}</div>`);
+    const lot = S.lot, sb = S.setbacks;
+    const pd = S.pdetail;
+    const official = pd && pd.lines.length;
+    const planLot = pd && pd.lots.find((l) => l.contains);
+    const edges = lot.edgesLL.map((e, i) => `<tr><td>${i + 1}</td><td><span class="kind kind-${e.kind}">${KIND[e.kind]}</span></td><td>${U.num(e.len, 1)} מ׳</td><td>${esc(e.street || '')}</td></tr>`).join('');
+    return `<div class="kpis">${R.kpi('שטח (מחושב)', `${U.int(lot.area)} מ"ר`, S.parcel && S.parcel.area ? `רשום: ${U.int(S.parcel.area)} מ"ר` : '')}${R.kpi('היקף', `${U.num(lot.perimeter, 1)} מ׳`)}${R.kpi('חזית לרחוב', `${U.num(lot.frontage, 1)} מ׳`, lot.frontStreet ? 'רח׳ ' + esc(lot.frontStreet) : '')}${R.kpi('צלעות', lot.edgesLL.length)}</div>
+      ${planLot ? `<p class="small">✓ נמצא גם <b>מגרש לפי התכנית</b>${planLot.number ? ` (${esc(planLot.number)})` : ''} — מוצג במפה בקו מקווקו חום.</p>` : ''}
+      <details class="raw"><summary>מידות הצלעות</summary><table class="tbl"><thead><tr><th>#</th><th>סוג</th><th>אורך</th><th>רחוב</th></tr></thead><tbody>${edges}</tbody></table></details>
+      <h4>קווי בניין ${official ? '' : '(משוערים)'}</h4>
+      ${official ? `<p class="small ok-note">✓ נמצאו ${pd.lines.length} קווי בניין בשכבת "${esc(pd.searched.lines.join(', '))}" — מוצגים במפה בקו אדום רציף.</p>` : `<p class="small muted">לא נמצאה שכבת קווי בניין פתוחה לאתר זה. הזינו את המרווחים מהוראות התב״ע / תיק המידע, והמעטפת תחושב ותוצג במפה בקו אדום מקווקו.</p>`}
+      <div class="sb-grid">
+        <label>קדמי (מ׳)<input type="number" min="0" step="0.5" data-sb="front" value="${sb.front}"></label>
+        <label>צדדי (מ׳)<input type="number" min="0" step="0.5" data-sb="side" value="${sb.side}"></label>
+        <label>אחורי (מ׳)<input type="number" min="0" step="0.5" data-sb="rear" value="${sb.rear}"></label>
+        <label>קומות<input type="number" min="1" step="1" data-sb="floors" value="${sb.floors}"></label>
+        <label>תכסית מרבית %<input type="number" min="0" max="100" step="1" data-sb="coverage" value="${sb.coverage}" placeholder="—"></label>
+      </div>
+      <div class="kpis k3" id="envKpis">${R.envKpis(S)}</div>
+      <p class="muted small">חזית = הצלע הפונה לרחוב הקרוב (OSM); אחור = הצלע שמולה; השאר צדדיות. החישוב גיאומטרי בלבד — הקובע הוא התב״ע, תיק המידע וההנחיות המרחביות.</p>`;
+  };
+  R.envKpis = (S) => {
+    const env = S.envelope, sb = S.setbacks, lot = S.lot;
+    if (!env) return `<div class="kpi alert" style="grid-column:1/-1"><span class="kpi-l">שטח בין קווי הבניין</span><span class="kpi-v">—</span><span class="kpi-s">המרווחים גדולים מדי למגרש או שצורתו מורכבת</span></div>`;
+    const cap = sb.coverage ? (lot.area * sb.coverage) / 100 : Infinity;
+    const fp = Math.min(env.area, cap);
+    return R.kpi('שטח בין קווי הבניין', `${U.int(env.area)} מ"ר`, `${U.num((env.area / lot.area) * 100, 0)}% מהמגרש`) +
+      R.kpi('תכסית לחישוב', `${U.int(fp)} מ"ר`, isFinite(cap) && cap < env.area ? `מוגבל ל-${sb.coverage}% תכסית` : 'לפי קווי הבניין') +
+      R.kpi(`שטח ברוטו ×${sb.floors}`, `${U.int(fp * sb.floors)} מ"ר`, `רח״ק ≈ ${U.num((fp * sb.floors) / lot.area, 2)}`);
+  };
+
+  /* =========================================================
+     ייעודי קרקע ושצ"פ
+     ========================================================= */
+  R.landuseHtml = (S) => {
+    const st = S.status.pdetail, pd = S.pdetail;
+    const osmGreen = S.poi ? S.poi.parks.filter((p) => /park|garden/.test(p.sub)) : [];
+    const osmFallback = () => {
+      if (!S.poi) return '';
+      const near = S.poi.items.filter((i) => /park|garden/.test(i.sub)).slice(0, 5);
+      return `<h4>שטחים ירוקים לפי OSM (קירוב לשצ״פ)</h4>${near.length ? `<ul class="rows">${near.map((i) => R.row(i)).join('')}</ul>` : '<p class="muted">לא נמצאו ברדיוס</p>'}
+        <p class="muted small">סה״כ ${U.int(osmGreen.reduce((s, p) => s + p.area, 0) / 1000)} דונם פארקים וגינות ברדיוס הניתוח. שצ״פ סטטוטורי — לפי תשריט התב״ע במבא״ת.</p>`;
+    };
+    if (st === 'loading') return R.sk(4);
+    if (st === 'error' || !pd || !pd.landuse.length) {
+      return `<p class="small">${st === 'error' ? `⚠️ ${esc(S.errors.pdetail || 'שירותי התכנון לא זמינים')}` : `לא נמצאה שכבת ייעודי קרקע פתוחה לאזור זה${pd && pd.layerCount ? ` (נסרקו ${pd.layerCount} שכבות)` : ''}.`} ייעודי הקרקע מופיעים בתשריט התב״ע במבא״ת וב-GovMap.</p>
+        <div class="quick">${R.link(R.links(S).mavat, 'מבא״ת', 'qbtn')}${R.link(R.links(S).govmap, 'GovMap', 'qbtn')}</div>${osmFallback()}`;
+    }
+    const site = pd.landuse.find((u) => u.dist === 0);
+    const opens = pd.landuse.filter((u) => u.open);
+    const groups = {};
+    pd.landuse.forEach((u) => { (groups[u.group] = groups[u.group] || { area: 0, color: u.color }).area += u.area; });
+    const tot = Object.values(groups).reduce((s, g) => s + g.area, 0);
+    const bars = Object.entries(groups).sort((a, b) => b[1].area - a[1].area).map(([g, v]) =>
+      `<li><span class="lu-sw" style="background:${v.color}"></span><span>${g}</span><span class="bar"><i style="width:${(v.area / tot) * 100}%;background:${v.color}"></i></span><small>${U.num((v.area / tot) * 100, 0)}%</small></li>`).join('');
+    return `${site ? `<div class="lu-site"><span class="lu-sw" style="background:${site.color}"></span><div><small>ייעוד הקרקע באתר</small><b>${esc(site.designation)}</b></div></div>` : ''}
+      <div class="kpis k3">${R.kpi('שצ״פ ב-300 מ׳', opens.length ? `${U.num(opens.reduce((s, u) => s + u.area, 0) / 1000, 1)} ד׳` : '0', `${opens.length} שטחים`)}${R.kpi('שצ״פ קרוב', opens.length ? U.dist(Math.min(...opens.map((u) => u.dist))) : '—')}${R.kpi('ייעודים שונים', Object.keys(groups).length)}</div>
+      <h4>תמהיל ייעודים ברדיוס 300 מ׳</h4><ul class="lu-list">${bars}</ul>
+      ${opens.length ? `<h4>שצ״פים קרובים</h4><ul class="simple">${opens.slice(0, 6).map((u) => `<li><span class="lu-sw" style="background:#22c55e"></span><span>${esc(u.designation)}<small> · ${U.int(u.area)} מ"ר</small></span><b>${u.dist === 0 ? 'באתר' : U.dist(u.dist)}</b></li>`).join('')}</ul>` : osmFallback()}
+      <p class="muted small">מקור: ${esc(pd.searched.landuse.join(', '))}. שטחים מחושבים מהפוליגונים — ייתכנו חפיפות בין תכניות.</p>`;
+  };
+
+  /* =========================================================
+     פרופיל גילאים
+     ========================================================= */
+  R.agesHtml = (S) => {
+    const st = S.status.ages, a = S.ages;
+    const upload = `<label class="upload">📄 העלאת קובץ למ״ס (xlsx / csv)<input type="file" accept=".xlsx,.xls,.csv" data-act="agesFile"></label>`;
+    if (st === 'loading') return R.sk(5);
+    if (!a) {
+      return `<p class="small">⚠️ ${esc(S.errors.ages || 'לא נמצאו נתוני גילאים לאזור הסטטיסטי')}</p>
+        <p class="small">הלמ״ס מפרסמת נתוני מפקד 2022 לפי <b>אזור סטטיסטי</b> (כמה בלוקים סביב האתר). להורדת הקובץ: אתר המפקד ← "נתונים נבחרים לפי יישובים ואזורים סטטיסטיים", ואז להעלות אותו כאן — האתר ימצא את שורות ${esc(S.city || 'היישוב')} ויציג את התפלגות הגילאים.</p>
+        <div class="quick">${R.link('https://census.cbs.gov.il/', 'אתר מפקד 2022', 'qbtn')}${R.link(R.links(S).cbs, 'למ״ס — יישובים', 'qbtn')}</div>${upload}`;
+    }
+    const pick = S.agesOptions && S.agesOptions.length > 1
+      ? `<label class="pick">אזור סטטיסטי:<select data-act="agesPick">${S.agesOptions.map((o, i) => `<option value="${i}" ${o === a ? 'selected' : ''}>${esc(o.label || [o.locality, o.areaName || o.area].filter(Boolean).join(' · ') || 'שורה ' + (i + 1))}</option>`).join('')}</select></label>` : '';
+    const max = Math.max(...a.series.map((b) => b.share));
+    const bars = a.series.map((b) => `<li><span>${b.label}</span><span class="bar age"><i style="width:${(b.share / max) * 100}%"></i></span><small>${U.num(b.share, 1)}%</small></li>`).join('');
+    const cmp = (v, nat) => v == null ? '' : v > nat + 3 ? `מעל הממוצע הארצי (~${nat}%)` : v < nat - 3 ? `מתחת לממוצע הארצי (~${nat}%)` : `קרוב לממוצע הארצי (~${nat}%)`;
+    return `${pick}<div class="kpis">${R.kpi('אזור סטטיסטי', esc(a.areaName || a.area || '—'), esc(a.locality || ''))}${R.kpi('תושבים באזור', a.total ? U.int(a.total) : '—')}${R.kpi('ילדים ונוער', a.kids != null ? `${U.num(a.kids, 0)}%` : '—', cmp(a.kids, SA.demo.national.kids))}${R.kpi('בני 65+', a.seniors != null ? `${U.num(a.seniors, 0)}%` : '—', cmp(a.seniors, SA.demo.national.seniors))}</div>
+      <h4>התפלגות גילאים</h4><ul class="age-list">${bars}</ul>
+      ${a.dependency != null ? `<p class="small">יחס תלות: <b>${U.num(a.dependency, 0)}</b> תלויים (ילדים + מבוגרים) לכל 100 בגיל העבודה.</p>` : ''}
+      ${a.extra.length ? `<details class="raw"><summary>נתונים נוספים לאזור (${a.extra.length})</summary>${R.dl(a.extra.map(([k, v]) => [esc(k), U.num(v, 1)]))}</details>` : ''}
+      <p class="muted small">מקור: ${esc(a.source)}. האזור הסטטיסטי מסומן במפה בקו סגול מקווקו (אם השכבה זמינה).</p>${upload}`;
   };
 
   function planCard(p, primary) {
@@ -310,7 +406,8 @@ window.SA = window.SA || {};
         <div class="legend-row">${SA.map.levelColors.map(([l, c]) => `<span><i style="background:${c}"></i>${l}</span>`).join('')}</div>
         <p class="muted small">חישוב ברדיוס 250 מ' מטביעות רגל של מבנים ב-OSM. מבנים ללא נתוני קומות מחושבים לפי הממוצע. אומדן בלבד.</p>`;
     }
-    return R.card(`אוכלוסייה — ${esc(S.city || 'היישוב')}`, pop, { icon: '👥', status: st.pop }) +
+    return R.card('פרופיל גילאים — האזור הסטטיסטי של האתר', R.agesHtml(S), { icon: '🧒', status: st.ages }) +
+      R.card(`אוכלוסייה — ${esc(S.city || 'היישוב')}`, pop, { icon: '👥', status: st.pop }) +
       R.card('מרקם בנוי וצפיפות מקומית', morph, { icon: '🏙️', status: st.env });
   };
 
@@ -400,6 +497,9 @@ window.SA = window.SA || {};
       ['אוכלוסייה', 'למ״ס דרך Wikidata · data.gov.il', st.pop, L.cbs],
       ['טופוגרפיה', 'Copernicus DEM · Open-Meteo', st.elev, 'https://open-meteo.com/'],
       ['קווי גובה', 'SRTM · AWS Terrain Tiles', st.contours, 'https://registry.opendata.aws/terrain-tiles/'],
+      ['ייעודי קרקע, שצ״פ, קווי בניין', 'מנהל התכנון · סריקת שכבות', st.pdetail, L.mavat],
+      ['גבול מגרש וחזית', 'GovMap + OSM', st.lot, L.govmapParcel],
+      ['פרופיל גילאים', 'למ״ס · אזורים סטטיסטיים / data.gov.il', st.ages, 'https://census.cbs.gov.il/'],
       ['רוח ואקלים', 'ERA5 · Open-Meteo Archive', st.climate, 'https://open-meteo.com/'],
       ['איזוכרונים', 'Valhalla · FOSSGIS', st.iso, 'https://valhalla.github.io/valhalla/'],
       ['שמש', 'SunCalc (חישוב מקומי)', 'ok', 'https://github.com/mourner/suncalc']

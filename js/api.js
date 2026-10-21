@@ -261,6 +261,157 @@ window.SA = window.SA || {};
     return { atSite, nearby, others };
   };
 
+  /* =========================================================
+     גילוי שכבות אוטומטי בשירותי ArcGIS (לפי שם השכבה)
+     ========================================================= */
+  API.layerIndex = layerIndex;
+  const servicesRoot = (url) => url.split('/rest/services')[0] + '/rest/services';
+
+  /** כל שכבות ה-MapServer בתיקייה (ובתתי-תיקיות עד עומק 1) */
+  API.discover = async function (folderUrl, svcFilter = /.*/, depth = 1) {
+    const key = 'disc:' + folderUrl + svcFilter;
+    const hit = U.cache.get(key);
+    if (hit) return hit;
+    const root = servicesRoot(folderUrl);
+    const out = [];
+    const walk = async (url, d) => {
+      const f = await U.arcgis(url, {});
+      const svcs = (f.services || []).filter((x) => x.type === 'MapServer' && svcFilter.test(x.name)).slice(0, 15);
+      for (const sv of svcs) {
+        const surl = `${root}/${sv.name}/MapServer`;
+        try {
+          const idx = await layerIndex(surl);
+          Object.values(idx).forEach((l) => out.push({ svc: surl, ...l }));
+        } catch (e) { /* שירות לא נגיש */ }
+      }
+      if (d > 0) {
+        for (const fo of (f.folders || []).slice(0, 10)) {
+          try { await walk(`${root}/${fo}`, d - 1); } catch (e) { /* skip */ }
+        }
+      }
+    };
+    await walk(folderUrl, depth);
+    U.cache.set(key, out);
+    return out;
+  };
+
+  async function layersOf(urls) {
+    const out = [];
+    for (const u of urls) {
+      try { Object.values(await layerIndex(u)).forEach((l) => out.push({ svc: u, ...l })); } catch (e) { /* skip */ }
+    }
+    return out;
+  }
+
+  async function queryLayer(l, lat, lon, radius) {
+    const dLat = radius / 111320, dLon = radius / (111320 * Math.cos((lat * Math.PI) / 180));
+    const q = await U.arcgis(`${l.svc}/${l.id}/query`, {
+      where: '1=1', outFields: '*', returnGeometry: true, outSR: 4326,
+      geometry: `${lon - dLon},${lat - dLat},${lon + dLon},${lat + dLat}`,
+      geometryType: 'esriGeometryEnvelope', inSR: 4326, spatialRel: 'esriSpatialRelIntersects'
+    });
+    return (q.features || []).slice(0, 300).map((f) => ({ attrs: f.attributes || {}, geom: f.geometry || {}, layer: l.name, aliases: l.aliases || {} }));
+  }
+  const ringsLL = (g) => (g.rings || []).map((r) => r.map(([x, y]) => ({ lat: y, lon: x })));
+  const pathsLL = (g) => (g.paths || []).map((r) => r.map(([x, y]) => ({ lat: y, lon: x })));
+  const attrText = (attrs, aliases, re) => {
+    for (const k of Object.keys(attrs)) {
+      const v = attrs[k];
+      if (typeof v === 'string' && v.trim() && (re.test(k) || re.test(aliases[k] || ''))) return v.trim();
+    }
+    return '';
+  };
+
+  /* ---------- ייעודי קרקע (צבעי מבא"ת בקירוב) ---------- */
+  const LU = [
+    [/שצ"?פ|ציבורי.?פתוח|open.?space|גן.?ציבורי|פארק/i, '#22c55e', 'שצ״פ'],
+    [/שפ"?פ|פרטי.?פתוח/i, '#86efac', 'שפ״פ'],
+    [/מבנים?.?ומוסדות.?ציבור|מבני.?ציבור|שב"?צ|public.?build/i, '#a16207', 'מבני ציבור'],
+    [/דרך|רחוב|road|חניה|מסילה/i, '#ef4444', 'דרך'],
+    [/מגורים.?(ומסחר|ותעסוקה)|מעורב|mixed/i, '#fb923c', 'מעורב'],
+    [/מגורים|residential/i, '#facc15', 'מגורים'],
+    [/מסחר|commercial|תעסוקה|משרד/i, '#c084fc', 'מסחר / תעסוקה'],
+    [/תעשי|industr/i, '#8b5cf6', 'תעשייה'],
+    [/מלונאות|תיירות|hotel/i, '#fb7185', 'תיירות'],
+    [/ספורט|נופש/i, '#4ade80', 'ספורט ונופש'],
+    [/חקלא/i, '#bef264', 'חקלאי'],
+    [/יער|שמורה|נחל|נוף/i, '#15803d', 'שטח פתוח / נוף'],
+    [/מתקנים.?הנדסיים|תשתית/i, '#64748b', 'תשתיות']
+  ];
+  API.landuseClass = (txt) => {
+    for (const [re, color, group] of LU) if (re.test(txt)) return { color, group, open: group === 'שצ״פ' };
+    return { color: '#94a3b8', group: 'אחר', open: false };
+  };
+
+  const isTelAviv = (lat, lon) => lat > 32.03 && lat < 32.15 && lon > 34.74 && lon < 34.86;
+
+  /** ייעודי קרקע, שצ"פ, קווי בניין ומגרשים — משכבות התכנון הזמינות */
+  API.planDetails = async function (lat, lon) {
+    const cfg = C();
+    let layers = [];
+    try { layers = await API.discover(cfg.planFolder); } catch (e) { /* תיקייה חסומה */ }
+    const extra = [cfg.xplan, ...(cfg.extraPlanServices || [])];
+    if (isTelAviv(lat, lon)) extra.push(cfg.telAvivGis);
+    const known = new Set(layers.map((l) => l.svc));
+    layers = layers.concat(await layersOf(extra.filter((u) => u && !known.has(u))));
+    if (!layers.length) throw new Error('שירותי התכנון לא זמינים');
+
+    const pick = (re, not) => layers.filter((l) => l.type !== 'Group Layer' && re.test(l.name) && !(not && not.test(l.name))).slice(0, 3);
+    const luLayers = pick(/ייעוד|יעוד|שימושי.?קרקע|land.?use|zoning/i, /קו.?בני/);
+    const blLayers = pick(/קו.?בני|קווי.?בני|building.?line|setback/i);
+    const lotLayers = pick(/מגרש|\blots?\b|\bplots?\b/i);
+
+    const landuse = [], lines = [], lots = [];
+    for (const l of luLayers) {
+      try {
+        (await queryLayer(l, lat, lon, 300)).forEach((f) => {
+          const txt = attrText(f.attrs, f.aliases, /ייעוד|יעוד|landuse|land_use|mavat_name|use|desc|תיאור|שם/i) || f.layer;
+          const rings = ringsLL(f.geom);
+          if (!rings.length) return;
+          const area = rings.reduce((s, r) => s + U.areaM2(r), 0);
+          landuse.push({ designation: txt, ...API.landuseClass(txt), rings, area, dist: rings.some((r) => U.pointInRing(lon, lat, r.map((q) => [q.lon, q.lat]))) ? 0 : Math.min(...rings.map((r) => U.distToLine({ lat, lon }, r))), layer: l.name, attrs: f.attrs, aliases: f.aliases });
+        });
+      } catch (e) { /* layer failed */ }
+    }
+    for (const l of blLayers) {
+      try {
+        (await queryLayer(l, lat, lon, 80)).forEach((f) => {
+          const paths = pathsLL(f.geom).concat(ringsLL(f.geom));
+          if (paths.length) lines.push({ paths, label: attrText(f.attrs, f.aliases, /קו|סוג|type|desc|מרחק/i), layer: l.name, attrs: f.attrs, aliases: f.aliases });
+        });
+      } catch (e) { /* skip */ }
+    }
+    for (const l of lotLayers) {
+      try {
+        (await queryLayer(l, lat, lon, 60)).forEach((f) => {
+          const rings = ringsLL(f.geom);
+          if (!rings.length) return;
+          const num = Object.entries(f.attrs).find(([k]) => /מגרש|lot|plot|num|מספר/i.test(k) || /מגרש/.test(f.aliases[k] || ''));
+          lots.push({ rings, number: num ? num[1] : '', contains: rings.some((r) => U.pointInRing(lon, lat, r.map((p) => [p.lon, p.lat]))), layer: l.name });
+        });
+      } catch (e) { /* skip */ }
+    }
+    landuse.sort((a, b) => a.dist - b.dist);
+    return {
+      landuse, lines, lots: lots.sort((a, b) => b.contains - a.contains),
+      searched: { landuse: luLayers.map((l) => l.name), lines: blLayers.map((l) => l.name), lots: lotLayers.map((l) => l.name) },
+      layerCount: layers.length
+    };
+  };
+
+  /* רחובות סמוכים — לזיהוי חזית המגרש */
+  API.streets = async function (lat, lon) {
+    const q = `[out:json][timeout:20];
+way["highway"]["highway"!~"^(footway|path|steps|cycleway|track|corridor|bridleway|proposed|construction)$"](around:120,${lat},${lon});
+out geom;`;
+    const data = await API.overpass(q);
+    return (data.elements || []).filter((e) => e.geometry).map((e) => ({
+      name: (e.tags && (e.tags['name:he'] || e.tags.name)) || '',
+      cls: e.tags && e.tags.highway,
+      geom: e.geometry.map((g) => ({ lat: g.lat, lon: g.lon }))
+    }));
+  };
+
   /* היתרי בנייה — GIS עירוני תל אביב-יפו (גילוי שכבה לפי שם) */
   API.telAvivPermits = async function (lat, lon, radius = 120) {
     const svc = C().telAvivGis;

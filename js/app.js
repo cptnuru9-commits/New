@@ -17,6 +17,9 @@
     env: ['overview', 'transport', 'population', 'environment', 'sources'],
     elev: ['overview', 'environment', 'sources'],
     contours: ['environment', 'sources'],
+    lot: ['overview', 'planning', 'sources'],
+    pdetail: ['overview', 'planning', 'sources'],
+    ages: ['overview', 'population', 'sources'],
     climate: ['overview', 'environment', 'sources'],
     iso: ['transport', 'sources'],
     pop: ['overview', 'population', 'sources'],
@@ -117,7 +120,7 @@
       lat, lon, r: radius, addr: label ? label.split(',')[0] : '', label,
       city: '', status: {}, errors: {}, sun: SA.charts.sunData(lat, lon)
     });
-    ['addr', 'parcel', 'plans', 'poi', 'env', 'elev', 'contours', 'climate', 'iso', 'pop'].forEach((k) => (S.status[k] = 'loading'));
+    ['addr', 'parcel', 'lot', 'pdetail', 'ages', 'plans', 'poi', 'env', 'elev', 'contours', 'climate', 'iso', 'pop'].forEach((k) => (S.status[k] = 'loading'));
 
     $('#emptyState').hidden = true;
     $('#results').hidden = false;
@@ -145,9 +148,38 @@
         run(token, 'permits', API.telAvivPermits(lat, lon), (p) => (S.permits = p));
       }
     });
-    run(token, 'parcel', API.parcel(lat, lon), (p) => {
+    S.setbacks = U.store.get('sitelens.setbacks', { front: 5, side: 3, rear: 5, floors: 4, coverage: '' });
+    const parcelP = API.parcel(lat, lon);
+    run(token, 'parcel', parcelP, (p) => {
       S.parcel = p;
       SA.map.showParcel(p.rings);
+    });
+    run(token, 'lot', parcelP.then(async (p) => {
+      const streets = await API.streets(lat, lon).catch(() => []);
+      const lot = SA.plot.analyze(p.rings[0], streets);
+      if (!lot) throw new Error('לא ניתן לנתח את גבול החלקה');
+      return lot;
+    }), (lot) => {
+      S.lot = lot;
+      SA.map.showLot(lot);
+      updateEnvelope();
+    });
+    run(token, 'pdetail', API.planDetails(lat, lon), (pd) => {
+      S.pdetail = pd;
+      SA.map.showLandUse(pd);
+      SA.map.showSetback(S.envelope, pd.lines);
+    });
+    run(token, 'ages', SA.demo.fromServices(lat, lon).catch(async (e1) => {
+      // גיבוי: data.gov.il לפי שם היישוב
+      await new Promise((r) => setTimeout(r, 2500));
+      try {
+        const res = await SA.demo.fromCkan(S.city);
+        S.agesOptions = res.options;
+        return res.options[0];
+      } catch (e2) { throw e1; }
+    }), (a) => {
+      S.ages = a;
+      SA.map.showStatArea(a.rings);
     });
     loadRadiusDependent(token);
     run(token, 'env', API.environment(lat, lon), (e) => {
@@ -265,6 +297,45 @@
       e.preventDefault();
       input.focus();
       input.select();
+    }
+  });
+
+  /* ---------- קווי בניין ---------- */
+  function updateEnvelope() {
+    const S = SA.state;
+    if (!S.lot) return;
+    const sb = S.setbacks;
+    S.envelope = SA.plot.envelope(S.lot, { front: +sb.front || 0, side: +sb.side || 0, rear: +sb.rear || 0 });
+    SA.map.showSetback(S.envelope, S.pdetail && S.pdetail.lines);
+    const k = $('#envKpis');
+    if (k) k.innerHTML = R.envKpis(S);
+  }
+  $('#results').addEventListener('input', (e) => {
+    const f = e.target.closest('[data-sb]');
+    if (!f || !SA.state || !SA.state.setbacks) return;
+    const v = f.value === '' ? '' : Math.max(0, +f.value);
+    SA.state.setbacks[f.dataset.sb] = f.dataset.sb === 'floors' ? Math.max(1, Math.round(+v || 1)) : v;
+    U.store.set('sitelens.setbacks', SA.state.setbacks);
+    updateEnvelope();
+  });
+
+  /* ---------- פרופיל גילאים: קובץ / בחירת אזור ---------- */
+  $('#results').addEventListener('change', async (e) => {
+    const S = SA.state;
+    if (e.target.matches('[data-act=agesFile]') && e.target.files[0]) {
+      toast('קורא את הקובץ…');
+      try {
+        const res = await SA.demo.fromFile(e.target.files[0], S.city);
+        S.agesOptions = res.options;
+        S.ages = res.options[0];
+        S.status.ages = 'ok';
+        toast(`נמצאו ${res.options.length} שורות — בחרו את האזור הסטטיסטי`);
+      } catch (err) { toast(err.message); }
+      renderPanes(PANES_FOR.ages);
+    }
+    if (e.target.matches('[data-act=agesPick]')) {
+      S.ages = S.agesOptions[+e.target.value];
+      renderPane('population');
     }
   });
 
@@ -395,6 +466,8 @@
     const itm = U.toITM(S.lat, S.lon);
     if (itm) lines.push(`ITM: ${itm.x}, ${itm.y}`);
     if (S.parcel) lines.push(`גוש ${S.parcel.gush} חלקה ${S.parcel.helka}${S.parcel.area ? ` (${U.int(S.parcel.area)} מ"ר)` : ''}`);
+    if (S.envelope) feats.push({ type: 'Feature', properties: { kind: 'building_envelope', setbacks: S.setbacks, area_m2: Math.round(S.envelope.area) }, geometry: { type: 'Polygon', coordinates: [S.envelope.ring.concat([S.envelope.ring[0]]).map((p) => [p.lon, p.lat])] } });
+    if (S.pdetail) S.pdetail.landuse.forEach((u) => u.rings.forEach((r) => feats.push({ type: 'Feature', properties: { kind: 'landuse', designation: u.designation, group: u.group }, geometry: { type: 'Polygon', coordinates: [r.map((q) => [q.lon, q.lat])] } })));
     if (S.plans) S.plans.atSite.forEach((p) => lines.push(`תכנית ${p.number}${p.name ? ' — ' + p.name : ''}${p.status ? ' [' + p.status + ']' : ''}`));
     if (S.poi) {
       const it = S.poi.items;

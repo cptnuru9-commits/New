@@ -58,8 +58,8 @@ window.SA = window.SA || {};
     groups.hillshade = esri('Elevation/World_Hillshade', 'Esri World Hillshade');
     groups.hillshade.options.className = 'hillshade';
     groups.hillshade.options.maxNativeZoom = 16;
-    ['plan', 'parcel', 'iso', 'sun', 'water', 'roads', 'buildings', 'parks', 'contours'].forEach((k) => (groups[k] = L.layerGroup()));
-    ['plan', 'parcel', 'iso', 'water', 'buildings', 'parks', 'contours'].forEach((k) => groups[k].addTo(map));
+    ['plan', 'parcel', 'iso', 'sun', 'water', 'roads', 'buildings', 'parks', 'contours', 'lot', 'setback', 'landuse', 'statarea'].forEach((k) => (groups[k] = L.layerGroup()));
+    ['plan', 'parcel', 'iso', 'water', 'buildings', 'parks', 'contours', 'lot', 'setback', 'landuse', 'statarea'].forEach((k) => groups[k].addTo(map));
 
     ctrlLayers = L.control.layers(
       { 'מפה': bases[currentBaseKey], 'תצלום אוויר': bases.sat, 'מפה טופוגרפית': bases.topo, 'מפת רחובות (Esri)': bases.osm },
@@ -75,6 +75,10 @@ window.SA = window.SA || {};
         'דרכים עיקריות': groups.roads,
         'כיווני זריחה ושקיעה': groups.sun,
         'קווי גובה (טופוגרפיה)': groups.contours,
+        'מידות גבול המגרש': groups.lot,
+        'קווי בניין': groups.setback,
+        'ייעודי קרקע ושצ״פ': groups.landuse,
+        'האזור הסטטיסטי': groups.statarea,
         'הצללת תבליט (Hillshade)': groups.hillshade
       },
       { position: 'topleft', collapsed: true }
@@ -139,7 +143,7 @@ window.SA = window.SA || {};
 
   M.clear = function () {
     Object.values(poiGroups).forEach((g) => g.clearLayers());
-    ['plan', 'parcel', 'iso', 'sun', 'water', 'roads', 'buildings', 'parks', 'contours'].forEach((k) => groups[k].clearLayers());
+    ['plan', 'parcel', 'iso', 'sun', 'water', 'roads', 'buildings', 'parks', 'contours', 'lot', 'setback', 'landuse', 'statarea'].forEach((k) => groups[k].clearLayers());
   };
 
   /* ---------- שירותים ---------- */
@@ -251,6 +255,50 @@ window.SA = window.SA || {};
       });
     });
   };
+  /* ---------- מגרש: מידות צלעות, חזית, קווי בניין ---------- */
+  M.showLot = function (lot) {
+    groups.lot.clearLayers();
+    if (!lot) return;
+    lot.edgesLL.forEach((e) => {
+      if (e.kind === 'front')
+        L.polyline([[e.a.lat, e.a.lon], [e.b.lat, e.b.lon]], { color: '#ea580c', weight: 5, opacity: 0.85 })
+          .bindTooltip(`חזית${e.street ? ' לרח׳ ' + U.esc(e.street) : ''} · ${U.num(e.len, 1)} מ׳`).addTo(groups.lot);
+      if (e.len < 1.5) return;
+      L.marker([e.mid.lat, e.mid.lon], {
+        interactive: false, keyboard: false,
+        icon: L.divIcon({ className: 'dim-label', html: `<span class="dim-${e.kind}">${U.num(e.len, 1)}</span>`, iconSize: [44, 18], iconAnchor: [22, 9] })
+      }).addTo(groups.lot);
+    });
+  };
+
+  M.showSetback = function (env, official) {
+    groups.setback.clearLayers();
+    (official || []).forEach((l) => l.paths.forEach((p) =>
+      L.polyline(p.map((q) => [q.lat, q.lon]), { color: '#dc2626', weight: 2.5 })
+        .bindTooltip(`קו בניין (מתוך התכנית)${l.label ? ' · ' + U.esc(l.label) : ''}`, { sticky: true }).addTo(groups.setback)));
+    if (env)
+      L.polygon(env.ring.map((q) => [q.lat, q.lon]), { color: '#dc2626', weight: 2, dashArray: '6 4', fillColor: '#fca5a5', fillOpacity: 0.18 })
+        .bindTooltip(`שטח בין קווי הבניין (משוער) · ${U.int(env.area)} מ"ר`, { sticky: true }).addTo(groups.setback);
+  };
+
+  M.showLandUse = function (pd) {
+    groups.landuse.clearLayers();
+    if (!pd) return;
+    pd.landuse.slice().sort((a, b) => b.area - a.area).forEach((u) =>
+      L.polygon(u.rings.map((r) => r.map((q) => [q.lat, q.lon])), {
+        renderer: canvas, color: u.open ? '#15803d' : u.color, weight: u.open ? 2 : 0.8,
+        fillColor: u.color, fillOpacity: u.open ? 0.45 : 0.3
+      }).bindTooltip(`${U.esc(u.designation)}${u.open ? ' (שצ״פ)' : ''} · ${U.int(u.area)} מ"ר`, { sticky: true }).addTo(groups.landuse));
+    pd.lots.filter((l) => l.contains).forEach((l) =>
+      L.polygon(l.rings.map((r) => r.map((q) => [q.lat, q.lon])), { color: '#7c2d12', weight: 2.5, fill: false, dashArray: '2 5' })
+        .bindTooltip(`מגרש לפי התכנית${l.number ? ' ' + U.esc(l.number) : ''}`, { sticky: true }).addTo(groups.landuse));
+  };
+
+  M.showStatArea = function (rings) {
+    groups.statarea.clearLayers();
+    (rings || []).forEach((r) => L.polygon(r.map((q) => [q.lat, q.lon]), { color: '#9333ea', weight: 2, dashArray: '10 6', fill: false, interactive: false }).addTo(groups.statarea));
+  };
+
   /* ---------- קווי גובה ---------- */
   M.showContours = function (res) {
     groups.contours.clearLayers();
@@ -295,6 +343,22 @@ window.SA = window.SA || {};
         { g: 'plan', sw: sw.poly('#1d4ed8', '#1d4ed8', 0.05, '5 3', 1.5), label: 'תכנית נוספת החלה על האתר' },
         { g: 'plansWms', sw: sw.poly('#2563eb', '#93c5fd', 0.3, '', 1), label: 'קווים כחולים — כל התכניות (מנהל התכנון)' },
         { g: 'parcelsWms', sw: sw.poly('#64748b', '#fff', 0, '', 1), label: 'גבולות גושים וחלקות (GovMap)' }
+      ]],
+      ['מגרש וקווי בניין', [
+        { g: 'lot', sw: sw.line('#ea580c', 5), label: 'חזית המגרש לרחוב' },
+        { g: 'lot', sw: '<span class="dim-label"><span class="dim-side">12.5</span></span>', label: 'אורך צלע במטרים' },
+        { g: 'setback', sw: sw.poly('#dc2626', '#fca5a5', 0.25, '6 4'), label: 'שטח בין קווי הבניין (משוער לפי מרווחים)' },
+        { g: 'setback', sw: sw.line('#dc2626', 2.5), label: 'קו בניין מתוך שכבת התכנית' },
+        { g: 'landuse', sw: sw.poly('#7c2d12', '#fff', 0, '2 4', 2.5), label: 'מגרש לפי התכנית' }
+      ]],
+      ['ייעודי קרקע', [
+        { g: 'landuse', sw: sw.poly('#15803d', '#22c55e', 0.5), label: 'שצ״פ — שטח ציבורי פתוח' },
+        { g: 'landuse', sw: sw.poly('#facc15', '#facc15', 0.4, '', 0.8), label: 'מגורים' },
+        { g: 'landuse', sw: sw.poly('#fb923c', '#fb923c', 0.4, '', 0.8), label: 'מעורב (מגורים ומסחר)' },
+        { g: 'landuse', sw: sw.poly('#c084fc', '#c084fc', 0.4, '', 0.8), label: 'מסחר / תעסוקה' },
+        { g: 'landuse', sw: sw.poly('#a16207', '#a16207', 0.4, '', 0.8), label: 'מבני ציבור' },
+        { g: 'landuse', sw: sw.poly('#ef4444', '#ef4444', 0.4, '', 0.8), label: 'דרך' },
+        { g: 'statarea', sw: sw.poly('#9333ea', '#fff', 0, '8 4', 2), label: 'גבול האזור הסטטיסטי (למ״ס)' }
       ]],
       ['שירותים (אייקונים)', Object.keys(SA.CATS).map((k) => ({ poi: k, sw: sw.icon(k), label: SA.CATS[k].label }))],
       ['טופוגרפיה', [

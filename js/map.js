@@ -31,14 +31,18 @@ window.SA = window.SA || {};
     L.control.zoom({ position: 'topleft' }).addTo(map);
     L.control.scale({ position: 'bottomleft', imperial: false }).addTo(map);
 
-    const carto = (style) => L.tileLayer(`https://{s}.basemaps.cartocdn.com/rastertiles/${style}/{z}/{x}/{y}{r}.png`, {
-      maxZoom: 20, subdomains: 'abcd', attribution: '© OpenStreetMap · © CARTO'
+    // מפות בסיס ללא צורך במפתח API (CARTO דורש מפתח מדומיינים מתארחים כמו github.io)
+    const osm = (cls) => L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 20, maxNativeZoom: 19, className: cls, attribution: '© OpenStreetMap'
+    });
+    const esri = (svc, attr) => L.tileLayer(`https://server.arcgisonline.com/ArcGIS/rest/services/${svc}/MapServer/tile/{z}/{y}/{x}`, {
+      maxZoom: 20, maxNativeZoom: 19, attribution: attr
     });
     bases = {
-      light: carto('voyager'),
-      dark: L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', { maxZoom: 20, subdomains: 'abcd', attribution: '© OpenStreetMap · © CARTO' }),
-      sat: L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', { maxZoom: 19, attribution: 'Esri World Imagery' }),
-      osm: L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19, attribution: '© OpenStreetMap' })
+      light: osm('base-light'),
+      dark: osm('base-dark'),
+      sat: esri('World_Imagery', 'Esri World Imagery'),
+      osm: esri('World_Street_Map', 'Esri World Street Map')
     };
     currentBaseKey = isDark() ? 'dark' : 'light';
     bases[currentBaseKey].addTo(map);
@@ -52,7 +56,7 @@ window.SA = window.SA || {};
     ['plan', 'parcel', 'iso', 'water', 'buildings', 'parks'].forEach((k) => groups[k].addTo(map));
 
     ctrlLayers = L.control.layers(
-      { 'מפה': bases[currentBaseKey], 'תצלום אוויר': bases.sat, 'OpenStreetMap': bases.osm },
+      { 'מפה': bases[currentBaseKey], 'תצלום אוויר': bases.sat, 'מפת רחובות (Esri)': bases.osm },
       {
         'תכניות — קווים כחולים (מנהל התכנון)': groups.plansWms,
         'גושים וחלקות (GovMap)': groups.parcelsWms,

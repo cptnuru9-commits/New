@@ -468,3 +468,7 @@ details.raw summary { color: var(--muted); font-weight: 500; }
   .pane { display: grid !important; break-inside: auto; }
   .card { break-inside: avoid; }
 }
+
+/* מפת בסיס: גוונים רכים בבהיר, היפוך צבעים בכהה */
+.base-light { filter: saturate(.75) brightness(1.02); }
+.base-dark { filter: invert(1) hue-rotate(180deg) brightness(.9) contrast(.9) saturate(.6); }

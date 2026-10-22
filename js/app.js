@@ -3,6 +3,15 @@
    מקרא מפה דינמי, ייצוא והערות
    ========================================================= */
 (function (SA) {
+  /* ---------- תיקון עצמי: דף HTML ישן מהמטמון + קוד חדש ← טעינה מחדש נקייה ---------- */
+  if (!document.getElementById('panelScroll') || !document.getElementById('keyBody')) {
+    const V = SA.VERSION || 'x';
+    let healed = false;
+    try { healed = sessionStorage.getItem('sitelens.heal') === V; sessionStorage.setItem('sitelens.heal', V); } catch (e) { /* ignore */ }
+    if (!healed) { location.replace(location.pathname + '?v=' + V + '-' + Date.now() + location.hash); return; }
+    if (SA.fatal) SA.fatal('הדפדפן טוען גרסה ישנה של האתר מהמטמון — נסו לרענן או לנקות את נתוני האתר.');
+    return;
+  }
   const U = SA.util, API = SA.api, R = SA.render;
   const $ = U.$, $$ = U.$$;
   let seq = 0;
@@ -607,8 +616,13 @@
   /* =========================================================
      אתחול
      ========================================================= */
-  SA.map.init((lat, lon) => analyze(lat, lon));
-  SA.map.applyTheme('overview');
+  try {
+    SA.map.init((lat, lon) => analyze(lat, lon));
+    SA.map.applyTheme('overview');
+  } catch (e) {
+    console.error(e);
+    SA.fatal('המפה לא נטענה: ' + e.message);
+  }
   if (window.innerWidth < 900) document.body.classList.add('sheet-mid');
   drawRecent();
   setRadiusUI();
@@ -619,4 +633,5 @@
     if (h[2]) radius = h[2];
     analyze(h[0], h[1]);
   }
+  SA.ready = true;
 })(window.SA);

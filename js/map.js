@@ -121,8 +121,11 @@ window.SA = window.SA || {};
   const esri = (svc, attr, opts = {}) => raster(`https://server.arcgisonline.com/ArcGIS/rest/services/${svc}/MapServer/tile/{z}/{y}/{x}`, { attribution: attr, ...opts });
 
   let rtlRequested = false;
+  const hasGL = (() => {
+    try { const c = document.createElement('canvas'); return !!(c.getContext('webgl2') || c.getContext('webgl')); } catch (e) { return false; }
+  })();
   function vectorBase(style) {
-    if (!L.maplibreGL || !window.maplibregl) return null;
+    if (!hasGL || !L.maplibreGL || !window.maplibregl) return null;
     try {
       if (!rtlRequested && maplibregl.getRTLTextPluginStatus && maplibregl.getRTLTextPluginStatus() === 'unavailable') {
         maplibregl.setRTLTextPlugin('https://cdn.jsdelivr.net/npm/@mapbox/mapbox-gl-rtl-text@0.3.0/dist/mapbox-gl-rtl-text.js', true);
@@ -135,17 +138,19 @@ window.SA = window.SA || {};
       layer.once('add', () => {
         const gl = layer.getMaplibreMap && layer.getMaplibreMap();
         if (!gl) return;
-        // תוויות בעברית
-        gl.on('styledata', () => {
+        let loaded = false;
+        gl.once('load', () => {
+          loaded = true;
+          // תוויות בעברית (פעם אחת, אחרי טעינת הסגנון)
           try {
             gl.getStyle().layers.forEach((ly) => {
               if (ly.type === 'symbol' && ly.layout && ly.layout['text-field'])
                 gl.setLayoutProperty(ly.id, 'text-field', ['coalesce', ['get', 'name:he'], ['get', 'name']]);
             });
-          } catch (e) { /* style not ready */ }
+          } catch (e) { /* ignore */ }
         });
-        let loaded = false;
-        gl.once('load', () => (loaded = true));
+        // אם הסגנון לא נטען תוך 8 שניות — עוברים למפה רגילה
+        setTimeout(() => { if (!loaded && baseLayer === layer) M.setBase('calm', true); }, 8000);
         gl.on('error', (ev) => {
           if (!loaded && baseLayer === layer) {
             console.warn('vector basemap failed — switching to raster', ev && ev.error);
@@ -174,7 +179,13 @@ window.SA = window.SA || {};
     }
     baseLayer = layer;
     baseKey = key;
-    layer.addTo(map);
+    try {
+      layer.addTo(map);
+    } catch (e) {
+      console.warn('basemap failed', e);
+      if (key === 'calm' && !forceRaster) return M.setBase('calm', true);
+      throw e;
+    }
     if (layer.bringToBack) layer.bringToBack();
     setBaseFade();
     U.store.set('sitelens.base', key);

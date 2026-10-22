@@ -168,6 +168,34 @@ window.SA = window.SA || {};
     return s + '</svg>';
   };
 
+  /* ---------------- חתך טופוגרפי ---------------- */
+  CH.profile = function (prof, labels = ['A', "A'"]) {
+    const pts = prof.pts;
+    if (pts.length < 2) return '';
+    const W = 360, H = 150, pl = 34, pr = 10, pt = 14, pb = 22;
+    const iw = W - pl - pr, ih = H - pt - pb;
+    let lo = Math.min(...pts.map((p) => p.v)), hi = Math.max(...pts.map((p) => p.v));
+    const pad = Math.max(2, (hi - lo) * 0.15);
+    lo = Math.floor(lo - pad); hi = Math.ceil(hi + pad);
+    const X = (d) => pl + (d / prof.len) * iw;
+    const Y = (v) => pt + ih - ((v - lo) / (hi - lo)) * ih;
+    const exag = (prof.len / iw) / ((hi - lo) / ih);
+    let s = `<svg viewBox="0 0 ${W} ${H}" class="chart prof" role="img" aria-label="חתך טופוגרפי">`;
+    for (let k = 0; k <= 3; k++) {
+      const v = lo + ((hi - lo) * k) / 3;
+      s += `<line x1="${pl}" x2="${W - pr}" y1="${f1(Y(v))}" y2="${f1(Y(v))}" class="grid"/><text x="${pl - 4}" y="${f1(Y(v) + 3)}" class="tick" text-anchor="end">${Math.round(v)}</text>`;
+    }
+    const line = pts.map((p) => `${f1(X(p.d))},${f1(Y(p.v))}`);
+    s += `<path d="M${line[0]} L${line.join(' L')} L${f1(X(prof.len))},${pt + ih} L${pl},${pt + ih}Z" class="ground"/>`;
+    s += `<polyline points="${line.join(' ')}" class="gline"/>`;
+    const mid = pts[Math.floor(pts.length / 2)];
+    s += `<line x1="${f1(X(prof.len / 2))}" x2="${f1(X(prof.len / 2))}" y1="${pt}" y2="${pt + ih}" class="site-v"/><circle cx="${f1(X(prof.len / 2))}" cy="${f1(Y(mid.v))}" r="4" class="site-dot"/>`;
+    s += `<text x="${pl}" y="${H - 6}" class="axis">${labels[0]}</text><text x="${W - pr}" y="${H - 6}" class="axis" text-anchor="end">${labels[1]}</text>`;
+    s += `<text x="${f1(X(prof.len / 2))}" y="${H - 6}" class="tick" text-anchor="middle">האתר · ${Math.round(prof.len)} מ׳</text>`;
+    s += `<text x="${W - pr}" y="${pt + 2}" class="tick" text-anchor="end">הגזמה אנכית ×${Math.max(1, Math.round(exag))}</text>`;
+    return s + '</svg>';
+  };
+
   /* ---------------- מד ציון ---------------- */
   CH.gauge = function (score) {
     const W = 200, H = 116, c = 100, cy = 104, R = 84;

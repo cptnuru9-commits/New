@@ -23,50 +23,102 @@ window.SA = window.SA || {};
   };
   const memCache = new Map();
   U.cache = {
-    get(k) {
-      if (memCache.has(k)) return memCache.get(k);
-      try { const v = sessionStorage.getItem('sl:' + k); return v ? JSON.parse(v) : undefined; } catch (e) { return undefined; }
-    },
-    set(k, v) {
-      memCache.set(k, v);
-      try { sessionStorage.setItem('sl:' + k, JSON.stringify(v)); } catch (e) { /* quota — memory only */ }
-    }
+    get(k) { return memCache.get(k); },
+    set(k, v) { memCache.set(k, v); }
   };
 
   /* ---------- network ---------- */
-  U.fetchJSON = async function (url, opts = {}) {
-    const { timeout = 25000, ...rest } = opts;
+  const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+  U.sleep = sleep;
+
+  class HttpError extends Error {
+    constructor(status) { super(status === 429 ? 'השרת עמוס (429)' : `שגיאת שרת ${status}`); this.status = status; }
+  }
+
+  /** בקשה בודדת עם הגבלת זמן */
+  async function fetchOnce(url, opts, timeout) {
     const ctrl = new AbortController();
     const t = setTimeout(() => ctrl.abort(), timeout);
+    if (opts.signal) opts.signal.addEventListener('abort', () => ctrl.abort());
     try {
-      const res = await fetch(url, { ...rest, signal: ctrl.signal });
-      if (!res.ok) throw new Error('HTTP ' + res.status);
+      const res = await fetch(url, { ...opts, signal: ctrl.signal });
+      if (!res.ok) throw new HttpError(res.status);
       const txt = await res.text();
       try { return JSON.parse(txt); } catch (e) { throw new Error('תשובה לא תקינה מהשרת'); }
     } catch (e) {
-      if (e.name === 'AbortError') throw new Error('תם הזמן להמתנה לשרת');
+      if (e.name === 'AbortError') { const err = new Error('תם הזמן להמתנה לשרת'); err.timeout = true; throw err; }
       throw e;
     } finally {
       clearTimeout(t);
     }
+  }
+  const retriable = (e) => e.timeout || e.status === 429 || (e.status >= 500) || e instanceof TypeError;
+
+  /**
+   * fetch JSON עם ניסיונות חוזרים: זמן המתנה גדל בכל ניסיון,
+   * והמתנה הולכת וגדלה בין ניסיונות (429 / 5xx / ניתוק / timeout).
+   */
+  U.fetchJSON = async function (url, opts = {}) {
+    const { timeout = 15000, retries = 1, ...rest } = opts;
+    let last;
+    for (let i = 0; i <= retries; i++) {
+      try {
+        return await fetchOnce(url, rest, timeout * (1 + i * 0.6));
+      } catch (e) {
+        last = e;
+        if (!retriable(e) || i === retries || (rest.signal && rest.signal.aborted)) break;
+        await sleep((e.status === 429 ? 2500 : 700) * (i + 1));
+      }
+    }
+    throw last;
+  };
+
+  /**
+   * "בקשות מגודרות": שולחים לשרת הראשון, ואם לא ענה תוך hedgeMs —
+   * שולחים במקביל גם לבא בתור. התשובה הראשונה שמצליחה מנצחת.
+   */
+  U.hedged = function (makers, { hedgeMs = 5000 } = {}) {
+    return new Promise((resolve, reject) => {
+      let done = false, failed = 0, started = 0, timer;
+      const ctrls = [];
+      const errs = [];
+      const start = () => {
+        if (done || started >= makers.length) return;
+        const i = started++;
+        const ctrl = new AbortController();
+        ctrls.push(ctrl);
+        makers[i](ctrl.signal).then((v) => {
+          if (done) return;
+          done = true; clearTimeout(timer);
+          ctrls.forEach((c) => c !== ctrl && c.abort());
+          resolve(v);
+        }, (e) => {
+          errs.push(e);
+          if (++failed === makers.length) { done = true; reject(errs.find((x) => !x.timeout) || errs[0]); }
+          else start();
+        });
+        if (started < makers.length) { clearTimeout(timer); timer = setTimeout(start, hedgeMs); }
+      };
+      start();
+    });
   };
 
   let jsonpSeq = 0;
-  U.jsonp = function (url, { timeout = 20000, param = 'callback' } = {}) {
+  U.jsonp = function (url, { timeout = 15000, param = 'callback' } = {}) {
     return new Promise((resolve, reject) => {
       const name = '__sl_jsonp_' + Date.now() + '_' + jsonpSeq++;
       const s = document.createElement('script');
-      const cleanup = () => { delete window[name]; s.remove(); clearTimeout(t); };
-      const t = setTimeout(() => { cleanup(); reject(new Error('תם הזמן (JSONP)')); }, timeout);
+      const cleanup = () => { window[name] = () => {}; s.remove(); clearTimeout(t); };
+      const t = setTimeout(() => { cleanup(); const e = new Error('תם הזמן להמתנה לשרת'); e.timeout = true; reject(e); }, timeout);
       window[name] = (data) => { cleanup(); resolve(data); };
-      s.onerror = () => { cleanup(); reject(new Error('JSONP נכשל')); };
+      s.onerror = () => { cleanup(); reject(new Error('השרת לא זמין')); };
       s.src = url + (url.includes('?') ? '&' : '?') + param + '=' + name;
       document.head.appendChild(s);
     });
   };
 
   /** fetch עם ניסיון חוזר דרך פרוקסי CORS (אם הוגדר) */
-  U.fetchViaProxy = async function (url, opts) {
+  U.fetchViaProxy = async function (url, opts = {}) {
     try {
       return await U.fetchJSON(url, opts);
     } catch (e) {
@@ -76,22 +128,79 @@ window.SA = window.SA || {};
     }
   };
 
-  /** בקשת ArcGIS REST — fetch, ואם נחסם ב-CORS אז פרוקסי ואז JSONP */
-  U.arcgis = async function (url, params = {}) {
+  /**
+   * בקשת ArcGIS REST: fetch (עם ניסיון חוזר), ואם נחסם ב-CORS — פרוקסי, ואז JSONP.
+   * תוצאות נשמרות במטמון קבוע (IndexedDB) לשבוע.
+   */
+  const corsBlocked = new Set();
+  U.arcgis = async function (url, params = {}, { timeout = 14000, ttl = 7 } = {}) {
     const qs = new URLSearchParams({ ...params, f: 'json' }).toString();
     const full = url + '?' + qs;
     const key = 'arc:' + full;
-    const hit = U.cache.get(key);
+    const hit = await U.pcache.get(key);
     if (hit) return hit;
+    const host = new URL(url).host;
     let data;
-    try {
-      data = await U.fetchViaProxy(full, { timeout: 20000 });
-    } catch (e) {
-      data = await U.jsonp(full, { timeout: 20000 });
+    if (!corsBlocked.has(host)) {
+      try {
+        data = await U.fetchViaProxy(full, { timeout, retries: 1 });
+      } catch (e) {
+        if (!(e instanceof TypeError) && !e.timeout) throw e; // שגיאת שרת אמיתית
+        if (e instanceof TypeError) corsBlocked.add(host);
+      }
     }
+    if (!data) data = await U.jsonp(full, { timeout: timeout + 4000 });
     if (data && data.error) throw new Error(data.error.message || 'שגיאת ArcGIS');
-    U.cache.set(key, data);
+    U.pcache.set(key, data, ttl);
     return data;
+  };
+
+  /* ---------- מטמון קבוע (IndexedDB) — ביקור חוזר באתר נטען מיד ---------- */
+  let dbP = null;
+  const db = () => {
+    if (!dbP) dbP = new Promise((res) => {
+      try {
+        const r = indexedDB.open('sitelens', 1);
+        r.onupgradeneeded = () => r.result.createObjectStore('c');
+        r.onsuccess = () => res(r.result);
+        r.onerror = () => res(null);
+      } catch (e) { res(null); }
+    });
+    return dbP;
+  };
+  U.pcache = {
+    async get(k) {
+      const m = U.cache.get(k);
+      if (m !== undefined) return m;
+      const d = await db();
+      if (!d) return undefined;
+      return new Promise((res) => {
+        try {
+          const q = d.transaction('c').objectStore('c').get(k);
+          q.onsuccess = () => {
+            const v = q.result;
+            if (v && v.exp > Date.now()) { memCache.set(k, v.v); res(v.v); } else res(undefined);
+          };
+          q.onerror = () => res(undefined);
+        } catch (e) { res(undefined); }
+      });
+    },
+    async set(k, v, days = 7) {
+      memCache.set(k, v);
+      const d = await db();
+      if (!d) return;
+      try { d.transaction('c', 'readwrite').objectStore('c').put({ v, exp: Date.now() + days * 864e5 }, k); } catch (e) { /* quota */ }
+    }
+  };
+
+  /** תור לשירותים עם מגבלת קצב (למשל Nominatim: בקשה לשנייה) */
+  U.rateLimit = (gapMs) => {
+    let chain = Promise.resolve();
+    return (fn) => {
+      const p = chain.then(fn);
+      chain = p.catch(() => {}).then(() => sleep(gapMs));
+      return p;
+    };
   };
 
   /* ---------- coordinates ---------- */

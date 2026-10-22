@@ -38,9 +38,10 @@ window.SA = window.SA || {};
   /* =========================================================
      גיאוקודינג
      ========================================================= */
+  const nominatim = U.rateLimit(1100);
   API.geocode = async function (q) {
     const url = `${C().nominatim}/search?format=jsonv2&addressdetails=1&limit=6&countrycodes=il&accept-language=he&q=${encodeURIComponent(q)}`;
-    const data = await U.fetchJSON(url);
+    const data = await nominatim(() => U.fetchJSON(url, { timeout: 12000, retries: 2 }));
     return data.map((r) => ({ lat: +r.lat, lon: +r.lon, label: r.display_name, type: r.type }));
   };
 
@@ -58,10 +59,10 @@ window.SA = window.SA || {};
 
   API.reverse = async function (lat, lon) {
     const key = `rev:${lat.toFixed(5)},${lon.toFixed(5)}`;
-    const hit = U.cache.get(key);
+    const hit = await U.pcache.get(key);
     if (hit) return hit;
     const url = `${C().nominatim}/reverse?format=jsonv2&addressdetails=1&zoom=18&accept-language=he&lat=${lat}&lon=${lon}`;
-    const r = await U.fetchJSON(url);
+    const r = await nominatim(() => U.fetchJSON(url, { timeout: 12000, retries: 2 }));
     const a = r.address || {};
     const out = {
       label: r.display_name,
@@ -71,7 +72,7 @@ window.SA = window.SA || {};
       district: a.state_district || a.state || '',
       postcode: a.postcode || ''
     };
-    U.cache.set(key, out);
+    U.pcache.set(key, out, 30);
     return out;
   };
 
@@ -103,6 +104,14 @@ window.SA = window.SA || {};
   }
 
   API.parcel = async function (lat, lon) {
+    const key = `parcel:${lat.toFixed(6)},${lon.toFixed(6)}`;
+    const hit = await U.pcache.get(key);
+    if (hit) return hit;
+    const res = await parcelFetch(lat, lon);
+    U.pcache.set(key, res, 30);
+    return res;
+  };
+  async function parcelFetch(lat, lon) {
     const itm = U.toITM(lat, lon);
     if (!itm) throw new Error('ספריית ההמרה ל-ITM לא נטענה');
     const d = 40;
@@ -112,18 +121,18 @@ window.SA = window.SA || {};
     try {
       const url = `${C().govmapWfs}?service=WFS&version=1.0.0&request=GetFeature&typeName=${layer}` +
         `&outputFormat=application/json&srsName=EPSG:2039&bbox=${bbox},EPSG:2039&maxFeatures=25`;
-      features = (await U.fetchViaProxy(url)).features || [];
+      features = (await U.fetchViaProxy(url, { timeout: 12000, retries: 1 })).features || [];
     } catch (e) {
       // גיבוי: WMS GetFeatureInfo
       const url = `${C().govmapWms}?service=WMS&version=1.1.1&request=GetFeatureInfo&layers=${layer}&query_layers=${layer}` +
         `&srs=EPSG:2039&bbox=${itm.x - 50},${itm.y - 50},${itm.x + 50},${itm.y + 50}&width=101&height=101&X=50&Y=50` +
         `&info_format=application/json&feature_count=3`;
-      features = (await U.fetchViaProxy(url)).features || [];
+      features = (await U.fetchViaProxy(url, { timeout: 12000, retries: 1 })).features || [];
     }
     if (!features.length) throw new Error('לא נמצאה חלקה בנקודה זו');
     const hit = features.find((f) => f.geometry && containsITM(f.geometry, itm.x, itm.y)) || features[0];
     return { ...normParcel(hit.properties), rings: ringsITMtoLatLng(hit.geometry) };
-  };
+  }
 
   API.parcelByNumber = async function (gush, helka) {
     const layer = C().parcelLayer;
@@ -238,17 +247,16 @@ window.SA = window.SA || {};
     if (!ids.length) ids = Object.values(idx).filter((l) => /תכני|קו.?כחול|plan/i.test(l.name) && l.type !== 'Group Layer').map((l) => l.id).slice(0, 2);
     const dLat = radius / 111320, dLon = radius / (111320 * Math.cos((lat * Math.PI) / 180));
     const nearby = [];
-    for (const id of ids) {
+    const qs = await Promise.allSettled(ids.map((id) => U.arcgis(`${svc}/${id}/query`, {
+      where: '1=1',
+      geometry: `${lon - dLon},${lat - dLat},${lon + dLon},${lat + dLat}`,
+      geometryType: 'esriGeometryEnvelope', inSR: 4326, spatialRel: 'esriSpatialRelIntersects',
+      outFields: '*', returnGeometry: false
+    }).then((q) => ({ id, q }))));
+    for (const r of qs) {
+      if (r.status !== 'fulfilled') continue;
+      const { id, q } = r.value;
       try {
-        const q = await U.arcgis(`${svc}/${id}/query`, {
-          where: '1=1',
-          geometry: `${lon - dLon},${lat - dLat},${lon + dLon},${lat + dLat}`,
-          geometryType: 'esriGeometryEnvelope',
-          inSR: 4326,
-          spatialRel: 'esriSpatialRelIntersects',
-          outFields: '*',
-          returnGeometry: false
-        });
         const aliases = (idx[id] && idx[id].aliases) || {};
         (q.features || []).forEach((f) => {
           const p = normPlan(f.attributes || {}, aliases, idx[id] && idx[id].name);
@@ -270,36 +278,29 @@ window.SA = window.SA || {};
   /** כל שכבות ה-MapServer בתיקייה (ובתתי-תיקיות עד עומק 1) */
   API.discover = async function (folderUrl, svcFilter = /.*/, depth = 1) {
     const key = 'disc:' + folderUrl + svcFilter;
-    const hit = U.cache.get(key);
+    const hit = await U.pcache.get(key);
     if (hit) return hit;
     const root = servicesRoot(folderUrl);
     const out = [];
     const walk = async (url, d) => {
       const f = await U.arcgis(url, {});
       const svcs = (f.services || []).filter((x) => x.type === 'MapServer' && svcFilter.test(x.name)).slice(0, 15);
-      for (const sv of svcs) {
+      // במקביל — במקום בזה אחר זה (חוסך עשרות שניות)
+      await Promise.allSettled(svcs.map(async (sv) => {
         const surl = `${root}/${sv.name}/MapServer`;
-        try {
-          const idx = await layerIndex(surl);
-          Object.values(idx).forEach((l) => out.push({ svc: surl, ...l }));
-        } catch (e) { /* שירות לא נגיש */ }
-      }
-      if (d > 0) {
-        for (const fo of (f.folders || []).slice(0, 10)) {
-          try { await walk(`${root}/${fo}`, d - 1); } catch (e) { /* skip */ }
-        }
-      }
+        const idx = await layerIndex(surl);
+        Object.values(idx).forEach((l) => out.push({ svc: surl, ...l }));
+      }));
+      if (d > 0) await Promise.allSettled((f.folders || []).slice(0, 10).map((fo) => walk(`${root}/${fo}`, d - 1)));
     };
     await walk(folderUrl, depth);
-    U.cache.set(key, out);
+    U.pcache.set(key, out, 14);
     return out;
   };
 
   async function layersOf(urls) {
     const out = [];
-    for (const u of urls) {
-      try { Object.values(await layerIndex(u)).forEach((l) => out.push({ svc: u, ...l })); } catch (e) { /* skip */ }
-    }
+    await Promise.allSettled(urls.map(async (u) => Object.values(await layerIndex(u)).forEach((l) => out.push({ svc: u, ...l }))));
     return out;
   }
 
@@ -362,9 +363,12 @@ window.SA = window.SA || {};
     const lotLayers = pick(/מגרש|\blots?\b|\bplots?\b/i);
 
     const landuse = [], lines = [], lots = [];
-    for (const l of luLayers) {
+    const settled = async (ls, r) => (await Promise.allSettled(ls.map((l) => queryLayer(l, lat, lon, r).then((fs) => ({ l, fs })))))
+      .filter((x) => x.status === 'fulfilled').map((x) => x.value);
+    const [luRes, blRes, lotRes] = await Promise.all([settled(luLayers, 300), settled(blLayers, 80), settled(lotLayers, 60)]);
+    for (const { l, fs } of luRes) {
       try {
-        (await queryLayer(l, lat, lon, 300)).forEach((f) => {
+        fs.forEach((f) => {
           const txt = attrText(f.attrs, f.aliases, /ייעוד|יעוד|landuse|land_use|mavat_name|use|desc|תיאור|שם/i) || f.layer;
           const rings = ringsLL(f.geom);
           if (!rings.length) return;
@@ -373,17 +377,17 @@ window.SA = window.SA || {};
         });
       } catch (e) { /* layer failed */ }
     }
-    for (const l of blLayers) {
+    for (const { l, fs } of blRes) {
       try {
-        (await queryLayer(l, lat, lon, 80)).forEach((f) => {
+        fs.forEach((f) => {
           const paths = pathsLL(f.geom).concat(ringsLL(f.geom));
           if (paths.length) lines.push({ paths, label: attrText(f.attrs, f.aliases, /קו|סוג|type|desc|מרחק/i), layer: l.name, attrs: f.attrs, aliases: f.aliases });
         });
       } catch (e) { /* skip */ }
     }
-    for (const l of lotLayers) {
+    for (const { l, fs } of lotRes) {
       try {
-        (await queryLayer(l, lat, lon, 60)).forEach((f) => {
+        fs.forEach((f) => {
           const rings = ringsLL(f.geom);
           if (!rings.length) return;
           const num = Object.entries(f.attrs).find(([k]) => /מגרש|lot|plot|num|מספר/i.test(k) || /מגרש/.test(f.aliases[k] || ''));
@@ -432,48 +436,48 @@ out geom;`;
   };
 
   /* =========================================================
-     Overpass — שירותים, תחבורה, סביבה
+     Overpass — שירותים, תחבורה, סביבה, מרקם
+     השאילתות מחולקות לחלקים קטנים שרצים במקביל, כל אחת נשלחת
+     לשרת אחד ועוברת לשרת גיבוי אם הוא איטי (hedged), ונשמרת במטמון.
      ========================================================= */
-  API.overpass = async function (query) {
+  API.overpass = async function (query, { ttl = 5 } = {}) {
     const key = 'ovp:' + query;
-    const hit = U.cache.get(key);
+    const hit = await U.pcache.get(key);
     if (hit) return hit;
-    let lastErr;
-    for (const url of C().overpass) {
-      try {
-        const data = await U.fetchJSON(url, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-          body: 'data=' + encodeURIComponent(query),
-          timeout: 45000
-        });
-        U.cache.set(key, data);
-        return data;
-      } catch (e) { lastErr = e; }
-    }
-    throw lastErr || new Error('Overpass לא זמין');
+    const mirrors = C().overpass;
+    const data = await U.hedged(mirrors.map((url) => (signal) => U.fetchJSON(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: 'data=' + encodeURIComponent(query),
+      timeout: 28000, retries: 1, signal
+    })), { hedgeMs: 6000 });
+    if (data && data.remark && /runtime error|timed out/i.test(data.remark) && !(data.elements || []).length) throw new Error('השאילתה כבדה מדי לשרת');
+    U.pcache.set(key, data, ttl);
+    return data;
   };
 
   const nameOf = (t, fallback) => t['name:he'] || t.name || fallback;
+  const geomOf = (el) => (el.geometry || []).map((g) => ({ lat: g.lat, lon: g.lon }));
+  const minDist = (arr) => arr.reduce((m, x) => Math.min(m, x.dist), Infinity);
+  const rnd = (v) => Math.round(v * 2e4) / 2e4; // ~5 מ' — לשיפור פגיעות במטמון
 
   API.poi = async function (lat, lon, radius) {
+    lat = rnd(lat); lon = rnd(lon);
     const R = radius, R2 = Math.max(radius, 2500), at = `${lat},${lon}`;
     const amen = '^(school|kindergarten|childcare|college|university|hospital|clinic|doctors|pharmacy|library|community_centre|townhall|police|fire_station|post_office|place_of_worship|theatre|arts_centre|marketplace|bicycle_rental|parking)$';
-    const q = `[out:json][timeout:40];
+    const q = `[out:json][timeout:25];
 way["leisure"~"^(park|garden|nature_reserve|playground)$"](around:${R},${at});
 out geom;
 (
-  node["amenity"~"${amen}"](around:${R},${at});
-  way["amenity"~"${amen}"](around:${R},${at});
-  relation["amenity"~"${amen}"](around:${R},${at});
+  nwr["amenity"~"${amen}"](around:${R},${at});
   node["leisure"~"^(park|garden|playground|sports_centre|pitch|nature_reserve)$"](around:${R},${at});
-  way["leisure"~"^(sports_centre|pitch)$"](around:${R},${at});
+  way["leisure"~"^(sports_centre|pitch)$"](around:${Math.min(R, 800)},${at});
   relation["leisure"~"^(park|nature_reserve)$"](around:${R},${at});
   nwr["shop"~"^(supermarket|mall)$"](around:${R},${at});
   node["highway"="bus_stop"](around:${R},${at});
   nwr["railway"~"^(station|halt|tram_stop)$"](around:${R2},${at});
 );
-out center tags;`;
+out center tags qt;`;
     const data = await API.overpass(q);
     const site = { lat, lon };
     const items = [], parks = [], seen = new Set();
@@ -488,19 +492,14 @@ out center tags;`;
       const [cat, subLabel] = SUB[sub];
       let p;
       if (el.geometry && el.type === 'way') {
-        const ring = el.geometry.map((g) => ({ lat: g.lat, lon: g.lon }));
-        const c = ring.reduce((a, q2) => ({ lat: a.lat + q2.lat / ring.length, lon: a.lon + q2.lon / ring.length }), { lat: 0, lon: 0 });
-        p = c;
-        if (/park|garden|nature_reserve|playground/.test(sub)) {
-          const area = U.areaM2(ring);
-          parks.push({ name: nameOf(t, subLabel), ring, area, sub });
-        }
+        const ring = geomOf(el);
+        p = ring.reduce((a, q2) => ({ lat: a.lat + q2.lat / ring.length, lon: a.lon + q2.lon / ring.length }), { lat: 0, lon: 0 });
+        if (/park|garden|nature_reserve|playground/.test(sub)) parks.push({ name: nameOf(t, subLabel), ring, area: U.areaM2(ring), sub });
       } else if (el.center) p = { lat: el.center.lat, lon: el.center.lon };
       else p = { lat: el.lat, lon: el.lon };
       if (p.lat == null) continue;
-      const dist = U.haversine(site, p);
       items.push({
-        id: uid, cat, sub, subLabel, name: nameOf(t, subLabel), lat: p.lat, lon: p.lon, dist,
+        id: uid, cat, sub, subLabel, name: nameOf(t, subLabel), lat: p.lat, lon: p.lon, dist: U.haversine(site, p),
         routes: t.route_ref || '', operator: t.operator || '', tags: t
       });
     }
@@ -508,48 +507,54 @@ out center tags;`;
     return { items, parks };
   };
 
+  /** סביבה: מים וקו חוף + דרכים, רכבות, שדות תעופה ושבילי אופניים (רעש ונגישות) */
   API.environment = async function (lat, lon) {
-    const at = `${lat},${lon}`;
-    const q = `[out:json][timeout:45];
-way["natural"="coastline"](around:6000,${at});
+    lat = rnd(lat); lon = rnd(lon);
+    const at = `${lat},${lon}`, site = { lat, lon };
+    const qWater = `[out:json][timeout:25];
+way["natural"="coastline"](around:5000,${at});
 out geom;
-way["waterway"~"^(river|stream|canal|wadi)$"](around:2000,${at});
+way["waterway"~"^(river|stream|canal|wadi)$"](around:1500,${at});
 out geom;
-way["natural"="water"]["water"!~"^(pond|basin|wastewater|swimming_pool)$"](around:2000,${at});
-out geom;
-way["highway"~"^(motorway|trunk|primary|secondary)$"](around:1200,${at});
-out geom;
-node["highway"="motorway_junction"](around:5000,${at});
-out;
-way["building"](around:250,${at});
+way["natural"="water"]["water"!~"^(pond|basin|wastewater|swimming_pool|reflecting_pool)$"](around:1500,${at});
 out geom;`;
-    const data = await API.overpass(q);
-    const site = { lat, lon };
-    const out = { coast: [], rivers: [], water: [], roads: [], junctions: [], buildings: [] };
-    for (const el of data.elements || []) {
-      const t = el.tags || {};
-      const geom = (el.geometry || []).map((g) => ({ lat: g.lat, lon: g.lon }));
+    const qMove = `[out:json][timeout:25];
+way["highway"~"^(motorway|trunk|primary|secondary)$"](around:1000,${at});
+out geom;
+node["highway"="motorway_junction"](around:4000,${at});
+out;
+way["railway"~"^(rail|light_rail|subway)$"](around:1000,${at});
+out geom;
+nwr["aeroway"="aerodrome"](around:8000,${at});
+out center tags;
+way["highway"="cycleway"](around:800,${at});
+out geom;
+way["cycleway"~"^(lane|track)$"](around:800,${at});
+out geom;`;
+    const [w, m] = await Promise.allSettled([API.overpass(qWater, { ttl: 30 }), API.overpass(qMove, { ttl: 10 })]);
+    if (w.status === 'rejected' && m.status === 'rejected') throw m.reason;
+    const out = { coast: [], rivers: [], water: [], roads: [], junctions: [], rail: [], airports: [], cycle: [], partial: w.status === 'rejected' || m.status === 'rejected' };
+    for (const el of (w.value && w.value.elements) || []) {
+      const t = el.tags || {}, geom = geomOf(el);
       if (t.natural === 'coastline') out.coast.push({ geom, dist: U.distToLine(site, geom) });
       else if (t.waterway) out.rivers.push({ geom, name: nameOf(t, 'נחל / ערוץ'), kind: t.waterway, dist: U.distToLine(site, geom) });
       else if (t.natural === 'water') {
         const area = U.areaM2(geom);
         if (area > 3000) out.water.push({ geom, name: nameOf(t, 'גוף מים'), area, dist: U.distToLine(site, geom) });
-      } else if (t.highway === 'motorway_junction') {
-        out.junctions.push({ name: nameOf(t, 'מחלף'), ref: t.ref || '', lat: el.lat, lon: el.lon, dist: U.haversine(site, el) });
-      } else if (t.highway) {
-        out.roads.push({ geom, cls: t.highway, ref: t.ref || '', name: nameOf(t, ''), dist: U.distToLine(site, geom) });
-      } else if (t.building) {
-        const levels = parseFloat(t['building:levels']) || (t.height ? parseFloat(t.height) / 3.2 : null);
-        out.buildings.push({ geom, levels, area: U.areaM2(geom), use: t.building, name: t.name || '' });
       }
     }
-    const minDist = (arr) => arr.reduce((m, x) => Math.min(m, x.dist), Infinity);
+    for (const el of (m.value && m.value.elements) || []) {
+      const t = el.tags || {}, geom = geomOf(el);
+      if (t.aeroway) out.airports.push({ name: nameOf(t, 'שדה תעופה'), dist: U.haversine(site, el.center || el) });
+      else if (t.highway === 'motorway_junction') out.junctions.push({ name: nameOf(t, 'מחלף'), ref: t.ref || '', lat: el.lat, lon: el.lon, dist: U.haversine(site, el) });
+      else if (t.railway) out.rail.push({ geom, kind: t.railway, name: nameOf(t, ''), dist: U.distToLine(site, geom) });
+      else if (t.highway === 'cycleway' || t.cycleway) out.cycle.push({ geom, len: geom.reduce((s, p, i) => (i ? s + U.haversine(geom[i - 1], p) : 0), 0) });
+      else if (t.highway) out.roads.push({ geom, cls: t.highway, ref: t.ref || '', name: nameOf(t, ''), dist: U.distToLine(site, geom), lanes: +t.lanes || null });
+    }
     out.coastDist = minDist(out.coast);
     out.riverDist = minDist(out.rivers);
     out.waterDist = minDist(out.water);
     out.junctions.sort((a, b) => a.dist - b.dist);
-
-    // דרכים עיקריות — קיבוץ לפי מספר/שם
     const groups = new Map();
     for (const r of out.roads) {
       const key = r.ref || r.name || r.cls;
@@ -557,22 +562,87 @@ out geom;`;
       if (!g || r.dist < g.dist) groups.set(key, { ...r, key });
     }
     out.roadGroups = [...groups.values()].sort((a, b) => a.dist - b.dist);
+    out.cycleKm = out.cycle.reduce((s, c) => s + c.len, 0) / 1000;
 
-    // מורפולוגיה עירונית ברדיוס 250 מ'
-    const circle = Math.PI * 250 * 250;
-    const b = out.buildings;
-    const footprint = b.reduce((s, x) => s + x.area, 0);
-    const withLv = b.filter((x) => x.levels);
+    // רעש — אומדן לפי מרחק ממקורות (כביש מהיר/ראשי, מסילה, שדה תעופה)
+    const near = (cls) => minDist(out.roads.filter((r) => cls.test(r.cls)));
+    const sources = [
+      { label: 'כביש מהיר / דרך ראשית', d: near(/motorway|trunk/), lim: [150, 400] },
+      { label: 'עורק ראשי', d: near(/primary/), lim: [40, 120] },
+      { label: 'עורק משני', d: near(/secondary/), lim: [20, 60] },
+      { label: 'מסילת רכבת', d: minDist(out.rail.filter((r) => r.kind === 'rail')), lim: [100, 300] },
+      { label: 'רכבת קלה', d: minDist(out.rail.filter((r) => r.kind !== 'rail')), lim: [20, 60] },
+      { label: 'שדה תעופה', d: minDist(out.airports), lim: [2000, 5000] }
+    ].map((x) => ({ ...x, level: x.d <= x.lim[0] ? 2 : x.d <= x.lim[1] ? 1 : 0 }));
+    const lvl = Math.max(0, ...sources.map((x) => x.level));
+    out.noise = { level: lvl, label: ['נמוך', 'בינוני', 'גבוה'][lvl], sources: sources.filter((x) => isFinite(x.d)).sort((a, b) => b.level - a.level || a.d - b.d) };
+    return out;
+  };
+
+  /** מרקם עירוני: מבנים (דמות-רקע, גובה, תכסית), שימושי קרקע ב-OSM, מורשת ושימור */
+  API.fabric = async function (lat, lon) {
+    lat = rnd(lat); lon = rnd(lon);
+    const at = `${lat},${lon}`, site = { lat, lon };
+    const qB = `[out:json][timeout:25];
+way["building"](around:300,${at});
+out geom qt;`;
+    const qL = `[out:json][timeout:25];
+way["landuse"~"^(residential|commercial|retail|industrial|construction|religious|cemetery|grass|military|farmland|orchard|brownfield|greenfield)$"](around:500,${at});
+out geom qt;
+nwr["historic"](around:1000,${at});
+out center tags qt;
+nwr["heritage"](around:1000,${at});
+out center tags qt;
+nwr["tourism"~"^(viewpoint|museum|artwork|attraction)$"](around:1000,${at});
+out center tags qt;`;
+    const [b, l] = await Promise.allSettled([API.overpass(qB, { ttl: 14 }), API.overpass(qL, { ttl: 14 })]);
+    if (b.status === 'rejected' && l.status === 'rejected') throw b.reason;
+    const out = { buildings: [], landuse: [], heritage: [], partial: b.status === 'rejected' || l.status === 'rejected' };
+    for (const el of (b.value && b.value.elements) || []) {
+      const t = el.tags || {}, geom = geomOf(el);
+      if (geom.length < 3) continue;
+      const levels = parseFloat(t['building:levels']) || (t.height ? parseFloat(t.height) / 3.2 : null);
+      const c = geom.reduce((a, p) => ({ lat: a.lat + p.lat / geom.length, lon: a.lon + p.lon / geom.length }), { lat: 0, lon: 0 });
+      out.buildings.push({ geom, levels, area: U.areaM2(geom), use: t.building, name: t.name || '', dist: U.haversine(site, c), year: t.start_date || t['building:year'] || '' });
+    }
+    const seen = new Set();
+    for (const el of (l.value && l.value.elements) || []) {
+      const t = el.tags || {};
+      if (seen.has(el.type + el.id)) continue;
+      seen.add(el.type + el.id);
+      if (t.landuse && el.geometry) {
+        const geom = geomOf(el);
+        out.landuse.push({ geom, kind: t.landuse, area: U.areaM2(geom) });
+      } else if (t.historic || t.heritage || t.tourism) {
+        const p = el.center || el;
+        if (p.lat == null) continue;
+        const kind = t.historic ? ({ archaeological_site: 'אתר ארכאולוגי', monument: 'אנדרטה', memorial: 'אתר הנצחה', building: 'מבנה היסטורי', ruins: 'חורבה', castle: 'מבצר', city_gate: 'שער עיר' }[t.historic] || 'אתר היסטורי')
+          : t.heritage ? 'מבנה לשימור / מורשת' : ({ viewpoint: 'נקודת תצפית', museum: 'מוזיאון', artwork: 'אמנות ציבורית', attraction: 'אטרקציה' }[t.tourism]);
+        out.heritage.push({ name: nameOf(t, kind), kind, lat: p.lat, lon: p.lon, dist: U.haversine(site, p), heritage: !!(t.heritage || t.historic) });
+      }
+    }
+    out.heritage.sort((a, x) => a.dist - x.dist);
+
+    // מורפולוגיה ברדיוס 250 מ'
+    const R = 250, circle = Math.PI * R * R;
+    const bs = out.buildings.filter((x) => x.dist <= R);
+    const withLv = bs.filter((x) => x.levels);
     const avgLv = withLv.length ? withLv.reduce((s, x) => s + x.levels, 0) / withLv.length : null;
-    const floorArea = b.reduce((s, x) => s + x.area * (x.levels || avgLv || 1), 0);
+    const hist = [0, 0, 0, 0, 0];
+    withLv.forEach((x) => hist[x.levels <= 2 ? 0 : x.levels <= 4 ? 1 : x.levels <= 8 ? 2 : x.levels <= 15 ? 3 : 4]++);
     out.morph = {
-      count: b.length,
-      coverage: footprint / circle,
+      count: bs.length,
+      coverage: bs.reduce((s, x) => s + x.area, 0) / circle,
       avgLevels: avgLv,
-      maxLevels: withLv.reduce((m, x) => Math.max(m, x.levels), 0) || null,
-      far: floorArea / circle,
-      levelsKnown: withLv.length
+      maxLevels: withLv.reduce((mx, x) => Math.max(mx, x.levels), 0) || null,
+      far: bs.reduce((s, x) => s + x.area * (x.levels || avgLv || 1), 0) / circle,
+      levelsKnown: withLv.length,
+      avgFootprint: bs.length ? bs.reduce((s, x) => s + x.area, 0) / bs.length : null,
+      hist
     };
+    const lu = {};
+    out.landuse.forEach((x) => (lu[x.kind] = (lu[x.kind] || 0) + x.area));
+    out.landuseMix = Object.entries(lu).sort((a, x) => x[1] - a[1]);
     return out;
   };
 
@@ -584,7 +654,7 @@ out geom;`;
     const pts = [{ lat, lon }];
     for (let b = 0; b < 360; b += 45) pts.push(U.destination({ lat, lon }, b, step));
     const url = `${C().openMeteoElevation}?latitude=${pts.map((p) => p.lat.toFixed(6)).join(',')}&longitude=${pts.map((p) => p.lon.toFixed(6)).join(',')}`;
-    const data = await U.fetchJSON(url);
+    const data = await U.fetchJSON(url, { timeout: 12000, retries: 2 });
     const e = data.elevation || [];
     const [c, n, ne, east, se, s, sw, w, nw] = e;
     // שיפוע: הפרשים מרכזיים (צירים + אלכסונים, ממוצע משוקלל)
@@ -604,12 +674,12 @@ out geom;`;
 
   API.climate = async function (lat, lon) {
     const y = new Date().getFullYear() - 1;
-    const url = `${C().openMeteoArchive}?latitude=${lat.toFixed(4)}&longitude=${lon.toFixed(4)}&start_date=${y}-01-01&end_date=${y}-12-31` +
+    const url = `${C().openMeteoArchive}?latitude=${lat.toFixed(2)}&longitude=${lon.toFixed(2)}&start_date=${y}-01-01&end_date=${y}-12-31` +
       `&hourly=wind_speed_10m,wind_direction_10m&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&wind_speed_unit=ms&timezone=Asia%2FJerusalem`;
     const key = 'clim:' + url;
-    const hit = U.cache.get(key);
+    const hit = await U.pcache.get(key);
     if (hit) return hit;
-    const d = await U.fetchJSON(url, { timeout: 30000 });
+    const d = await U.fetchJSON(url, { timeout: 25000, retries: 2 });
 
     // שושנת רוחות — 16 כיוונים × 4 טווחי מהירות
     const bins = [2, 4, 6, Infinity];
@@ -641,7 +711,7 @@ out geom;`;
       year: y, rose: roseP, prevailing, calm: (calm / n) * 100, meanSpeed: sum / n,
       monthly, annualRain: monthly.reduce((s, m) => s + m.rain, 0)
     };
-    U.cache.set(key, out);
+    U.pcache.set(key, out, 60);
     return out;
   };
 
@@ -649,11 +719,11 @@ out geom;`;
     const body = { locations: [{ lat, lon }], costing: 'pedestrian', contours: [{ time: 5 }, { time: 10 }, { time: 15 }], polygons: true };
     const url = `${C().valhalla}/isochrone?json=${encodeURIComponent(JSON.stringify(body))}`;
     const key = 'iso:' + url;
-    const hit = U.cache.get(key);
+    const hit = await U.pcache.get(key);
     if (hit) return hit;
-    const data = await U.fetchJSON(url, { timeout: 20000 });
+    const data = await U.fetchJSON(url, { timeout: 15000, retries: 1 });
     if (!data.features) throw new Error('אין איזוכרונים');
-    U.cache.set(key, data);
+    U.pcache.set(key, data, 30);
     return data;
   };
 
@@ -662,20 +732,27 @@ out geom;`;
      ========================================================= */
   API.city = async function (lat, lon) {
     const url = `${C().nominatim}/reverse?format=jsonv2&zoom=10&extratags=1&namedetails=1&accept-language=he&lat=${lat}&lon=${lon}`;
-    const r = await U.fetchJSON(url);
+    const key = 'city:' + lat.toFixed(3) + ',' + lon.toFixed(3);
+    const hit = await U.pcache.get(key);
+    if (hit) return { ...hit };
+    const r = await nominatim(() => U.fetchJSON(url, { timeout: 12000, retries: 2 }));
     const x = r.extratags || {};
-    return {
+    const out = {
       name: (r.namedetails && (r.namedetails['name:he'] || r.namedetails.name)) || r.name,
       wikidata: x.wikidata,
       osmPopulation: x.population ? +x.population : null,
       osmPopulationDate: x['population:date'] || x['source:population'] || '',
       website: x.website || ''
     };
+    U.pcache.set(key, out, 30);
+    return { ...out };
   };
 
   API.wikidata = async function (qid) {
     const url = `${C().wikidata}?action=wbgetentities&ids=${qid}&props=claims|labels|sitelinks&languages=he|en&format=json&origin=*`;
-    const data = await U.fetchJSON(url);
+    const key = 'wd:' + qid;
+    let data = await U.pcache.get(key);
+    if (!data) { data = await U.fetchJSON(url, { timeout: 12000, retries: 2 }); U.pcache.set(key, data, 30); }
     const ent = data.entities && data.entities[qid];
     if (!ent) throw new Error('לא נמצא ב-Wikidata');
     const cl = ent.claims || {};

@@ -4,35 +4,31 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>SiteLens — ניתוח אתר לאדריכלות</title>
-  <meta name="description" content="ניתוח אתר אדריכלי לכל כתובת בישראל: תב&quot;ע, גוש וחלקה, תחבורה, שירותים, אוכלוסייה, אקלים ושמש — על מפה אינטראקטיבית." />
+  <meta name="description" content="ניתוח אתר אדריכלי לכל כתובת בישראל: מגרש וקווי בניין, תב&quot;ע ושצ&quot;פ, טופוגרפיה, שמש ורוח, תנועה, שירותים, מרקם עירוני ואוכלוסייה — על מפה אינטראקטיבית." />
   <meta name="theme-color" content="#0f766e" />
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230f766e'/%3E%3Cpath d='M8 23 16 7l8 16' fill='none' stroke='white' stroke-width='3' stroke-linejoin='round'/%3E%3Ccircle cx='16' cy='18' r='2.6' fill='white'/%3E%3C/svg%3E" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%230f766e'/%3E%3Cpath d='M8 23 16 7l8 16' fill='none' stroke='white' stroke-width='3' stroke-linejoin='round'/%3E%3Ccircle cx='16' cy='18' r='2.6' fill='white'/%3E%3C/svg%3E" />
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/maplibre-gl@5.6.2/dist/maplibre-gl.css" />
   <link rel="stylesheet" href="css/styles.css" />
 </head>
 <body>
   <a class="skip" href="#panel">דילוג לתוכן הניתוח</a>
 
   <header class="topbar">
-    <div class="brand">
-      <span class="logo" aria-hidden="true">
-        <svg viewBox="0 0 32 32"><rect width="32" height="32" rx="9"/><path d="M8 23 16 7l8 16"/><circle cx="16" cy="18" r="2.6"/></svg>
-      </span>
-      <div>
-        <strong>SiteLens</strong>
-        <span class="tagline">ניתוח אתר לאדריכלות · ישראל</span>
-      </div>
-    </div>
+    <a class="brand" href="./" aria-label="SiteLens — דף הבית">
+      <span class="logo" aria-hidden="true"><svg viewBox="0 0 32 32"><rect width="32" height="32" rx="9"/><path d="M8 23 16 7l8 16"/><circle cx="16" cy="18" r="2.6"/></svg></span>
+      <span class="brand-t"><strong>SiteLens</strong><span class="tagline">ניתוח אתר לאדריכלות</span></span>
+    </a>
 
     <form class="search" id="searchForm" role="search" autocomplete="off">
       <svg class="search-ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
-      <input id="searchInput" type="search" placeholder="כתובת, מקום, או ״גוש 6106 חלקה 12״" aria-label="חיפוש כתובת" aria-autocomplete="list" aria-controls="suggestions" />
+      <input id="searchInput" type="search" enterkeyhint="search" placeholder="כתובת, מקום, או ״גוש 6106 חלקה 12״" aria-label="חיפוש כתובת" aria-autocomplete="list" aria-controls="suggestions" />
       <kbd class="kbd" aria-hidden="true">/</kbd>
-      <button type="submit" class="btn primary">נתח אתר</button>
+      <button type="submit" class="btn primary">נתחו</button>
       <ul id="suggestions" class="suggestions" role="listbox" hidden></ul>
     </form>
 
@@ -50,84 +46,103 @@
   </header>
 
   <main class="layout">
-    <!-- ======== פאנל ניתוח ======== -->
+    <!-- ======== פאנל ======== -->
     <aside class="panel" id="panel" aria-label="ניתוח האתר">
-      <div class="sheet-handle" id="sheetHandle" aria-hidden="true"></div>
+      <div class="sheet-bar">
+        <button class="sheet-handle" id="sheetHandle" aria-label="הגדלה / הקטנה של הפאנל"></button>
+        <button class="sheet-expand" id="sheetExpand" aria-label="מסך מלא">⤢</button>
+      </div>
+      <div class="panel-scroll" id="panelScroll">
 
-      <!-- מצב ריק -->
-      <section class="empty" id="emptyState">
-        <h1>ניתוח אתר בלחיצה אחת</h1>
-        <p>הקלידו כתובת או לחצו על נקודה במפה. נאסוף עבורכם תב״ע, גוש וחלקה, תחבורה ציבורית ודרכי הגעה, מוסדות חינוך, פארקים, אוכלוסייה, קו החוף, טופוגרפיה, שמש ורוח — מכל מקורות המידע הפתוחים בישראל.</p>
-        <div class="examples" id="examples">
-          <span>נסו:</span>
-          <button class="chip" data-q="דיזנגוף 50, תל אביב">דיזנגוף 50, ת״א</button>
-          <button class="chip" data-q="שדרות בן גוריון 1, חיפה">שד׳ בן גוריון, חיפה</button>
-          <button class="chip" data-q="רחוב יפו 97, ירושלים">יפו 97, ירושלים</button>
-          <button class="chip" data-q="שדרות רגר, באר שבע">שד׳ רגר, ב״ש</button>
-        </div>
-        <ul class="features">
-          <li><b>📐 תכנון</b> תב״ע חלות, סטטוס, ייעודי קרקע וקישור למבא״ת</li>
-          <li><b>🧾 קדסטר</b> גוש, חלקה ושטח רשום מהמרכז למיפוי ישראל</li>
-          <li><b>🚆 נגישות</b> תחנות, קווים, רכבת, מחלפים וזמני הליכה</li>
-          <li><b>🌳 שירותים</b> גנים, פארקים, בתי ספר, בריאות וקהילה</li>
-          <li><b>👥 אוכלוסייה</b> גודל, צפיפות ומגמות לאורך שנים</li>
-          <li><b>🌊 סביבה</b> קו המים, נחלים, טופוגרפיה, שמש ורוח</li>
-        </ul>
-        <div class="recent" id="recent"></div>
-      </section>
+        <!-- מצב ריק -->
+        <section class="empty" id="emptyState">
+          <p class="eyebrow">ניתוח אתר · ישראל</p>
+          <h1>כל מה שצריך לניתוח האתר — <span>בכתובת אחת</span></h1>
+          <p class="lead">הקלידו כתובת או לחצו על המפה. נאסוף ממקורות המידע הפתוחים בישראל את הנתונים לעבודת הניתוח: מגרש, תכנון, טופוגרפיה, אקלים, תנועה, מרקם ואוכלוסייה.</p>
+          <div class="examples">
+            <button class="chip" data-q="דיזנגוף 221, תל אביב">דיזנגוף 221, ת״א</button>
+            <button class="chip" data-q="שדרות בן גוריון 1, חיפה">שד׳ בן גוריון, חיפה</button>
+            <button class="chip" data-q="רחוב יפו 97, ירושלים">יפו 97, ירושלים</button>
+            <button class="chip" data-q="שדרות רגר, באר שבע">שד׳ רגר, ב״ש</button>
+          </div>
+          <ol class="steps">
+            <li><b>חיפוש</b><span>כתובת, גוש/חלקה, או לחיצה על המפה</span></li>
+            <li><b>נושא</b><span>כל לשונית מציגה במפה רק את השכבות שלה</span></li>
+            <li><b>ייצוא</b><span>סיכום, GeoJSON ל-QGIS/Rhino, ודוח PDF</span></li>
+          </ol>
+          <div class="topics">
+            <div><b>▱ מגרש</b><span>גבול, מידות, חזית, קווי בניין ושטח בנייה</span></div>
+            <div><b>▦ תכנון</b><span>תב״ע, ייעודי קרקע ושצ״פ, מסמכים</span></div>
+            <div><b>⛰ טופוגרפיה</b><span>קווי גובה, צבעי גבהים, חתכים, מים</span></div>
+            <div><b>☀ אקלים</b><span>מסלול שמש, שושנת רוחות, טמפרטורות</span></div>
+            <div><b>⇄ תנועה</b><span>תחב״צ, דרכים, אופניים, הליכה ורעש</span></div>
+            <div><b>⌂ שירותים</b><span>חינוך, ירוק, בריאות וציון נגישות</span></div>
+            <div><b>▤ מרקם</b><span>דמות-רקע, גובה מבנים, מורשת</span></div>
+            <div><b>☺ אוכלוסייה</b><span>גילאים באזור הסטטיסטי ונתוני היישוב</span></div>
+          </div>
+          <div class="recent" id="recent"></div>
+        </section>
 
-      <!-- תוצאות -->
-      <section class="results" id="results" hidden>
-        <header class="site-head">
-          <div class="site-title">
+        <!-- תוצאות -->
+        <section class="results" id="results" hidden>
+          <header class="site-head">
             <span class="eyebrow" id="siteCity">—</span>
             <h2 id="siteAddress">טוען כתובת…</h2>
             <div class="badges" id="siteBadges"></div>
+            <div class="toolbar">
+              <div class="seg" id="radiusSeg" role="radiogroup" aria-label="רדיוס ניתוח">
+                <button role="radio" data-r="400">400 מ׳</button>
+                <button role="radio" data-r="800">800 מ׳</button>
+                <button role="radio" data-r="1200">1.2 ק״מ</button>
+                <button role="radio" data-r="2000">2 ק״מ</button>
+              </div>
+              <div class="site-actions">
+                <button class="btn ghost sm" id="copyBtn" title="העתקת סיכום טקסט">העתקה</button>
+                <button class="btn ghost sm" id="geojsonBtn" title="הורדת שכבות GeoJSON">GeoJSON</button>
+                <button class="btn ghost sm" id="printBtn" title="הדפסה / שמירה כ-PDF">PDF</button>
+              </div>
+            </div>
+          </header>
+          <div class="progress" id="progress" aria-hidden="true"></div>
+          <nav class="tabs" role="tablist" id="tabs" aria-label="נושאי הניתוח"></nav>
+          <div class="tab-panes">
+            <section class="pane" data-pane="overview" role="tabpanel"></section>
+            <section class="pane" data-pane="lot" role="tabpanel" hidden></section>
+            <section class="pane" data-pane="planning" role="tabpanel" hidden></section>
+            <section class="pane" data-pane="topo" role="tabpanel" hidden></section>
+            <section class="pane" data-pane="climate" role="tabpanel" hidden></section>
+            <section class="pane" data-pane="transport" role="tabpanel" hidden></section>
+            <section class="pane" data-pane="services" role="tabpanel" hidden></section>
+            <section class="pane" data-pane="fabric" role="tabpanel" hidden></section>
+            <section class="pane" data-pane="population" role="tabpanel" hidden></section>
+            <section class="pane" data-pane="sources" role="tabpanel" hidden></section>
           </div>
-          <div class="site-actions">
-            <button class="btn ghost sm" id="copyBtn" title="העתקת סיכום">העתק</button>
-            <button class="btn ghost sm" id="geojsonBtn" title="הורדת שכבות כ-GeoJSON">GeoJSON</button>
-            <button class="btn ghost sm" id="printBtn" title="הדפסה / שמירה כ-PDF">דוח PDF</button>
-          </div>
-        </header>
-
-        <div class="radius-row">
-          <label for="radius">רדיוס ניתוח</label>
-          <div class="seg" id="radiusSeg" role="radiogroup" aria-label="רדיוס ניתוח">
-            <button role="radio" data-r="400">400 מ'</button>
-            <button role="radio" data-r="800">800 מ'</button>
-            <button role="radio" data-r="1200">1.2 ק"מ</button>
-            <button role="radio" data-r="2000">2 ק"מ</button>
-          </div>
-        </div>
-
-        <nav class="tabs" role="tablist" id="tabs">
-          <button role="tab" data-tab="overview" aria-selected="true">סקירה</button>
-          <button role="tab" data-tab="planning">תכנון</button>
-          <button role="tab" data-tab="transport">תחבורה</button>
-          <button role="tab" data-tab="services">שירותים</button>
-          <button role="tab" data-tab="population">אוכלוסייה</button>
-          <button role="tab" data-tab="environment">סביבה</button>
-          <button role="tab" data-tab="sources">מקורות</button>
-        </nav>
-
-        <div class="tab-panes">
-          <section class="pane" data-pane="overview" role="tabpanel"></section>
-          <section class="pane" data-pane="planning" role="tabpanel" hidden></section>
-          <section class="pane" data-pane="transport" role="tabpanel" hidden></section>
-          <section class="pane" data-pane="services" role="tabpanel" hidden></section>
-          <section class="pane" data-pane="population" role="tabpanel" hidden></section>
-          <section class="pane" data-pane="environment" role="tabpanel" hidden></section>
-          <section class="pane" data-pane="sources" role="tabpanel" hidden></section>
-        </div>
-      </section>
+        </section>
+      </div>
     </aside>
 
     <!-- ======== מפה ======== -->
     <section class="map-wrap" aria-label="מפה אינטראקטיבית">
       <div id="map"></div>
-      <div class="map-legend" id="legend" aria-label="שכבות שירותים"></div>
-      <div class="map-hint" id="mapHint">לחצו על המפה כדי לנתח נקודה · גררו את הסמן לשינוי מיקום</div>
+
+      <div class="map-key" id="mapKey">
+        <button class="key-head" id="keyToggle" aria-expanded="true" aria-controls="keyBody">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h2M4 12h2M4 18h2M10 6h10M10 12h10M10 18h10"/></svg>
+          <span id="keyTitle">מקרא</span><span class="chev" aria-hidden="true">⌃</span>
+        </button>
+        <div class="key-body" id="keyBody"></div>
+        <p class="key-note">לחיצה על פריט מציגה / מסתירה אותו</p>
+      </div>
+
+      <div class="map-tools">
+        <button class="tool-btn" id="layersBtn" aria-expanded="false" aria-controls="layersPanel">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 9 5-9 5-9-5 9-5Z"/><path d="m3 13 9 5 9-5"/></svg>שכבות ורקע
+        </button>
+        <div class="layers-panel" id="layersPanel" hidden>
+          <header><b>שכבות ורקע</b><button class="icon-btn sm" data-close aria-label="סגירה">✕</button></header>
+          <div id="layersBody"></div>
+        </div>
+      </div>
     </section>
   </main>
 
@@ -147,6 +162,8 @@
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/maplibre-gl@5.6.2/dist/maplibre-gl.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@maplibre/maplibre-gl-leaflet@0.1.3/leaflet-maplibre-gl.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/proj4js/2.9.0/proj4.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/suncalc@1.9.0/suncalc.js"></script>
   <script src="js/config.js"></script>

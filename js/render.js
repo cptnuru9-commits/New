@@ -634,7 +634,7 @@ window.SA = window.SA || {};
       <li>${R.link(L.iaa, 'רשות העתיקות')} — אתרי עתיקות מוכרזים.</li></ul>`;
     return R.card('מצב מקורות המידע', tbl + `<div class="quick"><button class="qbtn" data-act="retryAll">↻ טעינה מחדש של מה שנכשל</button><button class="qbtn" data-act="settings">הגדרות / פרוקסי</button><button class="qbtn" data-act="clearCache">ניקוי מטמון</button></div>`, { icon: 'ⓘ', sub: 'נתונים נשמרים במטמון — ביקור חוזר נטען מיד' }) +
       R.card('מקורות נוספים', more, { icon: '📚' }) +
-      R.card('הערה', `<p class="small">המידע נאסף ממקורות פתוחים ללימוד וניתוח ראשוני. אין להסתמך עליו כמידע תכנוני מחייב — יש לאמת מול הוועדה המקומית, מבא״ת ו-GovMap.</p>`, { icon: '!' });
+      R.card('הערה', `<p class="small muted">גרסת האתר: ${SA.VERSION}</p><p class="small">המידע נאסף ממקורות פתוחים ללימוד וניתוח ראשוני. אין להסתמך עליו כמידע תכנוני מחייב — יש לאמת מול הוועדה המקומית, מבא״ת ו-GovMap.</p>`, { icon: '!' });
   };
 
   /* =========================================================

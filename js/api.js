@@ -440,18 +440,37 @@ out geom;`;
      השאילתות מחולקות לחלקים קטנים שרצים במקביל, כל אחת נשלחת
      לשרת אחד ועוברת לשרת גיבוי אם הוא איטי (hedged), ונשמרת במטמון.
      ========================================================= */
+  // כל שרת Overpass מאפשר ~2 בקשות במקביל למשתמש — מעבר לזה הוא מעכב/דוחה.
+  // לכן: תור של 2 בקשות לכל שרת, ופיזור השאילתות בין השרתים מלכתחילה.
+  const slots = {};
+  const acquire = (host, signal) => new Promise((resolve, reject) => {
+    const s = (slots[host] = slots[host] || { busy: 0, q: [] });
+    const go = () => { s.busy++; resolve(() => { s.busy--; const n = s.q.shift(); if (n) n(); }); };
+    if (s.busy < 2) return go();
+    s.q.push(go);
+    signal.addEventListener('abort', () => { const i = s.q.indexOf(go); if (i >= 0) s.q.splice(i, 1); reject(new Error('בוטל')); });
+  });
+  let rr = 0;
   API.overpass = async function (query, { ttl = 5 } = {}) {
     const key = 'ovp:' + query;
     const hit = await U.pcache.get(key);
     if (hit) return hit;
-    const mirrors = C().overpass;
-    const data = await U.hedged(mirrors.map((url) => (signal) => U.fetchJSON(url, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: 'data=' + encodeURIComponent(query),
-      timeout: 28000, retries: 1, signal
-    })), { hedgeMs: 6000 });
-    if (data && data.remark && /runtime error|timed out/i.test(data.remark) && !(data.elements || []).length) throw new Error('השאילתה כבדה מדי לשרת');
+    const all = C().overpass;
+    const start = rr++ % all.length;
+    const mirrors = all.slice(start).concat(all.slice(0, start));
+    const data = await U.hedged(mirrors.map((url) => async (signal) => {
+      const release = await acquire(new URL(url).host, signal);
+      try {
+        const d = await U.fetchJSON(url, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: 'data=' + encodeURIComponent(query),
+          timeout: 28000, retries: 1, signal
+        });
+        if (d && d.remark && /runtime error|timed out|rate_limited/i.test(d.remark) && !(d.elements || []).length) throw new Error('השרת עמוס');
+        return d;
+      } finally { release(); }
+    }), { hedgeMs: 5000 });
     U.pcache.set(key, data, ttl);
     return data;
   };

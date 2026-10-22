@@ -7,6 +7,7 @@
 window.SA = window.SA || {};
 
 (function (SA) {
+  SA.VERSION = '2026.10.22b';
   const DEFAULTS = {
     // גיאוקודינג (OpenStreetMap)
     nominatim: 'https://nominatim.openstreetmap.org',
@@ -16,7 +17,8 @@ window.SA = window.SA || {};
     overpass: [
       'https://overpass-api.de/api/interpreter',
       'https://overpass.kumi.systems/api/interpreter',
-      'https://overpass.private.coffee/api/interpreter'
+      'https://overpass.private.coffee/api/interpreter',
+      'https://maps.mail.ru/osm/tools/overpass/api/interpreter'
     ],
 
     // מנהל התכנון — תכניות (קווים כחולים / XPLAN)

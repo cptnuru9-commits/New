@@ -158,7 +158,7 @@
       return LOADERS.lot(t, S);
     },
     lot: (t, S) => run(t, 'lot', (S._parcelP || API.parcel(S.lat, S.lon)).then(async (p) => {
-      const streets = await API.streets(S.lat, S.lon).catch(() => []);
+      const streets = await API.streets(S.lat, S.lon, S.r).catch(() => []);
       const lot = SA.plot.analyze(p.rings[0], streets);
       if (!lot) throw new Error('לא ניתן לנתח את גבול החלקה');
       return lot;
@@ -171,7 +171,7 @@
     }),
     plans: (t, S) => run(t, 'plans', API.plans(S.lat, S.lon, Math.min(S.r, 1200)), (v) => { S.plans = v; SA.map.showPlans(v.atSite); }),
     poi: (t, S) => run(t, 'poi', API.poi(S.lat, S.lon, S.r), (v) => { S.poi = v; SA.map.showPOI(v.items, v.parks); }),
-    env: (t, S) => run(t, 'env', API.environment(S.lat, S.lon), (e) => { S.env = e; SA.map.showEnv(e); }),
+    env: (t, S) => run(t, 'env', API.environment(S.lat, S.lon, S.r), (e) => { S.env = e; SA.map.showEnv(e); }),
     fabric: (t, S) => run(t, 'fabric', API.fabric(S.lat, S.lon), (f) => { S.fabric = f; SA.map.showFabric(f); }),
     elev: (t, S) => run(t, 'elev', API.elevation(S.lat, S.lon), (e) => (S.elev = e)),
     contours: (t, S) => run(t, 'contours', SA.topo.contours(S.lat, S.lon, S.r), (c) => {
@@ -210,6 +210,11 @@
     const S = SA.state;
     if (!S || !LOADERS[key]) return;
     if (key === 'lot' && S.status.parcel === 'error') key = 'parcel';
+    // שירותים, סביבה וחזית המגרש מגיעים מאותה שאילתת OpenStreetMap — מרעננים יחד
+    if (['poi', 'env'].includes(key) || (key === 'lot' && S.status.parcel === 'ok')) {
+      ['poi', 'env', 'lot'].filter((k) => S.status[k] === 'error' || k === key).forEach((k) => LOADERS[k](seq, S));
+      return;
+    }
     LOADERS[key](seq, S);
   }
 

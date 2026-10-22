@@ -7,7 +7,7 @@
 window.SA = window.SA || {};
 
 (function (SA) {
-  SA.VERSION = '2026.10.22c';
+  SA.VERSION = '2026.10.22d';
 
   /* ---------- מסך שגיאה ידידותי (במקום דף שבור) ---------- */
   SA.fatal = function (msg) {
@@ -36,9 +36,9 @@ window.SA = window.SA || {};
 
     // Overpass — שירותים, תחבורה, סביבה (מספר שרתים לגיבוי)
     overpass: [
-      'https://overpass-api.de/api/interpreter',
       'https://overpass.kumi.systems/api/interpreter',
       'https://overpass.private.coffee/api/interpreter',
+      'https://overpass-api.de/api/interpreter',
       'https://maps.mail.ru/osm/tools/overpass/api/interpreter'
     ],
 

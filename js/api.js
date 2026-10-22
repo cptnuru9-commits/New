@@ -403,19 +403,6 @@ window.SA = window.SA || {};
     };
   };
 
-  /* רחובות סמוכים — לזיהוי חזית המגרש */
-  API.streets = async function (lat, lon) {
-    const q = `[out:json][timeout:20];
-way["highway"]["highway"!~"^(footway|path|steps|cycleway|track|corridor|bridleway|proposed|construction)$"](around:120,${lat},${lon});
-out geom;`;
-    const data = await API.overpass(q);
-    return (data.elements || []).filter((e) => e.geometry).map((e) => ({
-      name: (e.tags && (e.tags['name:he'] || e.tags.name)) || '',
-      cls: e.tags && e.tags.highway,
-      geom: e.geometry.map((g) => ({ lat: g.lat, lon: g.lon }))
-    }));
-  };
-
   /* היתרי בנייה — GIS עירוני תל אביב-יפו (גילוי שכבה לפי שם) */
   API.telAvivPermits = async function (lat, lon, radius = 120) {
     const svc = C().telAvivGis;
@@ -436,41 +423,61 @@ out geom;`;
   };
 
   /* =========================================================
-     Overpass — שירותים, תחבורה, סביבה, מרקם
-     השאילתות מחולקות לחלקים קטנים שרצים במקביל, כל אחת נשלחת
-     לשרת אחד ועוברת לשרת גיבוי אם הוא איטי (hedged), ונשמרת במטמון.
+     Overpass (OpenStreetMap) — שירותים, תחבורה, סביבה, מרקם
+
+     שרתי Overpass החינמיים מגבילים כל משתמש (שגיאה 429). לכן:
+     • שאילתה משולבת אחת לכל אתר (במקום 6 נפרדות) + שאילתת מרקם אחת;
+     • תור טורי — בקשה אחת בכל רגע, בלי עותקים במקביל;
+     • שרת שהחזיר 429 / נתקע "מקורר" לדקה וחצי ועוברים לשרת הבא;
+     • מטמון קבוע — כתובת שכבר נבדקה לא נשלחת שוב.
      ========================================================= */
-  // כל שרת Overpass מאפשר ~2 בקשות במקביל למשתמש — מעבר לזה הוא מעכב/דוחה.
-  // לכן: תור של 2 בקשות לכל שרת, ופיזור השאילתות בין השרתים מלכתחילה.
-  const slots = {};
-  const acquire = (host, signal) => new Promise((resolve, reject) => {
-    const s = (slots[host] = slots[host] || { busy: 0, q: [] });
-    const go = () => { s.busy++; resolve(() => { s.busy--; const n = s.q.shift(); if (n) n(); }); };
-    if (s.busy < 2) return go();
-    s.q.push(go);
-    signal.addEventListener('abort', () => { const i = s.q.indexOf(go); if (i >= 0) s.q.splice(i, 1); reject(new Error('בוטל')); });
-  });
-  let rr = 0;
-  API.overpass = async function (query, { ttl = 5 } = {}) {
+  const cool = {}; // host → זמן שבו מותר לנסות שוב
+  const overpassQueue = U.rateLimit(300);
+  let overpassOk = null; // השרת האחרון שעבד — ננסה אותו ראשון
+
+  async function overpassFetch(query) {
+    const all = C().overpass;
+    const order = overpassOk ? [overpassOk, ...all.filter((u) => u !== overpassOk)] : all;
+    let saw429 = false, lastErr;
+    for (let pass = 0; pass < 2; pass++) {
+      for (const url of order) {
+        const host = new URL(url).host;
+        if ((cool[host] || 0) > Date.now()) continue;
+        try {
+          const d = await U.fetchJSON(url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: 'data=' + encodeURIComponent(query),
+            timeout: 22000, retries: 0
+          });
+          if (d && d.remark && /rate_limited|runtime error|timed out|out of memory/i.test(d.remark) && !(d.elements || []).length) {
+            const e = new Error('השרת עמוס'); e.status = 429; throw e;
+          }
+          overpassOk = url;
+          return d;
+        } catch (e) {
+          lastErr = e;
+          if (e.status === 429) saw429 = true;
+          cool[host] = Date.now() + (e.status === 429 ? 90000 : e.timeout ? 45000 : 20000);
+        }
+      }
+      // כל השרתים עמוסים — המתנה קצרה וסבב אחד נוסף על מי שהתקרר
+      const wait = Math.min(...all.map((u) => cool[new URL(u).host] || 0)) - Date.now();
+      if (pass === 0 && wait < 12000) { await U.sleep(Math.max(1500, wait)); continue; }
+      break;
+    }
+    const err = new Error(saw429
+      ? 'שרתי OpenStreetMap עמוסים כרגע (הגבלת בקשות). נסו שוב בעוד דקה — הנתונים יישמרו לפעם הבאה.'
+      : (lastErr && lastErr.timeout ? 'שרתי OpenStreetMap איטיים כרגע. נסו שוב בעוד רגע.' : 'שרתי OpenStreetMap לא זמינים כרגע.'));
+    err.status = saw429 ? 429 : 0;
+    throw err;
+  }
+
+  API.overpass = async function (query, { ttl = 7 } = {}) {
     const key = 'ovp:' + query;
     const hit = await U.pcache.get(key);
     if (hit) return hit;
-    const all = C().overpass;
-    const start = rr++ % all.length;
-    const mirrors = all.slice(start).concat(all.slice(0, start));
-    const data = await U.hedged(mirrors.map((url) => async (signal) => {
-      const release = await acquire(new URL(url).host, signal);
-      try {
-        const d = await U.fetchJSON(url, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-          body: 'data=' + encodeURIComponent(query),
-          timeout: 28000, retries: 1, signal
-        });
-        if (d && d.remark && /runtime error|timed out|rate_limited/i.test(d.remark) && !(d.elements || []).length) throw new Error('השרת עמוס');
-        return d;
-      } finally { release(); }
-    }), { hedgeMs: 5000 });
+    const data = await overpassQueue(async () => (await U.pcache.get(key)) || overpassFetch(query));
     U.pcache.set(key, data, ttl);
     return data;
   };
@@ -480,13 +487,17 @@ out geom;`;
   const minDist = (arr) => arr.reduce((m, x) => Math.min(m, x.dist), Infinity);
   const rnd = (v) => Math.round(v * 2e4) / 2e4; // ~5 מ' — לשיפור פגיעות במטמון
 
-  API.poi = async function (lat, lon, radius) {
+  /* ---------- השאילתה המשולבת: שירותים + תחבורה + דרכים + מים + רחובות ---------- */
+  const coreMemo = new Map();
+  function core(lat, lon, radius) {
     lat = rnd(lat); lon = rnd(lon);
+    const key = `${lat},${lon},${radius}`;
+    if (coreMemo.has(key)) return coreMemo.get(key);
     const R = radius, R2 = Math.max(radius, 2500), at = `${lat},${lon}`;
     const amen = '^(school|kindergarten|childcare|college|university|hospital|clinic|doctors|pharmacy|library|community_centre|townhall|police|fire_station|post_office|place_of_worship|theatre|arts_centre|marketplace|bicycle_rental|parking)$';
-    const q = `[out:json][timeout:25];
+    const q = `[out:json][timeout:30];
 way["leisure"~"^(park|garden|nature_reserve|playground)$"](around:${R},${at});
-out geom;
+out geom qt;
 (
   nwr["amenity"~"${amen}"](around:${R},${at});
   node["leisure"~"^(park|garden|playground|sports_centre|pitch|nature_reserve)$"](around:${R},${at});
@@ -495,19 +506,39 @@ out geom;
   nwr["shop"~"^(supermarket|mall)$"](around:${R},${at});
   node["highway"="bus_stop"](around:${R},${at});
   nwr["railway"~"^(station|halt|tram_stop)$"](around:${R2},${at});
+  nwr["aeroway"="aerodrome"](around:8000,${at});
+  node["highway"="motorway_junction"](around:4000,${at});
 );
-out center tags qt;`;
-    const data = await API.overpass(q);
-    const site = { lat, lon };
+out center tags qt;
+(
+  way["highway"~"^(motorway|trunk|primary|secondary)$"](around:1000,${at});
+  way["railway"~"^(rail|light_rail|subway)$"](around:1000,${at});
+  way["highway"="cycleway"](around:800,${at});
+  way["cycleway"~"^(lane|track)$"](around:800,${at});
+  way["highway"]["highway"!~"^(footway|path|steps|cycleway|track|corridor|bridleway|proposed|construction|platform)$"](around:120,${at});
+  way["natural"="coastline"](around:5000,${at});
+  way["waterway"~"^(river|stream|canal|wadi)$"](around:1500,${at});
+  way["natural"="water"]["water"!~"^(pond|basin|wastewater|swimming_pool|reflecting_pool)$"](around:1500,${at});
+);
+out geom qt;`;
+    const p = API.overpass(q, { ttl: 7 }).then((d) => ({ els: d.elements || [], site: { lat, lon } }));
+    coreMemo.set(key, p);
+    p.catch(() => coreMemo.delete(key)); // "נסו שוב" ישלח מחדש
+    return p;
+  }
+  API.core = core;
+
+  API.poi = async function (lat, lon, radius) {
+    const { els, site } = await core(lat, lon, radius);
     const items = [], parks = [], seen = new Set();
-    for (const el of data.elements || []) {
+    for (const el of els) {
       const t = el.tags || {};
       const uid = el.type + el.id;
       if (seen.has(uid)) continue;
-      seen.add(uid);
-      let sub = t.amenity || t.leisure || t.shop || (t.highway === 'bus_stop' ? 'bus_stop' : '') || t.railway;
+      let sub = t.amenity || t.leisure || t.shop || (t.highway === 'bus_stop' ? 'bus_stop' : '') || (el.type !== 'way' || el.center ? t.railway : '');
       if (t.railway === 'station' && /light_rail|subway|tram/.test(t.station || '')) sub = 'light_rail';
       if (!SUB[sub]) continue;
+      seen.add(uid);
       const [cat, subLabel] = SUB[sub];
       let p;
       if (el.geometry && el.type === 'way') {
@@ -526,49 +557,40 @@ out center tags qt;`;
     return { items, parks };
   };
 
+  /* רחובות סמוכים — לזיהוי חזית המגרש */
+  API.streets = async function (lat, lon, radius) {
+    const { els, site } = await core(lat, lon, radius);
+    const seen = new Set();
+    return els.filter((e) => {
+      const t = e.tags || {};
+      if (e.type !== 'way' || !e.geometry || !t.highway || /footway|path|steps|cycleway|track|corridor|bridleway|proposed|construction|platform|bus_stop|motorway_junction/.test(t.highway)) return false;
+      if (seen.has(e.id)) return false;
+      seen.add(e.id);
+      return U.distToLine(site, geomOf(e)) <= 130;
+    }).map((e) => ({ name: nameOf(e.tags, ''), cls: e.tags.highway, geom: geomOf(e) }));
+  };
+
   /** סביבה: מים וקו חוף + דרכים, רכבות, שדות תעופה ושבילי אופניים (רעש ונגישות) */
-  API.environment = async function (lat, lon) {
-    lat = rnd(lat); lon = rnd(lon);
-    const at = `${lat},${lon}`, site = { lat, lon };
-    const qWater = `[out:json][timeout:25];
-way["natural"="coastline"](around:5000,${at});
-out geom;
-way["waterway"~"^(river|stream|canal|wadi)$"](around:1500,${at});
-out geom;
-way["natural"="water"]["water"!~"^(pond|basin|wastewater|swimming_pool|reflecting_pool)$"](around:1500,${at});
-out geom;`;
-    const qMove = `[out:json][timeout:25];
-way["highway"~"^(motorway|trunk|primary|secondary)$"](around:1000,${at});
-out geom;
-node["highway"="motorway_junction"](around:4000,${at});
-out;
-way["railway"~"^(rail|light_rail|subway)$"](around:1000,${at});
-out geom;
-nwr["aeroway"="aerodrome"](around:8000,${at});
-out center tags;
-way["highway"="cycleway"](around:800,${at});
-out geom;
-way["cycleway"~"^(lane|track)$"](around:800,${at});
-out geom;`;
-    const [w, m] = await Promise.allSettled([API.overpass(qWater, { ttl: 30 }), API.overpass(qMove, { ttl: 10 })]);
-    if (w.status === 'rejected' && m.status === 'rejected') throw m.reason;
-    const out = { coast: [], rivers: [], water: [], roads: [], junctions: [], rail: [], airports: [], cycle: [], partial: w.status === 'rejected' || m.status === 'rejected' };
-    for (const el of (w.value && w.value.elements) || []) {
+  API.environment = async function (lat, lon, radius) {
+    const { els, site } = await core(lat, lon, radius);
+    const out = { coast: [], rivers: [], water: [], roads: [], junctions: [], rail: [], airports: [], cycle: [] };
+    const seen = new Set();
+    for (const el of els) {
+      const uid = el.type + el.id;
+      if (seen.has(uid)) continue;
+      seen.add(uid);
       const t = el.tags || {}, geom = geomOf(el);
       if (t.natural === 'coastline') out.coast.push({ geom, dist: U.distToLine(site, geom) });
       else if (t.waterway) out.rivers.push({ geom, name: nameOf(t, 'נחל / ערוץ'), kind: t.waterway, dist: U.distToLine(site, geom) });
       else if (t.natural === 'water') {
         const area = U.areaM2(geom);
         if (area > 3000) out.water.push({ geom, name: nameOf(t, 'גוף מים'), area, dist: U.distToLine(site, geom) });
-      }
-    }
-    for (const el of (m.value && m.value.elements) || []) {
-      const t = el.tags || {}, geom = geomOf(el);
-      if (t.aeroway) out.airports.push({ name: nameOf(t, 'שדה תעופה'), dist: U.haversine(site, el.center || el) });
+      } else if (t.aeroway === 'aerodrome') out.airports.push({ name: nameOf(t, 'שדה תעופה'), dist: U.haversine(site, el.center || el) });
       else if (t.highway === 'motorway_junction') out.junctions.push({ name: nameOf(t, 'מחלף'), ref: t.ref || '', lat: el.lat, lon: el.lon, dist: U.haversine(site, el) });
-      else if (t.railway) out.rail.push({ geom, kind: t.railway, name: nameOf(t, ''), dist: U.distToLine(site, geom) });
-      else if (t.highway === 'cycleway' || t.cycleway) out.cycle.push({ geom, len: geom.reduce((s, p, i) => (i ? s + U.haversine(geom[i - 1], p) : 0), 0) });
-      else if (t.highway) out.roads.push({ geom, cls: t.highway, ref: t.ref || '', name: nameOf(t, ''), dist: U.distToLine(site, geom), lanes: +t.lanes || null });
+      else if (el.type === 'way' && /^(rail|light_rail|subway)$/.test(t.railway || '')) out.rail.push({ geom, kind: t.railway, name: nameOf(t, ''), dist: U.distToLine(site, geom) });
+      else if (el.type === 'way' && (t.highway === 'cycleway' || /^(lane|track)$/.test(t.cycleway || ''))) out.cycle.push({ geom, len: geom.reduce((s2, p, i) => (i ? s2 + U.haversine(geom[i - 1], p) : 0), 0) });
+      if (el.type === 'way' && /^(motorway|trunk|primary|secondary)$/.test(t.highway || ''))
+        out.roads.push({ geom, cls: t.highway, ref: t.ref || '', name: nameOf(t, ''), dist: U.distToLine(site, geom), lanes: +t.lanes || null });
     }
     out.coastDist = minDist(out.coast);
     out.riverDist = minDist(out.rivers);
@@ -581,7 +603,7 @@ out geom;`;
       if (!g || r.dist < g.dist) groups.set(key, { ...r, key });
     }
     out.roadGroups = [...groups.values()].sort((a, b) => a.dist - b.dist);
-    out.cycleKm = out.cycle.reduce((s, c) => s + c.len, 0) / 1000;
+    out.cycleKm = out.cycle.reduce((s2, c) => s2 + c.len, 0) / 1000;
 
     // רעש — אומדן לפי מרחק ממקורות (כביש מהיר/ראשי, מסילה, שדה תעופה)
     const near = (cls) => minDist(out.roads.filter((r) => cls.test(r.cls)));
@@ -598,38 +620,36 @@ out geom;`;
     return out;
   };
 
-  /** מרקם עירוני: מבנים (דמות-רקע, גובה, תכסית), שימושי קרקע ב-OSM, מורשת ושימור */
+  /** מרקם עירוני: מבנים (דמות-רקע, גובה, תכסית), שימושי קרקע ב-OSM, מורשת ושימור — שאילתה אחת */
   API.fabric = async function (lat, lon) {
     lat = rnd(lat); lon = rnd(lon);
     const at = `${lat},${lon}`, site = { lat, lon };
-    const qB = `[out:json][timeout:25];
-way["building"](around:300,${at});
-out geom qt;`;
-    const qL = `[out:json][timeout:25];
-way["landuse"~"^(residential|commercial|retail|industrial|construction|religious|cemetery|grass|military|farmland|orchard|brownfield|greenfield)$"](around:500,${at});
+    const q = `[out:json][timeout:30];
+(
+  way["building"](around:300,${at});
+  way["landuse"~"^(residential|commercial|retail|industrial|construction|religious|cemetery|grass|military|farmland|orchard|brownfield|greenfield)$"](around:500,${at});
+);
 out geom qt;
-nwr["historic"](around:1000,${at});
-out center tags qt;
-nwr["heritage"](around:1000,${at});
-out center tags qt;
-nwr["tourism"~"^(viewpoint|museum|artwork|attraction)$"](around:1000,${at});
+(
+  nwr["historic"](around:1000,${at});
+  nwr["heritage"](around:1000,${at});
+  nwr["tourism"~"^(viewpoint|museum|artwork|attraction)$"](around:1000,${at});
+);
 out center tags qt;`;
-    const [b, l] = await Promise.allSettled([API.overpass(qB, { ttl: 14 }), API.overpass(qL, { ttl: 14 })]);
-    if (b.status === 'rejected' && l.status === 'rejected') throw b.reason;
-    const out = { buildings: [], landuse: [], heritage: [], partial: b.status === 'rejected' || l.status === 'rejected' };
-    for (const el of (b.value && b.value.elements) || []) {
-      const t = el.tags || {}, geom = geomOf(el);
-      if (geom.length < 3) continue;
-      const levels = parseFloat(t['building:levels']) || (t.height ? parseFloat(t.height) / 3.2 : null);
-      const c = geom.reduce((a, p) => ({ lat: a.lat + p.lat / geom.length, lon: a.lon + p.lon / geom.length }), { lat: 0, lon: 0 });
-      out.buildings.push({ geom, levels, area: U.areaM2(geom), use: t.building, name: t.name || '', dist: U.haversine(site, c), year: t.start_date || t['building:year'] || '' });
-    }
+    const d = await API.overpass(q, { ttl: 21 });
+    const out = { buildings: [], landuse: [], heritage: [] };
     const seen = new Set();
-    for (const el of (l.value && l.value.elements) || []) {
+    for (const el of d.elements || []) {
       const t = el.tags || {};
       if (seen.has(el.type + el.id)) continue;
       seen.add(el.type + el.id);
-      if (t.landuse && el.geometry) {
+      if (t.building && el.geometry) {
+        const geom = geomOf(el);
+        if (geom.length < 3) continue;
+        const levels = parseFloat(t['building:levels']) || (t.height ? parseFloat(t.height) / 3.2 : null);
+        const c = geom.reduce((a, p) => ({ lat: a.lat + p.lat / geom.length, lon: a.lon + p.lon / geom.length }), { lat: 0, lon: 0 });
+        out.buildings.push({ geom, levels, area: U.areaM2(geom), use: t.building, name: t.name || '', dist: U.haversine(site, c), year: t.start_date || t['building:year'] || '' });
+      } else if (t.landuse && el.geometry) {
         const geom = geomOf(el);
         out.landuse.push({ geom, kind: t.landuse, area: U.areaM2(geom) });
       } else if (t.historic || t.heritage || t.tourism) {
@@ -646,17 +666,17 @@ out center tags qt;`;
     const R = 250, circle = Math.PI * R * R;
     const bs = out.buildings.filter((x) => x.dist <= R);
     const withLv = bs.filter((x) => x.levels);
-    const avgLv = withLv.length ? withLv.reduce((s, x) => s + x.levels, 0) / withLv.length : null;
+    const avgLv = withLv.length ? withLv.reduce((s2, x) => s2 + x.levels, 0) / withLv.length : null;
     const hist = [0, 0, 0, 0, 0];
     withLv.forEach((x) => hist[x.levels <= 2 ? 0 : x.levels <= 4 ? 1 : x.levels <= 8 ? 2 : x.levels <= 15 ? 3 : 4]++);
     out.morph = {
       count: bs.length,
-      coverage: bs.reduce((s, x) => s + x.area, 0) / circle,
+      coverage: bs.reduce((s2, x) => s2 + x.area, 0) / circle,
       avgLevels: avgLv,
       maxLevels: withLv.reduce((mx, x) => Math.max(mx, x.levels), 0) || null,
-      far: bs.reduce((s, x) => s + x.area * (x.levels || avgLv || 1), 0) / circle,
+      far: bs.reduce((s2, x) => s2 + x.area * (x.levels || avgLv || 1), 0) / circle,
       levelsKnown: withLv.length,
-      avgFootprint: bs.length ? bs.reduce((s, x) => s + x.area, 0) / bs.length : null,
+      avgFootprint: bs.length ? bs.reduce((s2, x) => s2 + x.area, 0) / bs.length : null,
       hist
     };
     const lu = {};

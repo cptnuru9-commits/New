@@ -1,0 +1,332 @@
+{
+ "schemaVersion": 1,
+ "lastReviewed": "2026-11-01",
+ "dataNote": "Community-standard build archetypes (editorial). The engine adapts the situational slots to the detected enemy team.",
+ "templates": [
+  {
+   "id": "mm_crit",
+   "label": "מרקסמן קריט",
+   "items": [
+    "swift_boots",
+    "windtalker",
+    "berserkers_fury",
+    "haass_claws",
+    "malefic_roar",
+    "wind_of_nature"
+   ],
+   "emblem": "Marksman — Weapons Master + Quantum Charge",
+   "spell": "Flicker / Inspire",
+   "note": "Wind of Nature נגד מתנקשים פיזיים; Malefic Roar נגד טנקים עם שריון."
+  },
+  {
+   "id": "mm_atkspd",
+   "label": "מרקסמן מהירות התקפה / On-Hit",
+   "items": [
+    "swift_boots",
+    "demon_hunter_sword",
+    "golden_staff",
+    "corrosion_scythe",
+    "malefic_roar",
+    "wind_of_nature"
+   ],
+   "emblem": "Marksman — Agility + Weapons Master + Quantum Charge",
+   "spell": "Flicker / Inspire",
+   "note": "מצוין נגד טנקים וקבוצות עם הרבה HP."
+  },
+  {
+   "id": "mm_phys_burst",
+   "label": "מרקסמן בורסט פיזי",
+   "items": [
+    "swift_boots",
+    "blade_of_the_heptaseas",
+    "hunter_strike",
+    "endless_battle",
+    "blade_of_despair",
+    "malefic_roar"
+   ],
+   "emblem": "Marksman / Assassin — Rupture + Weapons Master + Lethal Ignition",
+   "spell": "Flicker",
+   "note": "Rose Gold Meteor או Wind of Nature כפריט שישי נגד מתנקשים."
+  },
+  {
+   "id": "mm_magic",
+   "label": "מרקסמן מג'יק",
+   "items": [
+    "arcane_boots",
+    "feather_of_heaven",
+    "enchanted_talisman",
+    "genius_wand",
+    "holy_crystal",
+    "blood_wings"
+   ],
+   "emblem": "Mage — Mystery Shop/Bargain Hunter + Weapons Master + Lethal Ignition",
+   "spell": "Flicker",
+   "note": "Winter Crown להישרדות נגד דייב."
+  },
+  {
+   "id": "mage_burst",
+   "label": "מאג' בורסט",
+   "items": [
+    "arcane_boots",
+    "enchanted_talisman",
+    "lightning_truncheon",
+    "holy_crystal",
+    "divine_glaive",
+    "blood_wings"
+   ],
+   "emblem": "Mage — Agility/Rupture + Weapons Master + Lethal Ignition",
+   "spell": "Flicker",
+   "note": "Winter Crown נגד מתנקשים; Glowing Wand נגד הילרים."
+  },
+  {
+   "id": "mage_poke",
+   "label": "מאג' פוק / מיד",
+   "items": [
+    "arcane_boots",
+    "clock_of_destiny",
+    "lightning_truncheon",
+    "holy_crystal",
+    "genius_wand",
+    "blood_wings"
+   ],
+   "emblem": "Mage — Inspire/Mystery Shop + Bargain Hunter + Lethal Ignition",
+   "spell": "Flicker / Aegis",
+   "note": "Ice Queen Wand/Glowing Wand לפי ההרכב היריב."
+  },
+  {
+   "id": "mage_dps",
+   "label": "מאג' DPS מתמשך",
+   "items": [
+    "arcane_boots",
+    "enchanted_talisman",
+    "clock_of_destiny",
+    "genius_wand",
+    "glowing_wand",
+    "holy_crystal"
+   ],
+   "emblem": "Mage — Agility + Bargain Hunter + Impure Rage",
+   "spell": "Flicker / Aegis",
+   "note": "Glowing Wand חובה נגד הילרים וטנקים עם רגנרציה."
+  },
+  {
+   "id": "mage_sustain",
+   "label": "מאג' עמיד",
+   "items": [
+    "arcane_boots",
+    "enchanted_talisman",
+    "clock_of_destiny",
+    "winter_crown",
+    "athenas_shield",
+    "brute_force_breastplate"
+   ],
+   "emblem": "Mage / Tank — Vitality + Tenacity + Concussive Blast",
+   "spell": "Flicker / Vengeance",
+   "note": "פריטי הגנה לפי סוג הנזק של היריב."
+  },
+  {
+   "id": "assassin_phys",
+   "label": "מתנקש פיזי",
+   "items": [
+    "tough_boots",
+    "blade_of_the_heptaseas",
+    "hunter_strike",
+    "malefic_roar",
+    "blade_of_despair",
+    "immortality"
+   ],
+   "emblem": "Assassin — Rupture + Seasoned Hunter/Master Assassin + Killing Spree",
+   "spell": "Retribution",
+   "note": "Rose Gold Meteor/Winter Crown נגד בורסט מג'יק."
+  },
+  {
+   "id": "fighter_jungle",
+   "label": "פייטר ג'ונגל",
+   "items": [
+    "tough_boots",
+    "war_axe",
+    "hunter_strike",
+    "blade_of_despair",
+    "malefic_roar",
+    "immortality"
+   ],
+   "emblem": "Fighter / Assassin — Rupture + Seasoned Hunter + Killing Spree",
+   "spell": "Retribution",
+   "note": "Sea Halberd נגד הילרים ולייפסטיל."
+  },
+  {
+   "id": "fighter_exp",
+   "label": "פייטר EXP (DPS)",
+   "items": [
+    "tough_boots",
+    "war_axe",
+    "hunter_strike",
+    "queens_wings",
+    "dominance_ice",
+    "immortality"
+   ],
+   "emblem": "Fighter — Firmness + Festival of Blood + Brave Smite",
+   "spell": "Vengeance / Petrify",
+   "note": "Sea Halberd נגד הילרים; Oracle נגד מאג'ים."
+  },
+  {
+   "id": "fighter_burst",
+   "label": "פייטר בורסט",
+   "items": [
+    "tough_boots",
+    "blade_of_the_heptaseas",
+    "hunter_strike",
+    "malefic_roar",
+    "queens_wings",
+    "immortality"
+   ],
+   "emblem": "Fighter — Rupture + Festival of Blood + Brave Smite",
+   "spell": "Petrify / Vengeance",
+   "note": "Blade of Despair אם המשחק נמשך ואתה במובילות."
+  },
+  {
+   "id": "fighter_sustain",
+   "label": "פייטר עמיד / סאסטיין",
+   "items": [
+    "tough_boots",
+    "war_axe",
+    "bloodlust_axe",
+    "oracle",
+    "queens_wings",
+    "athenas_shield"
+   ],
+   "emblem": "Fighter — Firmness + Festival of Blood + Brave Smite",
+   "spell": "Vengeance / Flicker",
+   "note": "Dominance Ice נגד מרקסמנים והילים."
+  },
+  {
+   "id": "fighter_magic",
+   "label": "פייטר מג'יק",
+   "items": [
+    "warrior_boots",
+    "concentrated_energy",
+    "feather_of_heaven",
+    "oracle",
+    "athenas_shield",
+    "glowing_wand"
+   ],
+   "emblem": "Fighter / Mage — Agility + Festival of Blood + Brave Smite",
+   "spell": "Vengeance / Petrify",
+   "note": "בג'ונגל: Starlium Scythe במקום Feather of Heaven."
+  },
+  {
+   "id": "xborg",
+   "label": "X.Borg",
+   "items": [
+    "warrior_boots",
+    "war_axe",
+    "blade_of_the_heptaseas",
+    "hunter_strike",
+    "queens_wings",
+    "immortality"
+   ],
+   "emblem": "Fighter — Rupture + Festival of Blood + Brave Smite",
+   "spell": "Petrify / Vengeance",
+   "note": "Sea Halberd נגד יריבים עם הרבה ריפוי."
+  },
+  {
+   "id": "masha",
+   "label": "Masha (אחרי הריוורק — Berserker)",
+   "items": [
+    "tough_boots",
+    "war_axe",
+    "queens_wings",
+    "brute_force_breastplate",
+    "oracle",
+    "immortality"
+   ],
+   "emblem": "Fighter — Firmness + Festival of Blood + Brave Smite",
+   "spell": "Vengeance",
+   "note": "לפי מדריכי פאץ' 2.2.16: לחימה מתמשכת בחזית במקום פיצול. Warrior Boots נגד הרכב פיזי."
+  },
+  {
+   "id": "argus",
+   "label": "Argus — מהירות התקפה",
+   "items": [
+    "swift_boots",
+    "corrosion_scythe",
+    "demon_hunter_sword",
+    "golden_staff",
+    "malefic_roar",
+    "immortality"
+   ],
+   "emblem": "Fighter / Assassin — Agility + Weapons Master + Brave Smite",
+   "spell": "Petrify / Vengeance",
+   "note": "קיבל באף ב-Season 42. Wind of Nature לשרוד בורסט פיזי."
+  },
+  {
+   "id": "hirara",
+   "label": "Hirara — מתנקשת ג'ונגל",
+   "items": [
+    "tough_boots",
+    "hunter_strike",
+    "war_axe",
+    "blade_of_the_heptaseas",
+    "malefic_roar",
+    "immortality"
+   ],
+   "emblem": "Assassin — Thrill + Seasoned Hunter + Impure Rage",
+   "spell": "Retribution",
+   "note": "הנזק שלה למיניונים מופחת, ולכן היא מתאימה לג'ונגל. Antique Cuirass אצל היריב מחליש אותה."
+  },
+  {
+   "id": "tank_roam",
+   "label": "טנק / תומך רואם",
+   "items": [
+    "tough_boots",
+    "dominance_ice",
+    "antique_cuirass",
+    "athenas_shield",
+    "oracle",
+    "immortality"
+   ],
+   "emblem": "Tank / Support — Vitality + Tenacity + Concussive Blast / Focusing Mark",
+   "spell": "Flicker / Vengeance",
+   "note": "Radiant Armor נגד דמויות מג'יק עם נזק מתמשך."
+  },
+  {
+   "id": "tank_exp",
+   "label": "טנק EXP / ג'ונגל",
+   "items": [
+    "tough_boots",
+    "cursed_helmet",
+    "antique_cuirass",
+    "dominance_ice",
+    "radiant_armor",
+    "oracle"
+   ],
+   "emblem": "Tank — Vitality + Tenacity + Concussive Blast",
+   "spell": "Vengeance / Petrify",
+   "note": "בג'ונגל: מגפיים עם Retribution; Thunder Belt למרדפים."
+  },
+  {
+   "id": "support_heal",
+   "label": "תומך ריפוי",
+   "items": [
+    "tough_boots",
+    "flask_of_the_oasis",
+    "fleeting_time",
+    "dominance_ice",
+    "oracle",
+    "athenas_shield"
+   ],
+   "emblem": "Support — Agility + Pull Yourself Together + Focusing Mark",
+   "spell": "Flicker / Aegis",
+   "note": "Enchanted Talisman כשצריך יותר כישורים בתדירות גבוהה."
+  }
+ ],
+ "archetypeDefaults": {
+  "marksman": "mm_crit",
+  "assassin_phys": "assassin_phys",
+  "assassin_magic": "mage_burst",
+  "mage": "mage_burst",
+  "fighter_phys": "fighter_exp",
+  "fighter_magic": "fighter_magic",
+  "tank": "tank_roam",
+  "support": "support_heal"
+ }
+}

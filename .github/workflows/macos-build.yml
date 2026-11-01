@@ -1,0 +1,38 @@
+name: macOS build & test
+
+on:
+  push:
+    branches: [mlbb-live-companion]
+  workflow_dispatch:
+
+defaults:
+  run:
+    shell: bash
+    working-directory: MLBB-Live-Companion
+
+jobs:
+  build:
+    runs-on: macos-15
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - name: Toolchain
+        run: |
+          sw_vers
+          xcodebuild -version
+          swift --version
+      - name: Validate database
+        run: python3 tools/validate_data.py
+      - name: Build (debug)
+        run: swift build
+      - name: Unit tests
+        run: swift test
+      - name: Build app bundle (release)
+        run: ./scripts/build_app.sh
+      - name: Zip app
+        run: ditto -c -k --keepParent "build/MLBB Live Companion.app" "build/MLBB-Live-Companion.zip"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: MLBB-Live-Companion-app
+          path: MLBB-Live-Companion/build/MLBB-Live-Companion.zip
+          retention-days: 30

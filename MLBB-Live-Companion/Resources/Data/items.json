@@ -1,0 +1,963 @@
+{
+ "schemaVersion": 1,
+ "lastReviewed": "2026-11-01",
+ "dataNote": "Qualitative item effects and counter weights only; no numeric stats. Verify names/effects against the in-game shop after each patch.",
+ "items": [
+  {
+   "id": "warrior_boots",
+   "name": "Warrior Boots",
+   "category": "boots",
+   "usableBy": [],
+   "tags": [
+    "physicalDefense"
+   ],
+   "counters": {
+    "physical": 0.7,
+    "basicAttack": 0.6
+   },
+   "effect": "מגפיים עם הגנה פיזית שמתחזקת כשסופגים התקפות בסיס.",
+   "tradeoff": "אין תוספת נזק או חדירה."
+  },
+  {
+   "id": "tough_boots",
+   "name": "Tough Boots",
+   "category": "boots",
+   "usableBy": [],
+   "tags": [
+    "magicDefense",
+    "ccReduction"
+   ],
+   "counters": {
+    "cc": 1.0,
+    "magic": 0.5
+   },
+   "effect": "מגפיים עם הגנת קסם וקיצור משך השליטה (CC) עליך.",
+   "tradeoff": "מוותרים על חדירת קסם / מהירות התקפה / קירור."
+  },
+  {
+   "id": "arcane_boots",
+   "name": "Arcane Boots",
+   "category": "boots",
+   "usableBy": [
+    "mage",
+    "assassin_magic",
+    "fighter_magic",
+    "support"
+   ],
+   "tags": [
+    "magicPenetration"
+   ],
+   "counters": {
+    "tanky": 0.25
+   },
+   "effect": "מגפיים עם חדירת קסם — נזק גבוה יותר למטרות עם הגנת קסם.",
+   "tradeoff": "בלי הגנה בכלל."
+  },
+  {
+   "id": "swift_boots",
+   "name": "Swift Boots",
+   "category": "boots",
+   "usableBy": [
+    "marksman",
+    "assassin_phys",
+    "fighter_phys",
+    "mage"
+   ],
+   "tags": [
+    "attackSpeed"
+   ],
+   "counters": {},
+   "effect": "מגפיים עם מהירות התקפה.",
+   "tradeoff": "בלי הגנה בכלל."
+  },
+  {
+   "id": "magic_shoes",
+   "name": "Magic Shoes",
+   "category": "boots",
+   "usableBy": [],
+   "tags": [
+    "cooldownReduction"
+   ],
+   "counters": {},
+   "effect": "מגפיים עם קיצור זמני קירור.",
+   "tradeoff": "בלי הגנה."
+  },
+  {
+   "id": "rapid_boots",
+   "name": "Rapid Boots",
+   "category": "boots",
+   "usableBy": [],
+   "tags": [
+    "moveSpeed"
+   ],
+   "counters": {},
+   "effect": "מהירות תנועה גבוהה מחוץ לקרב (רואם / רוטציות).",
+   "tradeoff": "החיסרון נעלם כשנכנסים לקרב."
+  },
+  {
+   "id": "demon_shoes",
+   "name": "Demon Shoes",
+   "category": "boots",
+   "usableBy": [
+    "mage",
+    "assassin_magic",
+    "fighter_magic",
+    "support"
+   ],
+   "tags": [
+    "manaRegen"
+   ],
+   "counters": {},
+   "effect": "החזרת מאנה — לגיבורים שתלויים במאנה.",
+   "tradeoff": "בלי הגנה וחדירה."
+  },
+  {
+   "id": "blade_of_despair",
+   "name": "Blade of Despair",
+   "category": "physical",
+   "usableBy": [
+    "marksman",
+    "assassin_phys",
+    "fighter_phys"
+   ],
+   "tags": [
+    "physicalAttack",
+    "execute"
+   ],
+   "counters": {},
+   "effect": "נזק פיזי גבוה, במיוחד נגד מטרות עם HP נמוך.",
+   "tradeoff": "אין הגנה."
+  },
+  {
+   "id": "blade_of_the_heptaseas",
+   "name": "Blade of the Heptaseas",
+   "category": "physical",
+   "usableBy": [
+    "marksman",
+    "assassin_phys",
+    "fighter_phys"
+   ],
+   "tags": [
+    "physicalAttack",
+    "penetration",
+    "burst"
+   ],
+   "counters": {
+    "tanky": 0.2
+   },
+   "effect": "בורסט פיזי ופתיחת קרב חזקה עם חדירה.",
+   "tradeoff": "נחלש בשלב המאוחר מול HP גבוה."
+  },
+  {
+   "id": "hunter_strike",
+   "name": "Hunter Strike",
+   "category": "physical",
+   "usableBy": [
+    "marksman",
+    "assassin_phys",
+    "fighter_phys"
+   ],
+   "tags": [
+    "physicalAttack",
+    "penetration",
+    "moveSpeed",
+    "cooldownReduction"
+   ],
+   "counters": {
+    "tanky": 0.3
+   },
+   "effect": "חדירה פיזית, קירור ומהירות תנועה למרדף.",
+   "tradeoff": "אין הגנה."
+  },
+  {
+   "id": "malefic_roar",
+   "name": "Malefic Roar",
+   "category": "physical",
+   "usableBy": [
+    "marksman",
+    "assassin_phys",
+    "fighter_phys"
+   ],
+   "tags": [
+    "physicalAttack",
+    "penetration"
+   ],
+   "counters": {
+    "tanky": 1.0
+   },
+   "effect": "חדירה פיזית שגדלה ככל שליעד יש יותר הגנה פיזית — נגד טנקים ושריון.",
+   "tradeoff": "מעט שימושי מול יריבים בלי שריון."
+  },
+  {
+   "id": "endless_battle",
+   "name": "Endless Battle",
+   "category": "physical",
+   "usableBy": [
+    "marksman",
+    "assassin_phys",
+    "fighter_phys"
+   ],
+   "tags": [
+    "physicalAttack",
+    "trueDamage",
+    "lifesteal",
+    "manaRegen"
+   ],
+   "counters": {
+    "tanky": 0.3
+   },
+   "effect": "נזק אמיתי אחרי שימוש ביכולת, עם מעט הגנה ולייפסטיל.",
+   "tradeoff": "יקר."
+  },
+  {
+   "id": "berserkers_fury",
+   "name": "Berserker's Fury",
+   "category": "physical",
+   "usableBy": [
+    "marksman",
+    "assassin_phys",
+    "fighter_phys"
+   ],
+   "tags": [
+    "physicalAttack",
+    "critical"
+   ],
+   "counters": {},
+   "effect": "הגברת נזק קריטי.",
+   "tradeoff": "אין הגנה; תלוי בסיכוי קריטי."
+  },
+  {
+   "id": "windtalker",
+   "name": "Windtalker",
+   "category": "physical",
+   "usableBy": [
+    "marksman"
+   ],
+   "tags": [
+    "attackSpeed",
+    "moveSpeed",
+    "critical"
+   ],
+   "counters": {},
+   "effect": "מהירות התקפה ותנועה, נזק מתגלגל ליעדים סמוכים.",
+   "tradeoff": "נזק בסיס נמוך."
+  },
+  {
+   "id": "haass_claws",
+   "name": "Haas's Claws",
+   "category": "physical",
+   "usableBy": [
+    "marksman",
+    "fighter_phys"
+   ],
+   "tags": [
+    "lifesteal",
+    "critical",
+    "attackSpeed"
+   ],
+   "counters": {
+    "sustained": 0.2
+   },
+   "effect": "לייפסטיל וקריטי — הישרדות בקרבות ארוכים.",
+   "tradeoff": "לייפסטיל חלש מול Anti-Heal."
+  },
+  {
+   "id": "demon_hunter_sword",
+   "name": "Demon Hunter Sword",
+   "category": "physical",
+   "usableBy": [
+    "marksman",
+    "fighter_phys",
+    "assassin_phys"
+   ],
+   "tags": [
+    "attackSpeed",
+    "percentHP"
+   ],
+   "counters": {
+    "tanky": 0.8
+   },
+   "effect": "נזק לפי אחוז מה-HP של היעד — חזק נגד טנקים.",
+   "tradeoff": "חלש יותר מול מטרות שבירות."
+  },
+  {
+   "id": "golden_staff",
+   "name": "Golden Staff",
+   "category": "physical",
+   "usableBy": [
+    "marksman",
+    "fighter_phys"
+   ],
+   "tags": [
+    "attackSpeed",
+    "onHit"
+   ],
+   "counters": {},
+   "effect": "מהירות התקפה ואפקטי On-Hit.",
+   "tradeoff": "אין קריטי."
+  },
+  {
+   "id": "corrosion_scythe",
+   "name": "Corrosion Scythe",
+   "category": "physical",
+   "usableBy": [
+    "marksman",
+    "fighter_phys"
+   ],
+   "tags": [
+    "attackSpeed",
+    "slow"
+   ],
+   "counters": {
+    "dive": 0.3
+   },
+   "effect": "האטה בהתקפות בסיס ומהירות התקפה.",
+   "tradeoff": "נזק בורסט נמוך."
+  },
+  {
+   "id": "sea_halberd",
+   "name": "Sea Halberd",
+   "category": "physical",
+   "usableBy": [
+    "marksman",
+    "assassin_phys",
+    "fighter_phys"
+   ],
+   "tags": [
+    "physicalAttack",
+    "antiHeal"
+   ],
+   "counters": {
+    "healing": 1.0
+   },
+   "effect": "Anti-Heal פיזי — מפחית ריפוי והחלמה של היעד.",
+   "tradeoff": "פחות נזק טהור מפריט התקפה רגיל."
+  },
+  {
+   "id": "war_axe",
+   "name": "War Axe",
+   "category": "physical",
+   "usableBy": [
+    "fighter_phys",
+    "assassin_phys"
+   ],
+   "tags": [
+    "physicalAttack",
+    "trueDamage",
+    "hp"
+   ],
+   "counters": {
+    "tanky": 0.3,
+    "sustained": 0.2
+   },
+   "effect": "נזק מצטבר בקרבות ארוכים עם HP.",
+   "tradeoff": "מצריך זמן בקרב."
+  },
+  {
+   "id": "bloodlust_axe",
+   "name": "Bloodlust Axe",
+   "category": "physical",
+   "usableBy": [
+    "fighter_phys",
+    "assassin_phys"
+   ],
+   "tags": [
+    "physicalAttack",
+    "spellVamp",
+    "cooldownReduction"
+   ],
+   "counters": {
+    "sustained": 0.3
+   },
+   "effect": "Spell Vamp — ריפוי מנזק יכולות.",
+   "tradeoff": "חלש מול Anti-Heal."
+  },
+  {
+   "id": "queens_wings",
+   "name": "Queen's Wings",
+   "category": "physical",
+   "usableBy": [
+    "fighter_phys",
+    "assassin_phys"
+   ],
+   "tags": [
+    "physicalAttack",
+    "damageReduction",
+    "spellVamp"
+   ],
+   "counters": {
+    "burst": 0.5,
+    "sustained": 0.4,
+    "physical": 0.2,
+    "magic": 0.2
+   },
+   "effect": "הפחתת נזק כשה-HP נמוך ו-Spell Vamp — הישרדות לפייטרים.",
+   "tradeoff": "פחות נזק מפריט התקפה מלא."
+  },
+  {
+   "id": "rose_gold_meteor",
+   "name": "Rose Gold Meteor",
+   "category": "physical",
+   "usableBy": [
+    "marksman",
+    "assassin_phys",
+    "fighter_phys"
+   ],
+   "tags": [
+    "physicalAttack",
+    "magicDefense",
+    "shield",
+    "lifesteal"
+   ],
+   "counters": {
+    "magic": 0.9,
+    "burst": 0.6
+   },
+   "effect": "הגנת קסם ומגן כשה-HP נמוך — נגד בורסט מאגי.",
+   "tradeoff": "פחות נזק מפריט ליבה."
+  },
+  {
+   "id": "wind_of_nature",
+   "name": "Wind of Nature",
+   "category": "physical",
+   "usableBy": [
+    "marksman",
+    "assassin_phys",
+    "fighter_phys"
+   ],
+   "tags": [
+    "attackSpeed",
+    "lifesteal",
+    "activeImmunity"
+   ],
+   "counters": {
+    "physical": 0.8,
+    "burst": 0.7,
+    "basicAttack": 0.8,
+    "dive": 0.5
+   },
+   "effect": "אקטיב שמבטל נזק פיזי לזמן קצר — נגד מתנקשים פיזיים ומרקסמנים.",
+   "tradeoff": "לא עוזר מול נזק קסם."
+  },
+  {
+   "id": "fleeting_time",
+   "name": "Fleeting Time",
+   "category": "physical",
+   "usableBy": [
+    "support",
+    "fighter_phys",
+    "assassin_phys",
+    "mage"
+   ],
+   "tags": [
+    "cooldownReduction",
+    "ultimate"
+   ],
+   "counters": {},
+   "effect": "קיצור זמן הקירור של האולטימייט אחרי הריגה/אסיסט.",
+   "tradeoff": "נתונים נמוכים לעומת פריט ליבה."
+  },
+  {
+   "id": "enchanted_talisman",
+   "name": "Enchanted Talisman",
+   "category": "magic",
+   "usableBy": [
+    "mage",
+    "assassin_magic",
+    "fighter_magic",
+    "support"
+   ],
+   "tags": [
+    "magicPower",
+    "cooldownReduction",
+    "manaRegen"
+   ],
+   "counters": {},
+   "effect": "קירור ומאנה.",
+   "tradeoff": "כוח קסם נמוך יחסית."
+  },
+  {
+   "id": "clock_of_destiny",
+   "name": "Clock of Destiny",
+   "category": "magic",
+   "usableBy": [
+    "mage",
+    "assassin_magic",
+    "fighter_magic",
+    "support"
+   ],
+   "tags": [
+    "magicPower",
+    "hp",
+    "mana"
+   ],
+   "counters": {
+    "burst": 0.1
+   },
+   "effect": "כוח קסם ו-HP שגדלים עם הזמן.",
+   "tradeoff": "איטי לבנות ערך."
+  },
+  {
+   "id": "lightning_truncheon",
+   "name": "Lightning Truncheon",
+   "category": "magic",
+   "usableBy": [
+    "mage",
+    "assassin_magic",
+    "fighter_magic",
+    "support"
+   ],
+   "tags": [
+    "magicPower",
+    "burst"
+   ],
+   "counters": {},
+   "effect": "בורסט מאגי — נזק נוסף שקופץ ליעדים.",
+   "tradeoff": "אין הגנה."
+  },
+  {
+   "id": "holy_crystal",
+   "name": "Holy Crystal",
+   "category": "magic",
+   "usableBy": [
+    "mage",
+    "assassin_magic",
+    "fighter_magic",
+    "support"
+   ],
+   "tags": [
+    "magicPower"
+   ],
+   "counters": {},
+   "effect": "מגביר מאוד את כוח הקסם.",
+   "tradeoff": "יקר; אין הגנה."
+  },
+  {
+   "id": "divine_glaive",
+   "name": "Divine Glaive",
+   "category": "magic",
+   "usableBy": [
+    "mage",
+    "assassin_magic",
+    "fighter_magic",
+    "support"
+   ],
+   "tags": [
+    "magicPower",
+    "magicPenetration"
+   ],
+   "counters": {
+    "tanky": 1.0
+   },
+   "effect": "חדירת קסם — חזק נגד יריבים שבנו הגנת קסם.",
+   "tradeoff": "חלש מול יריבים בלי הגנת קסם."
+  },
+  {
+   "id": "genius_wand",
+   "name": "Genius Wand",
+   "category": "magic",
+   "usableBy": [
+    "mage",
+    "assassin_magic",
+    "fighter_magic",
+    "support"
+   ],
+   "tags": [
+    "magicPower",
+    "magicPenetration",
+    "moveSpeed"
+   ],
+   "counters": {
+    "tanky": 0.5
+   },
+   "effect": "חדירת קסם והורדת הגנת קסם של היעד.",
+   "tradeoff": "אין הגנה."
+  },
+  {
+   "id": "glowing_wand",
+   "name": "Glowing Wand",
+   "category": "magic",
+   "usableBy": [
+    "mage",
+    "assassin_magic",
+    "fighter_magic",
+    "support"
+   ],
+   "tags": [
+    "magicPower",
+    "antiHeal",
+    "burn"
+   ],
+   "counters": {
+    "healing": 0.9,
+    "tanky": 0.4
+   },
+   "effect": "Anti-Heal מאגי עם שריפה לפי HP.",
+   "tradeoff": "פחות בורסט."
+  },
+  {
+   "id": "necklace_of_durance",
+   "name": "Necklace of Durance",
+   "category": "magic",
+   "usableBy": [
+    "mage",
+    "assassin_magic",
+    "fighter_magic",
+    "support"
+   ],
+   "tags": [
+    "magicPower",
+    "antiHeal",
+    "cooldownReduction"
+   ],
+   "counters": {
+    "healing": 1.0
+   },
+   "effect": "Anti-Heal מאגי זול וקירור.",
+   "tradeoff": "כוח קסם נמוך."
+  },
+  {
+   "id": "ice_queen_wand",
+   "name": "Ice Queen Wand",
+   "category": "magic",
+   "usableBy": [
+    "mage",
+    "assassin_magic",
+    "fighter_magic",
+    "support"
+   ],
+   "tags": [
+    "magicPower",
+    "slow",
+    "spellVamp"
+   ],
+   "counters": {
+    "dive": 0.3
+   },
+   "effect": "האטה בנזק יכולות — עוזר מול גיבורים ניידים.",
+   "tradeoff": "פחות בורסט."
+  },
+  {
+   "id": "blood_wings",
+   "name": "Blood Wings",
+   "category": "magic",
+   "usableBy": [
+    "mage",
+    "assassin_magic",
+    "fighter_magic",
+    "support"
+   ],
+   "tags": [
+    "magicPower",
+    "hp",
+    "shield"
+   ],
+   "counters": {
+    "burst": 0.4
+   },
+   "effect": "כוח קסם גבוה ו-HP/מגן.",
+   "tradeoff": "יקר."
+  },
+  {
+   "id": "concentrated_energy",
+   "name": "Concentrated Energy",
+   "category": "magic",
+   "usableBy": [
+    "mage",
+    "assassin_magic",
+    "fighter_magic",
+    "support"
+   ],
+   "tags": [
+    "magicPower",
+    "hp",
+    "spellVamp"
+   ],
+   "counters": {
+    "sustained": 0.3
+   },
+   "effect": "Spell Vamp מאגי — ריפוי מנזק יכולות.",
+   "tradeoff": "חלש מול Anti-Heal."
+  },
+  {
+   "id": "feather_of_heaven",
+   "name": "Feather of Heaven",
+   "category": "magic",
+   "usableBy": [
+    "mage",
+    "assassin_magic",
+    "fighter_magic",
+    "support"
+   ],
+   "tags": [
+    "magicPower",
+    "attackSpeed"
+   ],
+   "counters": {},
+   "effect": "מהירות התקפה לגיבורי קסם עם התקפות בסיס.",
+   "tradeoff": "מתאים רק לגיבורים מסוימים."
+  },
+  {
+   "id": "winter_crown",
+   "name": "Winter Crown",
+   "category": "magic",
+   "usableBy": [
+    "mage",
+    "assassin_magic",
+    "fighter_magic",
+    "support"
+   ],
+   "tags": [
+    "magicPower",
+    "activeImmunity",
+    "physicalDefense"
+   ],
+   "counters": {
+    "burst": 0.9,
+    "dive": 0.9,
+    "physical": 0.4
+   },
+   "effect": "אקטיב שמקפיא אותך ומונע נזק לזמן קצר — נגד בורסט ומתנקשים.",
+   "tradeoff": "לא זז בזמן האקטיב; פחות נזק."
+  },
+  {
+   "id": "flask_of_the_oasis",
+   "name": "Flask of the Oasis",
+   "category": "support",
+   "usableBy": [
+    "support",
+    "mage"
+   ],
+   "tags": [
+    "healingBoost",
+    "shield",
+    "magicPower"
+   ],
+   "counters": {
+    "burst": 0.3
+   },
+   "effect": "מגביר ריפוי ומגנים שאתה נותן לחברי הקבוצה.",
+   "tradeoff": "כמעט בלי נזק."
+  },
+  {
+   "id": "athenas_shield",
+   "name": "Athena's Shield",
+   "category": "defense",
+   "usableBy": [],
+   "tags": [
+    "magicDefense",
+    "shield",
+    "hp"
+   ],
+   "counters": {
+    "magic": 1.0,
+    "burst": 0.6
+   },
+   "effect": "הגנת קסם ומגן נגד נזק קסם — נגד בורסט מאגי.",
+   "tradeoff": "אין נזק."
+  },
+  {
+   "id": "radiant_armor",
+   "name": "Radiant Armor",
+   "category": "defense",
+   "usableBy": [],
+   "tags": [
+    "magicDefense",
+    "hpRegen"
+   ],
+   "counters": {
+    "magic": 0.9,
+    "sustained": 0.7
+   },
+   "effect": "הגנת קסם שמתחזקת מול נזק קסם מתמשך.",
+   "tradeoff": "פחות יעיל מול בורסט חד."
+  },
+  {
+   "id": "cursed_helmet",
+   "name": "Cursed Helmet",
+   "category": "defense",
+   "usableBy": [
+    "tank",
+    "fighter_phys",
+    "fighter_magic",
+    "support"
+   ],
+   "tags": [
+    "magicDefense",
+    "hp",
+    "burn"
+   ],
+   "counters": {
+    "magic": 0.7,
+    "sustained": 0.3
+   },
+   "effect": "הגנת קסם ו-HP עם שריפה סביבך.",
+   "tradeoff": "אין נזק ממשי לגיבורים שבירים."
+  },
+  {
+   "id": "oracle",
+   "name": "Oracle",
+   "category": "defense",
+   "usableBy": [],
+   "tags": [
+    "magicDefense",
+    "cooldownReduction",
+    "healingBoost"
+   ],
+   "counters": {
+    "magic": 0.6,
+    "sustained": 0.3
+   },
+   "effect": "הגנת קסם וקירור, ומגביר ריפוי ומגנים שאתה מקבל.",
+   "tradeoff": "אין נזק."
+  },
+  {
+   "id": "antique_cuirass",
+   "name": "Antique Cuirass",
+   "category": "defense",
+   "usableBy": [],
+   "tags": [
+    "physicalDefense",
+    "hp"
+   ],
+   "counters": {
+    "physical": 0.9,
+    "sustained": 0.5,
+    "basicAttack": 0.3
+   },
+   "effect": "הגנה פיזית ומחליש את ההתקפה הפיזית של מי שפוגע בך.",
+   "tradeoff": "אין נזק."
+  },
+  {
+   "id": "blade_armor",
+   "name": "Blade Armor",
+   "category": "defense",
+   "usableBy": [],
+   "tags": [
+    "physicalDefense",
+    "reflect"
+   ],
+   "counters": {
+    "physical": 0.7,
+    "basicAttack": 1.0
+   },
+   "effect": "הגנה פיזית גבוהה ומחזיר נזק להתקפות בסיס — נגד מרקסמנים.",
+   "tradeoff": "חלש מול יכולות."
+  },
+  {
+   "id": "twilight_armor",
+   "name": "Twilight Armor",
+   "category": "defense",
+   "usableBy": [],
+   "tags": [
+    "physicalDefense",
+    "hp",
+    "antiBurst"
+   ],
+   "counters": {
+    "physical": 0.7,
+    "burst": 0.8
+   },
+   "effect": "HP והגנה פיזית; מחליש מכות גדולות במיוחד.",
+   "tradeoff": "אין נזק."
+  },
+  {
+   "id": "dominance_ice",
+   "name": "Dominance Ice",
+   "category": "defense",
+   "usableBy": [],
+   "tags": [
+    "physicalDefense",
+    "mana",
+    "antiHeal",
+    "antiShield",
+    "attackSpeedReduction"
+   ],
+   "counters": {
+    "physical": 0.6,
+    "healing": 0.8,
+    "shields": 0.8,
+    "basicAttack": 0.6
+   },
+   "effect": "הגנה פיזית; מפחית מגנים והחלמה של אויבים סביבך ומאט את מהירות ההתקפה שלהם.",
+   "tradeoff": "אין נזק."
+  },
+  {
+   "id": "brute_force_breastplate",
+   "name": "Brute Force Breastplate",
+   "category": "defense",
+   "usableBy": [],
+   "tags": [
+    "physicalDefense",
+    "magicDefense",
+    "moveSpeed"
+   ],
+   "counters": {
+    "physical": 0.5,
+    "magic": 0.5,
+    "sustained": 0.3
+   },
+   "effect": "הגנה פיזית וקסם שמצטברת בזמן קרב, ומהירות תנועה.",
+   "tradeoff": "דורש להישאר בקרב."
+  },
+  {
+   "id": "thunder_belt",
+   "name": "Thunder Belt",
+   "category": "defense",
+   "usableBy": [
+    "tank",
+    "fighter_phys",
+    "fighter_magic",
+    "support"
+   ],
+   "tags": [
+    "physicalDefense",
+    "hp",
+    "trueDamage",
+    "slow"
+   ],
+   "counters": {
+    "physical": 0.4,
+    "dive": 0.3
+   },
+   "effect": "HP והגנה פיזית; אחרי יכולת — נזק נוסף והאטה.",
+   "tradeoff": "לא מתאים לגיבורים שבירים."
+  },
+  {
+   "id": "guardian_helmet",
+   "name": "Guardian Helmet",
+   "category": "defense",
+   "usableBy": [],
+   "tags": [
+    "hp",
+    "hpRegen"
+   ],
+   "counters": {
+    "sustained": 0.5,
+    "physical": 0.3,
+    "magic": 0.3
+   },
+   "effect": "HP גבוה מאוד והחלמה מחוץ לקרב.",
+   "tradeoff": "חלש מול Anti-Heal."
+  },
+  {
+   "id": "immortality",
+   "name": "Immortality",
+   "category": "defense",
+   "usableBy": [],
+   "tags": [
+    "revive",
+    "hp",
+    "physicalDefense"
+   ],
+   "counters": {
+    "burst": 0.7,
+    "dive": 0.6,
+    "physical": 0.3,
+    "magic": 0.3
+   },
+   "effect": "תחייה אחרי מוות — חזק בקרבות מאוחרים.",
+   "tradeoff": "לא עוזר לשרוד את הקרב עצמו."
+  }
+ ]
+}

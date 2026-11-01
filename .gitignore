@@ -1,0 +1,5 @@
+.DS_Store
+MLBB-Live-Companion/.build/
+MLBB-Live-Companion/build/
+MLBB-Live-Companion/.swiftpm/
+*.xcuserstate

@@ -1,0 +1,5165 @@
+{
+ "schemaVersion": 1,
+ "lastReviewed": "2026-11-01",
+ "dataNote": "Curated, qualitative hero profiles (0-3 scales). 'role-default' = not yet reviewed; update after every major patch. Not live statistics: no win/pick rates.",
+ "heroes": [
+  {
+   "name": "Miya",
+   "roles": [
+    "Marksman"
+   ],
+   "lanes": [
+    "gold"
+   ],
+   "damageType": "physical",
+   "damageProfile": "sustained",
+   "cc": 1,
+   "healing": 0,
+   "shields": 0,
+   "mobility": 1,
+   "tankiness": 0,
+   "basicAttacker": true,
+   "builds": {
+    "gold": "mm_atkspd"
+   },
+   "strongAgainst": [
+    "Layla",
+    "Moskov",
+    "Irithel"
+   ],
+   "weakAgainst": [
+    "Saber",
+    "Natalia",
+    "Lancelot",
+    "Hayabusa"
+   ],
+   "synergy": [
+    "Angela",
+    "Mathilda",
+    "Diggie",
+    "Estes"
+   ],
+   "profileSource": "curated"
+  },
+  {
+   "name": "Balmond",
+   "roles": [
+    "Fighter"
+   ],
+   "lanes": [
+    "jungle",
+    "exp"
+   ],
+   "damageType": "physical",
+   "damageProfile": "sustained",
+   "cc": 1,
+   "healing": 1,
+   "shields": 0,
+   "mobility": 2,
+   "tankiness": 2,
+   "basicAttacker": false,
+   "builds": {
+    "jungle": "fighter_jungle",
+    "exp": "fighter_exp"
+   },
+   "strongAgainst": [
+    "Fanny",
+    "Ling",
+    "Lancelot"
+   ],
+   "weakAgainst": [
+    "Baxia",
+    "Esmeralda",
+    "Dyrroth",
+    "Karrie"
+   ],
+   "synergy": [
+    "Tigreal",
+    "Atlas",
+    "Mathilda"
+   ],
+   "profileSource": "curated"
+  },
+  {
+   "name": "Saber",
+   "roles": [
+    "Assassin"
+   ],
+   "lanes": [
+    "jungle",
+    "roam"
+   ],
+   "damageType": "physical",
+   "damageProfile": "burst",
+   "cc": 2,
+   "healing": 0,
+   "shields": 0,
+   "mobility": 2,
+   "tankiness": 0,
+   "basicAttacker": false,
+   "builds": {
+    "*": "assassin_phys"
+   },
+   "strongAgainst": [
+    "Miya",
+    "Layla",
+    "Eudora",
+    "Pharsa"
+   ],
+   "weakAgainst": [
+    "Kaja",
+    "Franco",
+    "Ruby",
+    "Martis"
+   ],
+   "synergy": [
+    "Tigreal",
+    "Atlas",
+    "Kaja"
+   ],
+   "profileSource": "curated"
+  },
+  {
+   "name": "Alice",
+   "roles": [
+    "Mage",
+    "Tank"
+   ],
+   "lanes": [
+    "exp",
+    "roam",
+    "jungle"
+   ],
+   "damageType": "magic",
+   "damageProfile": "sustained",
+   "cc": 2,
+   "healing": 2,
+   "shields": 0,
+   "mobility": 2,
+   "tankiness": 2,
+   "basicAttacker": false,
+   "builds": {
+    "exp": "mage_sustain",
+    "roam": "tank_roam",
+    "jungle": "mage_sustain"
+   },
+   "strongAgainst": [
+    "Dyrroth",
+    "Thamuz",
+    "Esmeralda"
+   ],
+   "weakAgainst": [
+    "Baxia",
+    "Karrie",
+    "Valir",
+    "Kaja"
+   ],
+   "synergy": [
+    "Tigreal",
+    "Atlas",
+    "Franco"
+   ],
+   "profileSource": "curated"
+  },
+  {
+   "name": "Nana",
+   "roles": [
+    "Mage",
+    "Support"
+   ],
+   "lanes": [
+    "mid",
+    "roam"
+   ],
+   "damageType": "magic",
+   "damageProfile": "burst",
+   "cc": 3,
+   "healing": 0,
+   "shields": 0,
+   "mobility": 1,
+   "tankiness": 0,
+   "basicAttacker": false,
+   "builds": {
+    "*": "mage_poke"
+   },
+   "strongAgainst": [
+    "Lancelot",
+    "Gusion",
+    "Fanny"
+   ],
+   "weakAgainst": [
+    "Valir",
+    "Kagura",
+    "Ling"
+   ],
+   "synergy": [
+    "Selena",
+    "Eudora",
+    "Aurora"
+   ],
+   "profileSource": "curated"
+  },
+  {
+   "name": "Tigreal",
+   "roles": [
+    "Tank",
+    "Support"
+   ],
+   "lanes": [
+    "roam"
+   ],
+   "damageType": "physical",
+   "damageProfile": "mixed",
+   "cc": 3,
+   "healing": 0,
+   "shields": 0,
+   "mobility": 2,
+   "tankiness": 3,
+   "basicAttacker": false,
+   "builds": {
+    "*": "tank_roam"
+   },
+   "strongAgainst": [
+    "Ling",
+    "Fanny",
+    "Lancelot",
+    "Wanwan"
+   ],
+   "weakAgainst": [
+    "Diggie",
+    "Kaja",
+    "Valir",
+    "Lylia"
+   ],
+   "synergy": [
+    "Pharsa",
+    "Odette",
+    "Vale",
+    "Yve"
+   ],
+   "profileSource": "curated"
+  },
+  {
+   "name": "Alucard",
+   "roles": [
+    "Fighter",
+    "Assassin"
+   ],
+   "lanes": [
+    "jungle",
+    "exp"
+   ],
+   "damageType": "physical",
+   "damageProfile": "sustained",
+   "cc": 1,
+   "healing": 2,
+   "shields": 0,
+   "mobility": 2,
+   "tankiness": 1,
+   "basicAttacker": false,
+   "builds": {
+    "jungle": "fighter_jungle",
+    "exp": "fighter_exp"
+   },
+   "strongAgainst": [
+    "Layla",
+    "Miya",
+    "Eudora"
+   ],
+   "weakAgainst": [
+    "Baxia",
+    "Dyrroth",
+    "Kaja",
+    "Esmeralda"
+   ],
+   "synergy": [
+    "Angela",
+    "Estes",
+    "Tigreal"
+   ],
+   "profileSource": "curated"
+  },
+  {
+   "name": "Karina",
+   "roles": [
+    "Assassin",
+    "Mage"
+   ],
+   "lanes": [
+    "jungle",
+    "mid"
+   ],
+   "damageType": "magic",
+   "damageProfile": "burst",
+   "cc": 0,
+   "healing": 0,
+   "shields": 0,
+   "mobility": 2,
+   "tankiness": 0,
+   "basicAttacker": false,
+   "builds": {
+    "*": "mage_burst"
+   },
+   "strongAgainst": [
+    "Layla",
+    "Miya",
+    "Lancelot",
+    "Gusion"
+   ],
+   "weakAgainst": [
+    "Kaja",
+    "Ruby",
+    "Chou",
+    "Franco"
+   ],
+   "synergy": [
+    "Tigreal",
+    "Atlas",
+    "Kaja"
+   ],
+   "profileSource": "curated"
+  },
+  {
+   "name": "Akai",
+   "roles": [
+    "Tank",
+    "Support"
+   ],
+   "lanes": [
+    "roam",
+    "jungle",
+    "exp"
+   ],
+   "damageType": "physical",
+   "damageProfile": "mixed",
+   "cc": 3,
+   "healing": 0,
+   "shields": 0,
+   "mobility": 2,
+   "tankiness": 3,
+   "basicAttacker": false,
+   "builds": {
+    "*": "tank_roam"
+   },
+   "strongAgainst": [
+    "Wanwan",
+    "Beatrix",
+    "Ling"
+   ],
+   "weakAgainst": [
+    "Diggie",
+    "Kaja",
+    "Valir"
+   ],
+   "synergy": [
+    "Pharsa",
+    "Odette",
+    "Vale",
+    "Yve"
+   ],
+   "profileSource": "curated"
+  },
+  {
+   "name": "Franco",
+   "roles": [
+    "Tank",
+    "Support"
+   ],
+   "lanes": [
+    "roam"
+   ],
+   "damageType": "physical",
+   "damageProfile": "mixed",
+   "cc": 3,
+   "healing": 0,
+   "shields": 0,
+   "mobility": 1,
+   "tankiness": 3,
+   "basicAttacker": false,
+   "builds": {
+    "*": "tank_roam"
+   },
+   "strongAgainst": [
+    "Ling",
+    "Lancelot",
+    "Fanny",
+    "Hayabusa"
+   ],
+   "weakAgainst": [
+    "Diggie",
+    "Valir",
+    "Lylia",
+    "Kaja"
+   ],
+   "synergy": [
+    "Saber",
+    "Karina",
+    "Gusion",
+    "Chou"
+   ],
+   "profileSource": "curated"
+  },
+  {
+   "name": "Bane",
+   "roles": [
+    "Fighter",
+    "Mage"
+   ],
+   "lanes": [
+    "exp",
+    "jungle",
+    "mid"
+   ],
+   "damageType": "mixed",
+   "damageProfile": "mixed",
+   "cc": 1,
+   "healing": 0,
+   "shields": 0,
+   "mobility": 1,
+   "tankiness": 1,
+   "basicAttacker": false,
+   "builds": {
+    "exp": "fighter_exp",
+    "jungle": "fighter_jungle",
+    "mid": "mage_poke"
+   },
+   "strongAgainst": [
+    "Layla",
+    "Miya",
+    "Nana"
+   ],
+   "weakAgainst": [
+    "Lancelot",
+    "Ling",
+    "Hayabusa"
+   ],
+   "synergy": [
+    "Atlas",
+    "Tigreal",
+    "Mathilda"
+   ],
+   "profileSource": "curated"
+  },
+  {
+   "name": "Bruno",
+   "roles": [
+    "Marksman"
+   ],
+   "lanes": [
+    "gold"
+   ],
+   "damageType": "physical",
+   "damageProfile": "burst",
+   "cc": 1,
+   "healing": 0,
+   "shields": 0,
+   "mobility": 1,
+   "tankiness": 0,
+   "basicAttacker": true,
+   "builds": {
+    "gold": "mm_crit"
+   },
+   "strongAgainst": [
+    "Layla",
+    "Miya",
+    "Irithel"
+   ],
+   "weakAgainst": [
+    "Natalia",
+    "Saber",
+    "Hayabusa"
+   ],
+   "synergy": [
+    "Estes",
+    "Angela",
+    "Diggie"
+   ],
+   "profileSource": "curated"
+  },
+  {
+   "name": "Clint",
+   "roles": [
+    "Marksman"
+   ],
+   "lanes": [
+    "gold"
+   ],
+   "damageType": "physical",
+   "damageProfile": "mixed",
+   "cc": 1,
+   "healing": 0,
+   "shields": 0,
+   "mobility": 2,
+   "tankiness": 0,
+   "basicAttacker": true,
+   "builds": {
+    "gold": "mm_phys_burst"
+   },
+   "strongAgainst": [
+    "Wanwan",
+    "Miya",
+    "Layla"
+   ],
+   "weakAgainst": [
+    "Natalia",
+    "Saber",
+    "Lancelot",
+    "Helcurt"
+   ],
+   "synergy": [
+    "Angela",
+    "Tigreal",
+    "Atlas"
+   ],
+   "profileSource": "curated"
+  },
+  {
+   "name": "Rafaela",
+   "roles": [
+    "Support"
+   ],
+   "lanes": [
+    "roam"
+   ],
+   "damageType": "magic",
+   "damageProfile": "sustained",
+   "cc": 1,
+   "healing": 2,
+   "shields": 0,
+   "mobility": 1,
+   "tankiness": 0,
+   "basicAttacker": false,
+   "builds": {
+    "*": "support_heal"
+   },
+   "strongAgainst": [
+    "Kagura",
+    "Chang'e",
+    "Pharsa"
+   ],
+   "weakAgainst": [
+    "Saber",
+    "Natalia",
+    "Helcurt",
+    "Franco"
+   ],
+   "synergy": [
+    "Miya",
+    "Layla",
+    "Claude",
+    "Bruno"
+   ],
+   "profileSource": "curated"
+  },
+  {
+   "name": "Eudora",
+   "roles": [
+    "Mage"
+   ],
+   "lanes": [
+    "mid",
+    "roam"
+   ],
+   "damageType": "magic",
+   "damageProfile": "burst",
+   "cc": 2,
+   "healing": 0,
+   "shields": 0,
+   "mobility": 1,
+   "tankiness": 0,
+   "basicAttacker": false,
+   "builds": {
+    "*": "mage_burst"
+   },
+   "strongAgainst": [
+    "Lancelot",
+    "Gusion",
+    "Fanny",
+    "Layla"
+   ],
+   "weakAgainst": [
+    "Valir",
+    "Kaja",
+    "Ling",
+    "Diggie"
+   ],
+   "synergy": [
+    "Tigreal",
+    "Atlas",
+    "Kaja"
+   ],
+   "profileSource": "curated"
+  },
+  {
+   "name": "Zilong",
+   "roles": [
+    "Fighter",
+    "Assassin"
+   ],
+   "lanes": [
+    "exp",
+    "jungle"
+   ],
+   "damageType": "physical",
+   "damageProfile": "sustained",
+   "cc": 1,
+   "healing": 1,
+   "shields": 0,
+   "mobility": 2,
+   "tankiness": 0,
+   "basicAttacker": true,
+   "builds": {
+    "exp": "fighter_burst",
+    "jungle": "fighter_jungle"
+   },
+   "strongAgainst": [
+    "Layla",
+    "Miya",
+    "Eudora"
+   ],
+   "weakAgainst": [
+    "Chou",
+    "Kaja",
+    "Ruby",
+    "Franco"
+   ],
+   "synergy": [
+    "Angela",
+    "Estes",
+    "Mathilda"
+   ],
+   "profileSource": "curated"
+  },
+  {
+   "name": "Fanny",
+   "roles": [
+    "Assassin"
+   ],
+   "lanes": [
+    "jungle"
+   ],
+   "damageType": "physical",
+   "damageProfile": "burst",
+   "cc": 0,
+   "healing": 0,
+   "shields": 0,
+   "mobility": 3,
+   "tankiness": 0,
+   "basicAttacker": false,
+   "builds": {
+    "*": "assassin_phys"
+   },
+   "strongAgainst": [
+    "Pharsa",
+    "Odette",
+    "Lunox",
+    "Kimmy"
+   ],
+   "weakAgainst": [
+    "Kaja",
+    "Saber",
+    "Khufra",
+    "Franco",
+    "Chou"
+   ],
+   "synergy": [
+    "Tigreal",
+    "Atlas",
+    "Mathilda"
+   ],
+   "profileSource": "curated"
+  },
+  {
+   "name": "Layla",
+   "roles": [
+    "Marksman"
+   ],
+   "lanes": [
+    "gold"
+   ],
+   "damageType": "physical",
+   "damageProfile": "sustained",
+   "cc": 0,
+   "healing": 0,
+   "shields": 0,
+   "mobility": 0,
+   "tankiness": 0,
+   "basicAttacker": true,
+   "builds": {
+    "gold": "mm_crit"
+   },
+   "strongAgainst": [
+    "Miya",
+    "Bruno",
+    "Irithel"
+   ],
+   "weakAgainst": [
+    "Saber",
+    "Natalia",
+    "Lancelot",
+    "Gusion"
+   ],
+   "synergy": [
+    "Angela",
+    "Diggie",
+    "Estes",
+    "Mathilda"
+   ],
+   "profileSource": "curated"
+  },
+  {
+   "name": "Minotaur",
+   "roles": [
+    "Tank",
+    "Support"
+   ],
+   "lanes": [
+    "roam"
+   ],
+   "damageType": "physical",
+   "damageProfile": "mixed",
+   "cc": 3,
+   "healing": 1,
+   "shields": 0,
+   "mobility": 2,
+   "tankiness": 3,
+   "basicAttacker": false,
+   "builds": {
+    "*": "tank_roam"
+   },
+   "strongAgainst": [
+    "Ling",
+    "Wanwan",
+    "Gusion",
+    "Benedetta"
+   ],
+   "weakAgainst": [
+    "Diggie",
+    "Valir",
+    "Kaja",
+    "Esmeralda"
+   ],
+   "synergy": [
+    "Pharsa",
+    "Odette",
+    "Vale",
+    "Yve",
+    "Kagura"
+   ],
+   "profileSource": "curated"
+  },
+  {
+   "name": "Lolita",
+   "roles": [
+    "Tank",
+    "Support"
+   ],
+   "lanes": [
+    "roam"
+   ],
+   "damageType": "physical",
+   "damageProfile": "mixed",
+   "cc": 3,
+   "healing": 0,
+   "shields": 1,
+   "mobility": 2,
+   "tankiness": 3,
+   "basicAttacker": false,
+   "builds": {
+    "*": "tank_roam"
+   },
+   "strongAgainst": [
+    "Pharsa",
+    "Kimmy",
+    "Beatrix",
+    "Granger"
+   ],
+   "weakAgainst": [
+    "Valir",
+    "Kaja",
+    "Lunox",
+    "Esmeralda"
+   ],
+   "synergy": [
+    "Gusion",
+    "Ling",
+    "Karina"
+   ],
+   "profileSource": "curated"
+  },
+  {
+   "name": "Hayabusa",
+   "roles": [
+    "Assassin"
+   ],
+   "lanes": [
+    "jungle"
+   ],
+   "damageType": "physical",
+   "damageProfile": "burst",
+   "cc": 1,
+   "healing": 0,
+   "shields": 0,
+   "mobility": 3,
+   "tankiness": 0,
+   "basicAttacker": false,
+   "builds": {
+    "*": "assassin_phys"
+   },
+   "strongAgainst": [
+    "Pharsa",
+    "Miya",
+    "Layla",
+    "Beatrix"
+   ],
+   "weakAgainst": [
+    "Kaja",
+    "Chou",
+    "Franco",
+    "Khufra"
+   ],
+   "synergy": [
+    "Tigreal",
+    "Atlas",
+    "Mathilda"
+   ],
+   "profileSource": "curated"
+  },
+  {
+   "name": "Freya",
+   "roles": [
+    "Fighter"
+   ],
+   "lanes": [
+    "exp",
+    "jungle"
+   ],
+   "damageType": "physical",
+   "damageProfile": "sustained",
+   "cc": 1,
+   "healing": 0,
+   "shields": 1,
+   "mobility": 2,
+   "tankiness": 1,
+   "basicAttacker": true,
+   "builds": {
+    "exp": "fighter_exp",
+    "jungle": "fighter_jungle"
+   },
+   "strongAgainst": [
+    "Lancelot",
+    "Layla",
+    "Miya"
+   ],
+   "weakAgainst": [
+    "Esmeralda",
+    "Dyrroth",
+    "Baxia"
+   ],
+   "synergy": [
+    "Angela",
+    "Estes",
+    "Floryn"
+   ],
+   "profileSource": "curated"
+  },
+  {
+   "name": "Gord",
+   "roles": [
+    "Mage"
+   ],
+   "lanes": [
+    "mid"
+   ],
+   "damageType": "magic",
+   "damageProfile": "sustained",
+   "cc": 1,
+   "healing": 0,
+   "shields": 0,
+   "mobility": 0,
+   "tankiness": 0,
+   "basicAttacker": false,
+   "builds": {
+    "*": "mage_poke"
+   },
+   "strongAgainst": [
+    "Tigreal",
+    "Gatotkaca",
+    "Hylos"
+   ],
+   "weakAgainst": [
+    "Lancelot",
+    "Gusion",
+    "Saber",
+    "Natalia"
+   ],
+   "synergy": [
+    "Tigreal",
+    "Atlas",
+    "Franco"
+   ],
+   "profileSource": "curated"
+  },
+  {
+   "name": "Natalia",
+   "roles": [
+    "Assassin"
+   ],
+   "lanes": [
+    "roam",
+    "jungle"
+   ],
+   "damageType": "physical",
+   "damageProfile": "burst",
+   "cc": 1,
+   "healing": 0,
+   "shields": 0,
+   "mobility": 3,
+   "tankiness": 0,
+   "basicAttacker": false,
+   "builds": {
+    "*": "assassin_phys"
+   },
+   "strongAgainst": [
+    "Pharsa",
+    "Miya",
+    "Layla",
+    "Beatrix"
+   ],
+   "weakAgainst": [
+    "Kaja",
+    "Chou",
+    "Franco",
+    "Diggie"
+   ],
+   "synergy": [
+    "Tigreal",
+    "Atlas"
+   ],
+   "profileSource": "curated"
+  },
+  {
+   "name": "Kagura",
+   "roles": [
+    "Mage"
+   ],
+   "lanes": [
+    "mid"
+   ],
+   "damageType": "magic",
+   "damageProfile": "burst",
+   "cc": 2,
+   "healing": 0,
+   "shields": 1,
+   "mobility": 2,
+   "tankiness": 0,
+   "basicAttacker": false,
+   "builds": {
+    "*": "mage_burst"
+   },
+   "strongAgainst": [
+    "Lancelot",
+    "Gusion",
+    "Kagura",
+    "Nana"
+   ],
+   "weakAgainst": [
+    "Saber",
+    "Natalia",
+    "Hayabusa",
+    "Kaja"
+   ],
+   "synergy": [
+    "Tigreal",
+    "Atlas",
+    "Kaja",
+    "Ruby"
+   ],
+   "profileSource": "curated"
+  },
+  {
+   "name": "Chou",
+   "roles": [
+    "Fighter",
+    "Tank"
+   ],
+   "lanes": [
+    "exp",
+    "roam"
+   ],
+   "damageType": "physical",
+   "damageProfile": "burst",
+   "cc": 3,
+   "healing": 0,
+   "shields": 0,
+   "mobility": 2,
+   "tankiness": 1,
+   "basicAttacker": false,
+   "builds": {
+    "exp": "fighter_burst",
+    "roam": "tank_roam"
+   },
+   "strongAgainst": [
+    "Lancelot",
+    "Fanny",
+    "Ling",
+    "Gusion",
+    "Wanwan"
+   ],
+   "weakAgainst": [
+    "Kaja",
+    "Valir",
+    "Ruby",
+    "Diggie"
+   ],
+   "synergy": [
+    "Pharsa",
+    "Odette",
+    "Lunox",
+    "Kagura"
+   ],
+   "profileSource": "curated"
+  },
+  {
+   "name": "Sun",
+   "roles": [
+    "Fighter"
+   ],
+   "lanes": [
+    "exp",
+    "jungle"
+   ],
+   "damageType": "physical",
+   "damageProfile": "sustained",
+   "cc": 0,
+   "healing": 0,
+   "shields": 0,
+   "mobility": 1,
+   "tankiness": 1,
+   "basicAttacker": true,
+   "builds": {
+    "exp": "fighter_exp",
+    "jungle": "fighter_jungle"
+   },
+   "strongAgainst": [
+    "Layla",
+    "Miya",
+    "Lancelot"
+   ],
+   "weakAgainst": [
+    "Esmeralda",
+    "Dyrroth",
+    "Baxia"
+   ],
+   "synergy": [
+    "Angela",
+    "Mathilda",
+    "Estes"
+   ],
+   "profileSource": "curated"
+  },
+  {
+   "name": "Alpha",
+   "roles": [
+    "Fighter"
+   ],
+   "lanes": [
+    "exp",
+    "jungle"
+   ],
+   "damageType": "physical",
+   "damageProfile": "mixed",
+   "cc": 2,
+   "healing": 1,
+   "shields": 0,
+   "mobility": 2,
+   "tankiness": 1,
+   "basicAttacker": false,
+   "builds": {
+    "exp": "fighter_exp",
+    "jungle": "fighter_jungle"
+   },
+   "strongAgainst": [
+    "Layla",
+    "Miya",
+    "Eudora"
+   ],
+   "weakAgainst": [
+    "Esmeralda",
+    "Dyrroth",
+    "Baxia",
+    "Ruby"
+   ],
+   "synergy": [
+    "Angela",
+    "Estes",
+    "Floryn"
+   ],
+   "profileSource": "curated"
+  },
+  {
+   "name": "Ruby",
+   "roles": [
+    "Fighter",
+    "Tank"
+   ],
+   "lanes": [
+    "exp",
+    "roam"
+   ],
+   "damageType": "physical",
+   "damageProfile": "sustained",
+   "cc": 2,
+   "healing": 2,
+   "shields": 0,
+   "mobility": 2,
+   "tankiness": 2,
+   "basicAttacker": false,
+   "builds": {
+    "exp": "fighter_sustain",
+    "roam": "tank_roam"
+   },
+   "strongAgainst": [
+    "Lancelot",
+    "Ling",
+    "Gusion",
+    "Fanny",
+    "Benedetta"
+   ],
+   "weakAgainst": [
+    "Baxia",
+    "Esmeralda",
+    "Karrie",
+    "Dyrroth"
+   ],
+   "synergy": [
+    "Angela",
+    "Estes",
+    "Floryn"
+   ],
+   "profileSource": "curated"
+  },
+  {
+   "name": "Yi Sun-shin",
+   "roles": [
+    "Assassin",
+    "Marksman"
+   ],
+   "lanes": [
+    "jungle",
+    "gold"
+   ],
+   "damageType": "physical",
+   "damageProfile": "mixed",
+   "cc": 1,
+   "healing": 0,
+   "shields": 0,
+   "mobility": 2,
+   "tankiness": 0,
+   "basicAttacker": true,
+   "builds": {
+    "jungle": "fighter_jungle",
+    "gold": "mm_phys_burst"
+   },
+   "strongAgainst": [
+    "Miya",
+    "Layla",
+    "Pharsa"
+   ],
+   "weakAgainst": [
+    "Saber",
+    "Natalia",
+    "Chou",
+    "Kaja"
+   ],
+   "synergy": [
+    "Tigreal",
+    "Atlas",
+    "Mathilda"
+   ],
+   "profileSource": "curated"
+  },
+  {
+   "name": "Moskov",
+   "roles": [
+    "Marksman"
+   ],
+   "lanes": [
+    "gold"
+   ],
+   "damageType": "physical",
+   "damageProfile": "sustained",
+   "cc": 1,
+   "healing": 0,
+   "shields": 0,
+   "mobility": 1,
+   "tankiness": 0,
+   "basicAttacker": true,
+   "builds": {
+    "gold": "mm_atkspd"
+   },
+   "strongAgainst": [
+    "Miya",
+    "Layla",
+    "Wanwan"
+   ],
+   "weakAgainst": [
+    "Natalia",
+    "Saber",
+    "Lancelot",
+    "Hayabusa"
+   ],
+   "synergy": [
+    "Tigreal",
+    "Atlas",
+    "Angela",
+    "Estes"
+   ],
+   "profileSource": "curated"
+  },
+  {
+   "name": "Johnson",
+   "roles": [
+    "Tank",
+    "Support"
+   ],
+   "lanes": [
+    "roam"
+   ],
+   "damageType": "magic",
+   "damageProfile": "burst",
+   "cc": 3,
+   "healing": 0,
+   "shields": 1,
+   "mobility": 3,
+   "tankiness": 3,
+   "basicAttacker": false,
+   "builds": {
+    "*": "tank_roam"
+   },
+   "strongAgainst": [
+    "Pharsa",
+    "Beatrix",
+    "Granger",
+    "Kimmy"
+   ],
+   "weakAgainst": [
+    "Kaja",
+    "Franco",
+    "Chou"
+   ],
+   "synergy": [
+    "Odette",
+    "Kagura",
+    "Vale",
+    "Pharsa"
+   ],
+   "profileSource": "curated"
+  },
+  {
+   "name": "Cyclops",
+   "roles": [
+    "Mage"
+   ],
+   "lanes": [
+    "mid",
+    "jungle"
+   ],
+   "damageType": "magic",
+   "damageProfile": "burst",
+   "cc": 2,
+   "healing": 0,
+   "shields": 0,
+   "mobility": 1,
+   "tankiness": 0,
+   "basicAttacker": false,
+   "builds": {
+    "*": "mage_burst"
+   },
+   "strongAgainst": [
+    "Gusion",
+    "Lancelot",
+    "Ling",
+    "Fanny"
+   ],
+   "weakAgainst": [
+    "Valir",
+    "Kaja",
+    "Chou"
+   ],
+   "synergy": [
+    "Tigreal",
+    "Atlas"
+   ],
+   "profileSource": "curated"
+  },
+  {
+   "name": "Estes",
+   "roles": [
+    "Support"
+   ],
+   "lanes": [
+    "roam"
+   ],
+   "damageType": "magic",
+   "damageProfile": "sustained",
+   "cc": 1,
+   "healing": 3,
+   "shields": 0,
+   "mobility": 0,
+   "tankiness": 0,
+   "basicAttacker": false,
+   "builds": {
+    "*": "support_heal"
+   },
+   "strongAgainst": [
+    "Pharsa",
+    "Kagura",
+    "Lunox"
+   ],
+   "weakAgainst": [
+    "Saber",
+    "Natalia",
+    "Baxia",
+    "Helcurt"
+   ],
+   "synergy": [
+    "Miya",
+    "Layla",
+    "Alucard",
+    "Moskov",
+    "Irithel"
+   ],
+   "profileSource": "curated"
+  },
+  {
+   "name": "Hilda",
+   "roles": [
+    "Fighter",
+    "Tank"
+   ],
+   "lanes": [
+    "exp",
+    "roam"
+   ],
+   "damageType": "physical",
+   "damageProfile": "mixed",
+   "cc": 1,
+   "healing": 1,
+   "shields": 0,
+   "mobility": 1,
+   "tankiness": 2,
+   "basicAttacker": false,
+   "builds": {
+    "exp": "fighter_exp",
+    "roam": "tank_roam"
+   },
+   "strongAgainst": [
+    "Layla",
+    "Miya",
+    "Lancelot"
+   ],
+   "weakAgainst": [
+    "Esmeralda",
+    "Dyrroth",
+    "Baxia"
+   ],
+   "synergy": [
+    "Angela",
+    "Estes",
+    "Floryn"
+   ],
+   "profileSource": "curated"
+  },
+  {
+   "name": "Aurora",
+   "roles": [
+    "Mage"
+   ],
+   "lanes": [
+    "mid"
+   ],
+   "damageType": "magic",
+   "damageProfile": "burst",
+   "cc": 3,
+   "healing": 0,
+   "shields": 0,
+   "mobility": 0,
+   "tankiness": 0,
+   "basicAttacker": false,
+   "builds": {
+    "*": "mage_burst"
+   },
+   "strongAgainst": [
+    "Tigreal",
+    "Fanny",
+    "Ling"
+   ],
+   "weakAgainst": [
+    "Natalia",
+    "Saber",
+    "Lancelot"
+   ],
+   "synergy": [
+    "Tigreal",
+    "Atlas",
+    "Franco"
+   ],
+   "profileSource": "curated"
+  },
+  {
+   "name": "Lapu-Lapu",
+   "roles": [
+    "Fighter"
+   ],
+   "lanes": [
+    "exp"
+   ],
+   "damageType": "physical",
+   "damageProfile": "burst",
+   "cc": 1,
+   "healing": 0,
+   "shields": 1,
+   "mobility": 2,
+   "tankiness": 1,
+   "basicAttacker": false,
+   "builds": {
+    "exp": "fighter_burst"
+   },
+   "strongAgainst": [
+    "Layla",
+    "Miya",
+    "Lancelot"
+   ],
+   "weakAgainst": [
+    "Esmeralda",
+    "Dyrroth",
+    "Baxia"
+   ],
+   "synergy": [
+    "Angela",
+    "Estes",
+    "Floryn"
+   ],
+   "profileSource": "curated"
+  },
+  {
+   "name": "Vexana",
+   "roles": [
+    "Mage"
+   ],
+   "lanes": [
+    "mid"
+   ],
+   "damageType": "magic",
+   "damageProfile": "burst",
+   "cc": 2,
+   "healing": 0,
+   "shields": 0,
+   "mobility": 0,
+   "tankiness": 0,
+   "basicAttacker": false,
+   "builds": {
+    "*": "mage_burst"
+   },
+   "strongAgainst": [
+    "Chou",
+    "Fanny",
+    "Ling"
+   ],
+   "weakAgainst": [
+    "Natalia",
+    "Saber",
+    "Lancelot",
+    "Hayabusa"
+   ],
+   "synergy": [
+    "Tigreal",
+    "Atlas",
+    "Franco"
+   ],
+   "profileSource": "curated"
+  },
+  {
+   "name": "Roger",
+   "roles": [
+    "Fighter",
+    "Marksman"
+   ],
+   "lanes": [
+    "jungle",
+    "gold"
+   ],
+   "damageType": "physical",
+   "damageProfile": "burst",
+   "cc": 1,
+   "healing": 0,
+   "shields": 0,
+   "mobility": 2,
+   "tankiness": 0,
+   "basicAttacker": true,
+   "builds": {
+    "jungle": "fighter_jungle",
+    "gold": "mm_crit"
+   },
+   "strongAgainst": [
+    "Layla",
+    "Miya",
+    "Irithel"
+   ],
+   "weakAgainst": [
+    "Chou",
+    "Kaja",
+    "Franco",
+    "Valir"
+   ],
+   "synergy": [
+    "Tigreal",
+    "Atlas",
+    "Mathilda"
+   ],
+   "profileSource": "curated"
+  },
+  {
+   "name": "Karrie",
+   "roles": [
+    "Marksman"
+   ],
+   "lanes": [
+    "gold"
+   ],
+   "damageType": "true",
+   "damageProfile": "sustained",
+   "cc": 0,
+   "healing": 0,
+   "shields": 0,
+   "mobility": 1,
+   "tankiness": 0,
+   "basicAttacker": true,
+   "builds": {
+    "gold": "mm_atkspd"
+   },
+   "strongAgainst": [
+    "Uranus",
+    "Esmeralda",
+    "Baxia",
+    "Fredrinn",
+    "Gloo"
+   ],
+   "weakAgainst": [
+    "Natalia",
+    "Saber",
+    "Lancelot",
+    "Hayabusa"
+   ],
+   "synergy": [
+    "Tigreal",
+    "Atlas",
+    "Angela",
+    "Estes"
+   ],
+   "profileSource": "curated"
+  },
+  {
+   "name": "Gatotkaca",
+   "roles": [
+    "Tank",
+    "Fighter"
+   ],
+   "lanes": [
+    "exp",
+    "roam"
+   ],
+   "damageType": "physical",
+   "damageProfile": "mixed",
+   "cc": 3,
+   "healing": 0,
+   "shields": 0,
+   "mobility": 1,
+   "tankiness": 3,
+   "basicAttacker": false,
+   "builds": {
+    "exp": "fighter_exp",
+    "roam": "tank_roam"
+   },
+   "strongAgainst": [
+    "Fanny",
+    "Ling",
+    "Lancelot",
+    "Gusion"
+   ],
+   "weakAgainst": [
+    "Diggie",
+    "Kaja",
+    "Valir"
+   ],
+   "synergy": [
+    "Pharsa",
+    "Odette",
+    "Kagura"
+   ],
+   "profileSource": "role-default"
+  },
+  {
+   "name": "Harley",
+   "roles": [
+    "Assassin",
+    "Mage"
+   ],
+   "lanes": [
+    "jungle",
+    "mid"
+   ],
+   "damageType": "magic",
+   "damageProfile": "burst",
+   "cc": 0,
+   "healing": 0,
+   "shields": 0,
+   "mobility": 3,
+   "tankiness": 0,
+   "basicAttacker": false,
+   "builds": {
+    "*": "mage_burst"
+   },
+   "strongAgainst": [
+    "Layla",
+    "Miya",
+    "Pharsa"
+   ],
+   "weakAgainst": [
+    "Kaja",
+    "Ruby",
+    "Chou",
+    "Franco"
+   ],
+   "synergy": [
+    "Tigreal",
+    "Atlas"
+   ],
+   "profileSource": "curated"
+  },
+  {
+   "name": "Irithel",
+   "roles": [
+    "Marksman"
+   ],
+   "lanes": [
+    "gold"
+   ],
+   "damageType": "physical",
+   "damageProfile": "sustained",
+   "cc": 1,
+   "healing": 0,
+   "shields": 0,
+   "mobility": 1,
+   "tankiness": 0,
+   "basicAttacker": true,
+   "builds": {
+    "gold": "mm_crit"
+   },
+   "strongAgainst": [
+    "Miya",
+    "Layla",
+    "Clint"
+   ],
+   "weakAgainst": [
+    "Natalia",
+    "Saber",
+    "Lancelot"
+   ],
+   "synergy": [
+    "Estes",
+    "Angela",
+    "Rafaela"
+   ],
+   "profileSource": "curated"
+  },
+  {
+   "name": "Grock",
+   "roles": [
+    "Tank",
+    "Support"
+   ],
+   "lanes": [
+    "roam",
+    "exp"
+   ],
+   "damageType": "physical",
+   "damageProfile": "burst",
+   "cc": 3,
+   "healing": 0,
+   "shields": 0,
+   "mobility": 1,
+   "tankiness": 3,
+   "basicAttacker": false,
+   "builds": {
+    "*": "tank_roam"
+   },
+   "strongAgainst": [
+    "Ling",
+    "Fanny",
+    "Lancelot",
+    "Wanwan"
+   ],
+   "weakAgainst": [
+    "Kaja",
+    "Diggie",
+    "Valir"
+   ],
+   "synergy": [
+    "Pharsa",
+    "Odette",
+    "Kagura"
+   ],
+   "profileSource": "curated"
+  },
+  {
+   "name": "Argus",
+   "roles": [
+    "Fighter"
+   ],
+   "lanes": [
+    "exp"
+   ],
+   "damageType": "physical",
+   "damageProfile": "sustained",
+   "cc": 0,
+   "healing": 0,
+   "shields": 0,
+   "mobility": 2,
+   "tankiness": 0,
+   "basicAttacker": true,
+   "builds": {
+    "exp": "argus"
+   },
+   "strongAgainst": [
+    "Layla",
+    "Miya",
+    "Eudora",
+    "Valir"
+   ],
+   "weakAgainst": [
+    "Kaja",
+    "Franco",
+    "Chou",
+    "Diggie"
+   ],
+   "synergy": [
+    "Angela",
+    "Estes",
+    "Floryn",
+    "Rafaela"
+   ],
+   "profileSource": "curated"
+  },
+  {
+   "name": "Odette",
+   "roles": [
+    "Mage"
+   ],
+   "lanes": [
+    "mid"
+   ],
+   "damageType": "magic",
+   "damageProfile": "burst",
+   "cc": 2,
+   "healing": 0,
+   "shields": 0,
+   "mobility": 0,
+   "tankiness": 0,
+   "basicAttacker": false,
+   "builds": {
+    "*": "mage_burst"
+   },
+   "strongAgainst": [
+    "Fanny",
+    "Lancelot",
+    "Ling",
+    "Hayabusa"
+   ],
+   "weakAgainst": [
+    "Kaja",
+    "Ruby",
+    "Chou",
+    "Franco"
+   ],
+   "synergy": [
+    "Tigreal",
+    "Atlas",
+    "Johnson",
+    "Minotaur"
+   ],
+   "profileSource": "curated"
+  },
+  {
+   "name": "Lancelot",
+   "roles": [
+    "Assassin"
+   ],
+   "lanes": [
+    "jungle"
+   ],
+   "damageType": "physical",
+   "damageProfile": "burst",
+   "cc": 0,
+   "healing": 0,
+   "shields": 0,
+   "mobility": 3,
+   "tankiness": 0,
+   "basicAttacker": false,
+   "builds": {
+    "*": "assassin_phys"
+   },
+   "strongAgainst": [
+    "Pharsa",
+    "Miya",
+    "Layla",
+    "Beatrix",
+    "Karrie"
+   ],
+   "weakAgainst": [
+    "Kaja",
+    "Chou",
+    "Khufra",
+    "Franco"
+   ],
+   "synergy": [
+    "Tigreal",
+    "Atlas",
+    "Mathilda"
+   ],
+   "profileSource": "curated"
+  },
+  {
+   "name": "Diggie",
+   "roles": [
+    "Support"
+   ],
+   "lanes": [
+    "roam"
+   ],
+   "damageType": "magic",
+   "damageProfile": "sustained",
+   "cc": 1,
+   "healing": 0,
+   "shields": 1,
+   "mobility": 1,
+   "tankiness": 0,
+   "basicAttacker": false,
+   "builds": {
+    "*": "support_heal"
+   },
+   "strongAgainst": [
+    "Tigreal",
+    "Atlas",
+    "Franco",
+    "Kaja",
+    "Chou"
+   ],
+   "weakAgainst": [
+    "Saber",
+    "Natalia",
+    "Helcurt",
+    "Lancelot"
+   ],
+   "synergy": [
+    "Pharsa",
+    "Odette",
+    "Yve",
+    "Kagura"
+   ],
+   "profileSource": "curated"
+  },
+  {
+   "name": "Hylos",
+   "roles": [
+    "Tank"
+   ],
+   "lanes": [
+    "roam",
+    "jungle"
+   ],
+   "damageType": "magic",
+   "damageProfile": "sustained",
+   "cc": 2,
+   "healing": 1,
+   "shields": 0,
+   "mobility": 1,
+   "tankiness": 3,
+   "basicAttacker": false,
+   "builds": {
+    "*": "tank_roam"
+   },
+   "strongAgainst": [
+    "Fanny",
+    "Ling",
+    "Lancelot",
+    "Gusion"
+   ],
+   "weakAgainst": [
+    "Karrie",
+    "Diggie",
+    "Valir",
+    "Dyrroth"
+   ],
+   "synergy": [
+    "Pharsa",
+    "Odette",
+    "Yve",
+    "Moskov"
+   ],
+   "profileSource": "curated"
+  },
+  {
+   "name": "Zhask",
+   "roles": [
+    "Mage"
+   ],
+   "lanes": [
+    "mid"
+   ],
+   "damageType": "magic",
+   "damageProfile": "sustained",
+   "cc": 1,
+   "healing": 0,
+   "shields": 0,
+   "mobility": 0,
+   "tankiness": 0,
+   "basicAttacker": false,
+   "builds": {
+    "*": "mage_dps"
+   },
+   "strongAgainst": [
+    "Tigreal",
+    "Gatotkaca",
+    "Hylos"
+   ],
+   "weakAgainst": [
+    "Lancelot",
+    "Gusion",
+    "Saber",
+    "Natalia"
+   ],
+   "synergy": [
+    "Tigreal",
+    "Atlas",
+    "Franco"
+   ],
+   "profileSource": "curated"
+  },
+  {
+   "name": "Helcurt",
+   "roles": [
+    "Assassin"
+   ],
+   "lanes": [
+    "jungle"
+   ],
+   "damageType": "physical",
+   "damageProfile": "burst",
+   "cc": 1,
+   "healing": 0,
+   "shields": 0,
+   "mobility": 3,
+   "tankiness": 0,
+   "basicAttacker": false,
+   "builds": {
+    "*": "assassin_phys"
+   },
+   "strongAgainst": [
+    "Pharsa",
+    "Miya",
+    "Layla",
+    "Estes",
+    "Rafaela"
+   ],
+   "weakAgainst": [
+    "Kaja",
+    "Chou",
+    "Franco",
+    "Khufra"
+   ],
+   "synergy": [
+    "Tigreal",
+    "Atlas"
+   ],
+   "profileSource": "curated"
+  },
+  {
+   "name": "Pharsa",
+   "roles": [
+    "Mage"
+   ],
+   "lanes": [
+    "mid"
+   ],
+   "damageType": "magic",
+   "damageProfile": "burst",
+   "cc": 1,
+   "healing": 0,
+   "shields": 0,
+   "mobility": 2,
+   "tankiness": 0,
+   "basicAttacker": false,
+   "builds": {
+    "*": "mage_poke"
+   },
+   "strongAgainst": [
+    "Gord",
+    "Zhask",
+    "Tigreal",
+    "Atlas"
+   ],
+   "weakAgainst": [
+    "Saber",
+    "Natalia",
+    "Helcurt",
+    "Lancelot",
+    "Hayabusa"
+   ],
+   "synergy": [
+    "Tigreal",
+    "Atlas",
+    "Minotaur",
+    "Johnson"
+   ],
+   "profileSource": "curated"
+  },
+  {
+   "name": "Lesley",
+   "roles": [
+    "Marksman"
+   ],
+   "lanes": [
+    "gold",
+    "jungle"
+   ],
+   "damageType": "physical",
+   "damageProfile": "burst",
+   "cc": 1,
+   "healing": 0,
+   "shields": 0,
+   "mobility": 1,
+   "tankiness": 0,
+   "basicAttacker": true,
+   "builds": {
+    "gold": "mm_phys_burst",
+    "jungle": "mm_phys_burst"
+   },
+   "strongAgainst": [
+    "Miya",
+    "Layla",
+    "Pharsa",
+    "Kagura"
+   ],
+   "weakAgainst": [
+    "Natalia",
+    "Saber",
+    "Lancelot",
+    "Helcurt"
+   ],
+   "synergy": [
+    "Angela",
+    "Tigreal",
+    "Atlas"
+   ],
+   "profileSource": "curated"
+  },
+  {
+   "name": "Jawhead",
+   "roles": [
+    "Fighter",
+    "Assassin"
+   ],
+   "lanes": [
+    "roam",
+    "exp"
+   ],
+   "damageType": "physical",
+   "damageProfile": "burst",
+   "cc": 2,
+   "healing": 0,
+   "shields": 0,
+   "mobility": 2,
+   "tankiness": 1,
+   "basicAttacker": false,
+   "builds": {
+    "roam": "tank_roam",
+    "exp": "fighter_burst"
+   },
+   "strongAgainst": [
+    "Miya",
+    "Layla",
+    "Pharsa",
+    "Beatrix"
+   ],
+   "weakAgainst": [
+    "Diggie",
+    "Kaja",
+    "Chou",
+    "Franco"
+   ],
+   "synergy": [
+    "Pharsa",
+    "Odette",
+    "Yve",
+    "Kagura"
+   ],
+   "profileSource": "curated"
+  },
+  {
+   "name": "Angela",
+   "roles": [
+    "Support"
+   ],
+   "lanes": [
+    "roam"
+   ],
+   "damageType": "magic",
+   "damageProfile": "sustained",
+   "cc": 1,
+   "healing": 3,
+   "shields": 2,
+   "mobility": 1,
+   "tankiness": 0,
+   "basicAttacker": false,
+   "builds": {
+    "*": "support_heal"
+   },
+   "strongAgainst": [
+    "Saber",
+    "Natalia",
+    "Fanny",
+    "Gusion"
+   ],
+   "weakAgainst": [
+    "Baxia",
+    "Lancelot",
+    "Helcurt"
+   ],
+   "synergy": [
+    "Alucard",
+    "Ruby",
+    "Chou",
+    "Moskov",
+    "Lancelot",
+    "Fanny"
+   ],
+   "profileSource": "curated"
+  },
+  {
+   "name": "Gusion",
+   "roles": [
+    "Assassin",
+    "Mage"
+   ],
+   "lanes": [
+    "jungle",
+    "mid"
+   ],
+   "damageType": "magic",
+   "damageProfile": "burst",
+   "cc": 0,
+   "healing": 0,
+   "shields": 0,
+   "mobility": 3,
+   "tankiness": 0,
+   "basicAttacker": false,
+   "builds": {
+    "*": "mage_burst"
+   },
+   "strongAgainst": [
+    "Pharsa",
+    "Odette",
+    "Lunox",
+    "Miya"
+   ],
+   "weakAgainst": [
+    "Kaja",
+    "Chou",
+    "Ruby",
+    "Franco",
+    "Khufra"
+   ],
+   "synergy": [
+    "Tigreal",
+    "Atlas",
+    "Kaja"
+   ],
+   "profileSource": "curated"
+  },
+  {
+   "name": "Valir",
+   "roles": [
+    "Mage"
+   ],
+   "lanes": [
+    "mid"
+   ],
+   "damageType": "magic",
+   "damageProfile": "sustained",
+   "cc": 3,
+   "healing": 0,
+   "shields": 0,
+   "mobility": 1,
+   "tankiness": 0,
+   "basicAttacker": false,
+   "builds": {
+    "*": "mage_poke"
+   },
+   "strongAgainst": [
+    "Lancelot",
+    "Fanny",
+    "Ling",
+    "Gusion",
+    "Chou"
+   ],
+   "weakAgainst": [
+    "Pharsa",
+    "Lunox",
+    "Kagura"
+   ],
+   "synergy": [
+    "Tigreal",
+    "Atlas",
+    "Franco"
+   ],
+   "profileSource": "curated"
+  },
+  {
+   "name": "Martis",
+   "roles": [
+    "Fighter"
+   ],
+   "lanes": [
+    "jungle",
+    "exp"
+   ],
+   "damageType": "physical",
+   "damageProfile": "burst",
+   "cc": 2,
+   "healing": 0,
+   "shields": 0,
+   "mobility": 2,
+   "tankiness": 1,
+   "basicAttacker": false,
+   "builds": {
+    "jungle": "fighter_jungle",
+    "exp": "fighter_exp"
+   },
+   "strongAgainst": [
+    "Layla",
+    "Miya",
+    "Pharsa",
+    "Odette"
+   ],
+   "weakAgainst": [
+    "Kaja",
+    "Chou",
+    "Diggie",
+    "Franco"
+   ],
+   "synergy": [
+    "Tigreal",
+    "Atlas",
+    "Angela"
+   ],
+   "profileSource": "curated"
+  },
+  {
+   "name": "Uranus",
+   "roles": [
+    "Tank"
+   ],
+   "lanes": [
+    "exp"
+   ],
+   "damageType": "magic",
+   "damageProfile": "sustained",
+   "cc": 1,
+   "healing": 3,
+   "shields": 0,
+   "mobility": 1,
+   "tankiness": 3,
+   "basicAttacker": false,
+   "builds": {
+    "exp": "tank_exp"
+   },
+   "strongAgainst": [
+    "Lancelot",
+    "Ling",
+    "Fanny",
+    "Alucard"
+   ],
+   "weakAgainst": [
+    "Karrie",
+    "Dyrroth",
+    "Baxia",
+    "Esmeralda"
+   ],
+   "synergy": [
+    "Angela",
+    "Estes",
+    "Floryn"
+   ],
+   "profileSource": "curated"
+  },
+  {
+   "name": "Hanabi",
+   "roles": [
+    "Marksman"
+   ],
+   "lanes": [
+    "gold"
+   ],
+   "damageType": "physical",
+   "damageProfile": "sustained",
+   "cc": 0,
+   "healing": 0,
+   "shields": 1,
+   "mobility": 0,
+   "tankiness": 0,
+   "basicAttacker": true,
+   "builds": {
+    "gold": "mm_crit"
+   },
+   "strongAgainst": [
+    "Layla",
+    "Miya",
+    "Bruno",
+    "Gloo"
+   ],
+   "weakAgainst": [
+    "Natalia",
+    "Saber",
+    "Lancelot",
+    "Helcurt"
+   ],
+   "synergy": [
+    "Angela",
+    "Mathilda",
+    "Diggie",
+    "Rafaela"
+   ],
+   "profileSource": "curated"
+  },
+  {
+   "name": "Chang'e",
+   "roles": [
+    "Mage"
+   ],
+   "lanes": [
+    "mid"
+   ],
+   "damageType": "magic",
+   "damageProfile": "sustained",
+   "cc": 1,
+   "healing": 0,
+   "shields": 1,
+   "mobility": 0,
+   "tankiness": 0,
+   "basicAttacker": false,
+   "builds": {
+    "*": "mage_dps"
+   },
+   "strongAgainst": [
+    "Tigreal",
+    "Akai",
+    "Franco"
+   ],
+   "weakAgainst": [
+    "Lancelot",
+    "Natalia",
+    "Saber",
+    "Hayabusa"
+   ],
+   "synergy": [
+    "Tigreal",
+    "Atlas",
+    "Kaja"
+   ],
+   "profileSource": "curated"
+  },
+  {
+   "name": "Kaja",
+   "roles": [
+    "Support",
+    "Fighter"
+   ],
+   "lanes": [
+    "roam"
+   ],
+   "damageType": "magic",
+   "damageProfile": "sustained",
+   "cc": 1,
+   "healing": 1,
+   "shields": 1,
+   "mobility": 1,
+   "tankiness": 1,
+   "basicAttacker": false,
+   "builds": {
+    "*": "tank_roam"
+   },
+   "strongAgainst": [
+    "Lancelot",
+    "Ling",
+    "Fanny",
+    "Gusion",
+    "Hayabusa"
+   ],
+   "weakAgainst": [
+    "Diggie",
+    "Valir",
+    "Lylia"
+   ],
+   "synergy": [
+    "Gusion",
+    "Karina",
+    "Saber",
+    "Chou"
+   ],
+   "profileSource": "role-default"
+  },
+  {
+   "name": "Selena",
+   "roles": [
+    "Assassin",
+    "Mage"
+   ],
+   "lanes": [
+    "roam",
+    "mid"
+   ],
+   "damageType": "magic",
+   "damageProfile": "burst",
+   "cc": 2,
+   "healing": 0,
+   "shields": 0,
+   "mobility": 2,
+   "tankiness": 0,
+   "basicAttacker": false,
+   "builds": {
+    "*": "mage_burst"
+   },
+   "strongAgainst": [
+    "Pharsa",
+    "Miya",
+    "Layla",
+    "Ling"
+   ],
+   "weakAgainst": [
+    "Kaja",
+    "Ruby",
+    "Chou",
+    "Franco"
+   ],
+   "synergy": [
+    "Tigreal",
+    "Atlas",
+    "Valir"
+   ],
+   "profileSource": "curated"
+  },
+  {
+   "name": "Aldous",
+   "roles": [
+    "Fighter"
+   ],
+   "lanes": [
+    "exp"
+   ],
+   "damageType": "physical",
+   "damageProfile": "burst",
+   "cc": 1,
+   "healing": 0,
+   "shields": 0,
+   "mobility": 2,
+   "tankiness": 1,
+   "basicAttacker": false,
+   "builds": {
+    "exp": "fighter_burst"
+   },
+   "strongAgainst": [
+    "Layla",
+    "Miya",
+    "Eudora"
+   ],
+   "weakAgainst": [
+    "Esmeralda",
+    "Dyrroth",
+    "Baxia"
+   ],
+   "synergy": [
+    "Angela",
+    "Estes",
+    "Floryn",
+    "Mathilda"
+   ],
+   "profileSource": "curated"
+  },
+  {
+   "name": "Claude",
+   "roles": [
+    "Marksman"
+   ],
+   "lanes": [
+    "gold"
+   ],
+   "damageType": "physical",
+   "damageProfile": "sustained",
+   "cc": 0,
+   "healing": 0,
+   "shields": 0,
+   "mobility": 2,
+   "tankiness": 0,
+   "basicAttacker": true,
+   "builds": {
+    "gold": "mm_atkspd"
+   },
+   "strongAgainst": [
+    "Miya",
+    "Layla",
+    "Granger",
+    "Wanwan"
+   ],
+   "weakAgainst": [
+    "Natalia",
+    "Saber",
+    "Lancelot",
+    "Helcurt"
+   ],
+   "synergy": [
+    "Angela",
+    "Estes",
+    "Mathilda"
+   ],
+   "profileSource": "curated"
+  },
+  {
+   "name": "Vale",
+   "roles": [
+    "Mage"
+   ],
+   "lanes": [
+    "mid"
+   ],
+   "damageType": "magic",
+   "damageProfile": "burst",
+   "cc": 2,
+   "healing": 0,
+   "shields": 0,
+   "mobility": 0,
+   "tankiness": 0,
+   "basicAttacker": false,
+   "builds": {
+    "*": "mage_burst"
+   },
+   "strongAgainst": [
+    "Gusion",
+    "Lancelot",
+    "Ling",
+    "Fanny"
+   ],
+   "weakAgainst": [
+    "Saber",
+    "Natalia",
+    "Helcurt"
+   ],
+   "synergy": [
+    "Tigreal",
+    "Atlas",
+    "Minotaur"
+   ],
+   "profileSource": "curated"
+  },
+  {
+   "name": "Leomord",
+   "roles": [
+    "Fighter"
+   ],
+   "lanes": [
+    "jungle",
+    "exp"
+   ],
+   "damageType": "physical",
+   "damageProfile": "sustained",
+   "cc": 1,
+   "healing": 0,
+   "shields": 0,
+   "mobility": 2,
+   "tankiness": 1,
+   "basicAttacker": false,
+   "builds": {
+    "jungle": "fighter_jungle",
+    "exp": "fighter_exp"
+   },
+   "strongAgainst": [
+    "Layla",
+    "Miya",
+    "Pharsa"
+   ],
+   "weakAgainst": [
+    "Kaja",
+    "Chou",
+    "Franco"
+   ],
+   "synergy": [
+    "Tigreal",
+    "Atlas",
+    "Mathilda"
+   ],
+   "profileSource": "curated"
+  },
+  {
+   "name": "Lunox",
+   "roles": [
+    "Mage"
+   ],
+   "lanes": [
+    "mid"
+   ],
+   "damageType": "magic",
+   "damageProfile": "sustained",
+   "cc": 0,
+   "healing": 0,
+   "shields": 0,
+   "mobility": 1,
+   "tankiness": 0,
+   "basicAttacker": false,
+   "builds": {
+    "*": "mage_dps"
+   },
+   "strongAgainst": [
+    "Fanny",
+    "Lancelot",
+    "Ling",
+    "Gusion"
+   ],
+   "weakAgainst": [
+    "Saber",
+    "Natalia",
+    "Helcurt",
+    "Hayabusa"
+   ],
+   "synergy": [
+    "Tigreal",
+    "Atlas",
+    "Kaja"
+   ],
+   "profileSource": "curated"
+  },
+  {
+   "name": "Hanzo",
+   "roles": [
+    "Assassin"
+   ],
+   "lanes": [
+    "jungle"
+   ],
+   "damageType": "physical",
+   "damageProfile": "sustained",
+   "cc": 0,
+   "healing": 0,
+   "shields": 0,
+   "mobility": 2,
+   "tankiness": 0,
+   "basicAttacker": false,
+   "builds": {
+    "*": "assassin_phys"
+   },
+   "strongAgainst": [
+    "Layla",
+    "Miya",
+    "Pharsa"
+   ],
+   "weakAgainst": [
+    "Kaja",
+    "Chou",
+    "Saber"
+   ],
+   "synergy": [
+    "Tigreal",
+    "Atlas"
+   ],
+   "profileSource": "curated"
+  },
+  {
+   "name": "Belerick",
+   "roles": [
+    "Tank"
+   ],
+   "lanes": [
+    "roam",
+    "exp"
+   ],
+   "damageType": "physical",
+   "damageProfile": "mixed",
+   "cc": 3,
+   "healing": 0,
+   "shields": 0,
+   "mobility": 1,
+   "tankiness": 3,
+   "basicAttacker": false,
+   "builds": {
+    "*": "tank_roam"
+   },
+   "strongAgainst": [
+    "Karrie",
+    "Moskov",
+    "Claude",
+    "Wanwan"
+   ],
+   "weakAgainst": [
+    "Valir",
+    "Diggie",
+    "Lunox"
+   ],
+   "synergy": [
+    "Pharsa",
+    "Odette",
+    "Kagura"
+   ],
+   "profileSource": "role-default"
+  },
+  {
+   "name": "Kimmy",
+   "roles": [
+    "Marksman",
+    "Mage"
+   ],
+   "lanes": [
+    "gold",
+    "mid"
+   ],
+   "damageType": "magic",
+   "damageProfile": "sustained",
+   "cc": 0,
+   "healing": 0,
+   "shields": 0,
+   "mobility": 1,
+   "tankiness": 0,
+   "basicAttacker": true,
+   "builds": {
+    "*": "mm_magic"
+   },
+   "strongAgainst": [
+    "Layla",
+    "Miya",
+    "Pharsa"
+   ],
+   "weakAgainst": [
+    "Natalia",
+    "Saber",
+    "Lancelot",
+    "Helcurt"
+   ],
+   "synergy": [
+    "Tigreal",
+    "Atlas",
+    "Angela"
+   ],
+   "profileSource": "curated"
+  },
+  {
+   "name": "Thamuz",
+   "roles": [
+    "Fighter"
+   ],
+   "lanes": [
+    "exp",
+    "jungle"
+   ],
+   "damageType": "physical",
+   "damageProfile": "sustained",
+   "cc": 1,
+   "healing": 2,
+   "shields": 0,
+   "mobility": 2,
+   "tankiness": 2,
+   "basicAttacker": false,
+   "builds": {
+    "exp": "fighter_exp",
+    "jungle": "fighter_jungle"
+   },
+   "strongAgainst": [
+    "Layla",
+    "Miya",
+    "Lancelot"
+   ],
+   "weakAgainst": [
+    "Esmeralda",
+    "Baxia",
+    "Karrie"
+   ],
+   "synergy": [
+    "Angela",
+    "Estes",
+    "Floryn"
+   ],
+   "profileSource": "curated"
+  },
+  {
+   "name": "Harith",
+   "roles": [
+    "Mage"
+   ],
+   "lanes": [
+    "gold",
+    "mid"
+   ],
+   "damageType": "magic",
+   "damageProfile": "sustained",
+   "cc": 0,
+   "healing": 0,
+   "shields": 1,
+   "mobility": 2,
+   "tankiness": 0,
+   "basicAttacker": false,
+   "builds": {
+    "*": "mage_dps"
+   },
+   "strongAgainst": [
+    "Lancelot",
+    "Gusion",
+    "Ling",
+    "Fanny"
+   ],
+   "weakAgainst": [
+    "Kaja",
+    "Saber",
+    "Natalia",
+    "Chou"
+   ],
+   "synergy": [
+    "Angela",
+    "Tigreal",
+    "Atlas"
+   ],
+   "profileSource": "curated"
+  },
+  {
+   "name": "Minsitthar",
+   "roles": [
+    "Fighter"
+   ],
+   "lanes": [
+    "roam",
+    "exp"
+   ],
+   "damageType": "physical",
+   "damageProfile": "mixed",
+   "cc": 3,
+   "healing": 0,
+   "shields": 0,
+   "mobility": 1,
+   "tankiness": 2,
+   "basicAttacker": false,
+   "builds": {
+    "roam": "tank_roam",
+    "exp": "fighter_exp"
+   },
+   "strongAgainst": [
+    "Fanny",
+    "Ling",
+    "Lancelot",
+    "Benedetta"
+   ],
+   "weakAgainst": [
+    "Diggie",
+    "Kaja",
+    "Valir"
+   ],
+   "synergy": [
+    "Pharsa",
+    "Odette",
+    "Kagura"
+   ],
+   "profileSource": "curated"
+  },
+  {
+   "name": "Kadita",
+   "roles": [
+    "Mage",
+    "Assassin"
+   ],
+   "lanes": [
+    "roam",
+    "mid"
+   ],
+   "damageType": "magic",
+   "damageProfile": "burst",
+   "cc": 2,
+   "healing": 0,
+   "shields": 0,
+   "mobility": 2,
+   "tankiness": 0,
+   "basicAttacker": false,
+   "builds": {
+    "*": "mage_burst"
+   },
+   "strongAgainst": [
+    "Ling",
+    "Gusion",
+    "Wanwan",
+    "Miya"
+   ],
+   "weakAgainst": [
+    "Kaja",
+    "Ruby",
+    "Chou",
+    "Franco"
+   ],
+   "synergy": [
+    "Pharsa",
+    "Odette",
+    "Yve"
+   ],
+   "profileSource": "curated"
+  },
+  {
+   "name": "Faramis",
+   "roles": [
+    "Mage",
+    "Support"
+   ],
+   "lanes": [
+    "roam",
+    "mid"
+   ],
+   "damageType": "magic",
+   "damageProfile": "sustained",
+   "cc": 1,
+   "healing": 1,
+   "shields": 0,
+   "mobility": 1,
+   "tankiness": 0,
+   "basicAttacker": false,
+   "builds": {
+    "*": "mage_sustain"
+   },
+   "strongAgainst": [
+    "Saber",
+    "Natalia",
+    "Lancelot"
+   ],
+   "weakAgainst": [
+    "Baxia",
+    "Esmeralda",
+    "Valir"
+   ],
+   "synergy": [
+    "Ruby",
+    "Alucard",
+    "Moskov",
+    "Yu Zhong"
+   ],
+   "profileSource": "curated"
+  },
+  {
+   "name": "Badang",
+   "roles": [
+    "Fighter"
+   ],
+   "lanes": [
+    "exp",
+    "jungle"
+   ],
+   "damageType": "physical",
+   "damageProfile": "burst",
+   "cc": 2,
+   "healing": 0,
+   "shields": 0,
+   "mobility": 1,
+   "tankiness": 1,
+   "basicAttacker": false,
+   "builds": {
+    "exp": "fighter_burst",
+    "jungle": "fighter_jungle"
+   },
+   "strongAgainst": [
+    "Layla",
+    "Miya",
+    "Lancelot"
+   ],
+   "weakAgainst": [
+    "Kaja",
+    "Diggie",
+    "Valir"
+   ],
+   "synergy": [
+    "Tigreal",
+    "Atlas"
+   ],
+   "profileSource": "curated"
+  },
+  {
+   "name": "Khufra",
+   "roles": [
+    "Tank",
+    "Support"
+   ],
+   "lanes": [
+    "roam"
+   ],
+   "damageType": "physical",
+   "damageProfile": "mixed",
+   "cc": 3,
+   "healing": 0,
+   "shields": 0,
+   "mobility": 2,
+   "tankiness": 3,
+   "basicAttacker": false,
+   "builds": {
+    "*": "tank_roam"
+   },
+   "strongAgainst": [
+    "Fanny",
+    "Ling",
+    "Lancelot",
+    "Wanwan",
+    "Hayabusa"
+   ],
+   "weakAgainst": [
+    "Diggie",
+    "Valir",
+    "Kaja",
+    "Lylia"
+   ],
+   "synergy": [
+    "Pharsa",
+    "Odette",
+    "Yve",
+    "Kagura"
+   ],
+   "profileSource": "curated"
+  },
+  {
+   "name": "Granger",
+   "roles": [
+    "Marksman"
+   ],
+   "lanes": [
+    "gold",
+    "jungle"
+   ],
+   "damageType": "physical",
+   "damageProfile": "burst",
+   "cc": 0,
+   "healing": 0,
+   "shields": 0,
+   "mobility": 1,
+   "tankiness": 0,
+   "basicAttacker": true,
+   "builds": {
+    "gold": "mm_phys_burst",
+    "jungle": "mm_phys_burst"
+   },
+   "strongAgainst": [
+    "Pharsa",
+    "Miya",
+    "Layla",
+    "Kagura"
+   ],
+   "weakAgainst": [
+    "Natalia",
+    "Saber",
+    "Lancelot",
+    "Chou"
+   ],
+   "synergy": [
+    "Tigreal",
+    "Atlas",
+    "Angela"
+   ],
+   "profileSource": "curated"
+  },
+  {
+   "name": "Guinevere",
+   "roles": [
+    "Fighter",
+    "Mage"
+   ],
+   "lanes": [
+    "exp",
+    "jungle"
+   ],
+   "damageType": "magic",
+   "damageProfile": "burst",
+   "cc": 2,
+   "healing": 0,
+   "shields": 1,
+   "mobility": 2,
+   "tankiness": 0,
+   "basicAttacker": false,
+   "builds": {
+    "exp": "fighter_magic",
+    "jungle": "fighter_magic"
+   },
+   "strongAgainst": [
+    "Lancelot",
+    "Pharsa",
+    "Odette",
+    "Lunox"
+   ],
+   "weakAgainst": [
+    "Kaja",
+    "Chou",
+    "Franco",
+    "Diggie"
+   ],
+   "synergy": [
+    "Tigreal",
+    "Atlas",
+    "Kaja"
+   ],
+   "profileSource": "curated"
+  },
+  {
+   "name": "Esmeralda",
+   "roles": [
+    "Mage",
+    "Tank"
+   ],
+   "lanes": [
+    "exp",
+    "jungle"
+   ],
+   "damageType": "magic",
+   "damageProfile": "sustained",
+   "cc": 1,
+   "healing": 1,
+   "shields": 3,
+   "mobility": 2,
+   "tankiness": 2,
+   "basicAttacker": false,
+   "builds": {
+    "exp": "fighter_magic",
+    "jungle": "fighter_magic"
+   },
+   "strongAgainst": [
+    "Alice",
+    "Uranus",
+    "Hylos",
+    "Gatotkaca",
+    "Ruby"
+   ],
+   "weakAgainst": [
+    "Karrie",
+    "Baxia",
+    "Valir",
+    "Dyrroth"
+   ],
+   "synergy": [
+    "Angela",
+    "Estes",
+    "Floryn"
+   ],
+   "profileSource": "curated"
+  },
+  {
+   "name": "Terizla",
+   "roles": [
+    "Fighter"
+   ],
+   "lanes": [
+    "exp"
+   ],
+   "damageType": "physical",
+   "damageProfile": "mixed",
+   "cc": 2,
+   "healing": 0,
+   "shields": 0,
+   "mobility": 1,
+   "tankiness": 2,
+   "basicAttacker": false,
+   "builds": {
+    "exp": "fighter_sustain"
+   },
+   "strongAgainst": [
+    "Layla",
+    "Miya",
+    "Pharsa"
+   ],
+   "weakAgainst": [
+    "Dyrroth",
+    "Esmeralda",
+    "Baxia"
+   ],
+   "synergy": [
+    "Atlas",
+    "Tigreal",
+    "Mathilda"
+   ],
+   "profileSource": "curated"
+  },
+  {
+   "name": "X.Borg",
+   "roles": [
+    "Fighter"
+   ],
+   "lanes": [
+    "exp"
+   ],
+   "damageType": "physical",
+   "damageProfile": "sustained",
+   "cc": 1,
+   "healing": 0,
+   "shields": 2,
+   "mobility": 1,
+   "tankiness": 1,
+   "basicAttacker": false,
+   "builds": {
+    "exp": "xborg"
+   },
+   "strongAgainst": [
+    "Esmeralda",
+    "Ruby",
+    "Uranus",
+    "Hylos"
+   ],
+   "weakAgainst": [
+    "Baxia",
+    "Karrie",
+    "Dyrroth"
+   ],
+   "synergy": [
+    "Angela",
+    "Estes",
+    "Floryn"
+   ],
+   "profileSource": "curated"
+  },
+  {
+   "name": "Ling",
+   "roles": [
+    "Assassin"
+   ],
+   "lanes": [
+    "jungle"
+   ],
+   "damageType": "physical",
+   "damageProfile": "burst",
+   "cc": 0,
+   "healing": 0,
+   "shields": 0,
+   "mobility": 3,
+   "tankiness": 0,
+   "basicAttacker": false,
+   "builds": {
+    "*": "assassin_phys"
+   },
+   "strongAgainst": [
+    "Pharsa",
+    "Miya",
+    "Layla",
+    "Kagura"
+   ],
+   "weakAgainst": [
+    "Kaja",
+    "Chou",
+    "Khufra",
+    "Franco"
+   ],
+   "synergy": [
+    "Tigreal",
+    "Atlas",
+    "Mathilda"
+   ],
+   "profileSource": "curated"
+  },
+  {
+   "name": "Dyrroth",
+   "roles": [
+    "Fighter"
+   ],
+   "lanes": [
+    "exp",
+    "jungle"
+   ],
+   "damageType": "physical",
+   "damageProfile": "burst",
+   "cc": 1,
+   "healing": 1,
+   "shields": 0,
+   "mobility": 2,
+   "tankiness": 1,
+   "basicAttacker": false,
+   "builds": {
+    "exp": "fighter_burst",
+    "jungle": "fighter_jungle"
+   },
+   "strongAgainst": [
+    "Uranus",
+    "Esmeralda",
+    "Ruby",
+    "Alucard",
+    "Freya"
+   ],
+   "weakAgainst": [
+    "Kaja",
+    "Chou",
+    "Franco",
+    "Baxia"
+   ],
+   "synergy": [
+    "Tigreal",
+    "Atlas",
+    "Angela"
+   ],
+   "profileSource": "curated"
+  },
+  {
+   "name": "Lylia",
+   "roles": [
+    "Mage"
+   ],
+   "lanes": [
+    "mid"
+   ],
+   "damageType": "magic",
+   "damageProfile": "sustained",
+   "cc": 1,
+   "healing": 0,
+   "shields": 0,
+   "mobility": 1,
+   "tankiness": 0,
+   "basicAttacker": false,
+   "builds": {
+    "*": "mage_dps"
+   },
+   "strongAgainst": [
+    "Tigreal",
+    "Franco",
+    "Kaja",
+    "Khufra"
+   ],
+   "weakAgainst": [
+    "Saber",
+    "Natalia",
+    "Lancelot",
+    "Helcurt"
+   ],
+   "synergy": [
+    "Tigreal",
+    "Atlas",
+    "Mathilda"
+   ],
+   "profileSource": "curated"
+  },
+  {
+   "name": "Baxia",
+   "roles": [
+    "Tank"
+   ],
+   "lanes": [
+    "jungle",
+    "roam"
+   ],
+   "damageType": "physical",
+   "damageProfile": "mixed",
+   "cc": 3,
+   "healing": 0,
+   "shields": 0,
+   "mobility": 1,
+   "tankiness": 3,
+   "basicAttacker": false,
+   "builds": {
+    "*": "tank_exp"
+   },
+   "strongAgainst": [
+    "Esmeralda",
+    "Ruby",
+    "Alucard",
+    "Estes",
+    "Angela"
+   ],
+   "weakAgainst": [
+    "Karrie",
+    "Valir",
+    "Diggie"
+   ],
+   "synergy": [
+    "Pharsa",
+    "Odette",
+    "Moskov"
+   ],
+   "profileSource": "role-default"
+  },
+  {
+   "name": "Masha",
+   "roles": [
+    "Fighter",
+    "Tank"
+   ],
+   "lanes": [
+    "exp"
+   ],
+   "damageType": "physical",
+   "damageProfile": "sustained",
+   "cc": 1,
+   "healing": 1,
+   "shields": 1,
+   "mobility": 1,
+   "tankiness": 2,
+   "basicAttacker": true,
+   "builds": {
+    "exp": "masha"
+   },
+   "strongAgainst": [
+    "Ruby",
+    "Uranus",
+    "Esmeralda",
+    "Lukas"
+   ],
+   "weakAgainst": [
+    "Karrie",
+    "Dyrroth",
+    "Baxia",
+    "Phoveus"
+   ],
+   "synergy": [
+    "Angela",
+    "Floryn",
+    "Estes",
+    "Rafaela"
+   ],
+   "profileSource": "curated"
+  },
+  {
+   "name": "Wanwan",
+   "roles": [
+    "Marksman"
+   ],
+   "lanes": [
+    "gold"
+   ],
+   "damageType": "physical",
+   "damageProfile": "sustained",
+   "cc": 0,
+   "healing": 0,
+   "shields": 0,
+   "mobility": 3,
+   "tankiness": 0,
+   "basicAttacker": true,
+   "builds": {
+    "gold": "mm_atkspd"
+   },
+   "strongAgainst": [
+    "Miya",
+    "Layla",
+    "Pharsa",
+    "Gusion"
+   ],
+   "weakAgainst": [
+    "Minotaur",
+    "Khufra",
+    "Akai",
+    "Tigreal"
+   ],
+   "synergy": [
+    "Angela",
+    "Mathilda",
+    "Atlas"
+   ],
+   "profileSource": "curated"
+  },
+  {
+   "name": "Silvanna",
+   "roles": [
+    "Fighter"
+   ],
+   "lanes": [
+    "exp"
+   ],
+   "damageType": "magic",
+   "damageProfile": "mixed",
+   "cc": 2,
+   "healing": 0,
+   "shields": 1,
+   "mobility": 2,
+   "tankiness": 1,
+   "basicAttacker": false,
+   "builds": {
+    "exp": "fighter_magic"
+   },
+   "strongAgainst": [
+    "Layla",
+    "Miya",
+    "Pharsa"
+   ],
+   "weakAgainst": [
+    "Diggie",
+    "Kaja",
+    "Baxia"
+   ],
+   "synergy": [
+    "Pharsa",
+    "Odette",
+    "Kagura"
+   ],
+   "profileSource": "curated"
+  },
+  {
+   "name": "Cecilion",
+   "roles": [
+    "Mage"
+   ],
+   "lanes": [
+    "mid"
+   ],
+   "damageType": "magic",
+   "damageProfile": "sustained",
+   "cc": 1,
+   "healing": 0,
+   "shields": 0,
+   "mobility": 0,
+   "tankiness": 0,
+   "basicAttacker": false,
+   "builds": {
+    "*": "mage_dps"
+   },
+   "strongAgainst": [
+    "Tigreal",
+    "Franco",
+    "Khufra",
+    "Hylos"
+   ],
+   "weakAgainst": [
+    "Saber",
+    "Natalia",
+    "Lancelot",
+    "Helcurt"
+   ],
+   "synergy": [
+    "Carmilla",
+    "Tigreal",
+    "Atlas"
+   ],
+   "profileSource": "curated"
+  },
+  {
+   "name": "Carmilla",
+   "roles": [
+    "Support",
+    "Tank"
+   ],
+   "lanes": [
+    "roam"
+   ],
+   "damageType": "magic",
+   "damageProfile": "mixed",
+   "cc": 3,
+   "healing": 0,
+   "shields": 0,
+   "mobility": 1,
+   "tankiness": 2,
+   "basicAttacker": false,
+   "builds": {
+    "*": "tank_roam"
+   },
+   "strongAgainst": [
+    "Saber",
+    "Natalia",
+    "Lancelot"
+   ],
+   "weakAgainst": [
+    "Diggie",
+    "Valir",
+    "Kaja"
+   ],
+   "synergy": [
+    "Cecilion",
+    "Pharsa",
+    "Odette",
+    "Yve"
+   ],
+   "profileSource": "curated"
+  },
+  {
+   "name": "Atlas",
+   "roles": [
+    "Tank"
+   ],
+   "lanes": [
+    "roam"
+   ],
+   "damageType": "physical",
+   "damageProfile": "mixed",
+   "cc": 3,
+   "healing": 0,
+   "shields": 0,
+   "mobility": 1,
+   "tankiness": 3,
+   "basicAttacker": false,
+   "builds": {
+    "*": "tank_roam"
+   },
+   "strongAgainst": [
+    "Ling",
+    "Fanny",
+    "Lancelot",
+    "Wanwan",
+    "Gusion"
+   ],
+   "weakAgainst": [
+    "Diggie",
+    "Kaja",
+    "Valir",
+    "Lylia"
+   ],
+   "synergy": [
+    "Pharsa",
+    "Odette",
+    "Yve",
+    "Vale",
+    "Kagura"
+   ],
+   "profileSource": "curated"
+  },
+  {
+   "name": "Popol and Kupa",
+   "roles": [
+    "Marksman"
+   ],
+   "lanes": [
+    "gold"
+   ],
+   "damageType": "physical",
+   "damageProfile": "sustained",
+   "cc": 2,
+   "healing": 0,
+   "shields": 0,
+   "mobility": 1,
+   "tankiness": 0,
+   "basicAttacker": true,
+   "builds": {
+    "gold": "mm_atkspd"
+   },
+   "strongAgainst": [
+    "Miya",
+    "Layla",
+    "Ling"
+   ],
+   "weakAgainst": [
+    "Natalia",
+    "Saber",
+    "Lancelot"
+   ],
+   "synergy": [
+    "Tigreal",
+    "Atlas",
+    "Angela"
+   ],
+   "profileSource": "curated"
+  },
+  {
+   "name": "Yu Zhong",
+   "roles": [
+    "Fighter"
+   ],
+   "lanes": [
+    "exp"
+   ],
+   "damageType": "physical",
+   "damageProfile": "sustained",
+   "cc": 1,
+   "healing": 2,
+   "shields": 0,
+   "mobility": 2,
+   "tankiness": 2,
+   "basicAttacker": false,
+   "builds": {
+    "exp": "fighter_burst"
+   },
+   "strongAgainst": [
+    "Ruby",
+    "Esmeralda",
+    "Uranus",
+    "Alucard"
+   ],
+   "weakAgainst": [
+    "Karrie",
+    "Baxia",
+    "Dyrroth"
+   ],
+   "synergy": [
+    "Angela",
+    "Estes",
+    "Floryn"
+   ],
+   "profileSource": "curated"
+  },
+  {
+   "name": "Luo Yi",
+   "roles": [
+    "Mage"
+   ],
+   "lanes": [
+    "mid"
+   ],
+   "damageType": "magic",
+   "damageProfile": "burst",
+   "cc": 2,
+   "healing": 0,
+   "shields": 0,
+   "mobility": 1,
+   "tankiness": 0,
+   "basicAttacker": false,
+   "builds": {
+    "*": "mage_poke"
+   },
+   "strongAgainst": [
+    "Tigreal",
+    "Franco",
+    "Khufra"
+   ],
+   "weakAgainst": [
+    "Saber",
+    "Natalia",
+    "Lancelot",
+    "Helcurt"
+   ],
+   "synergy": [
+    "Tigreal",
+    "Atlas",
+    "Minotaur",
+    "Johnson"
+   ],
+   "profileSource": "curated"
+  },
+  {
+   "name": "Benedetta",
+   "roles": [
+    "Assassin",
+    "Fighter"
+   ],
+   "lanes": [
+    "exp",
+    "jungle"
+   ],
+   "damageType": "physical",
+   "damageProfile": "burst",
+   "cc": 1,
+   "healing": 0,
+   "shields": 0,
+   "mobility": 3,
+   "tankiness": 0,
+   "basicAttacker": false,
+   "builds": {
+    "exp": "fighter_burst",
+    "jungle": "fighter_jungle"
+   },
+   "strongAgainst": [
+    "Layla",
+    "Miya",
+    "Pharsa",
+    "Esmeralda"
+   ],
+   "weakAgainst": [
+    "Kaja",
+    "Chou",
+    "Ruby",
+    "Minsitthar"
+   ],
+   "synergy": [
+    "Tigreal",
+    "Atlas",
+    "Angela"
+   ],
+   "profileSource": "curated"
+  },
+  {
+   "name": "Khaleed",
+   "roles": [
+    "Fighter"
+   ],
+   "lanes": [
+    "exp"
+   ],
+   "damageType": "physical",
+   "damageProfile": "sustained",
+   "cc": 1,
+   "healing": 1,
+   "shields": 0,
+   "mobility": 2,
+   "tankiness": 1,
+   "basicAttacker": false,
+   "builds": {
+    "exp": "fighter_exp"
+   },
+   "strongAgainst": [
+    "Layla",
+    "Miya",
+    "Pharsa"
+   ],
+   "weakAgainst": [
+    "Esmeralda",
+    "Baxia",
+    "Karrie"
+   ],
+   "synergy": [
+    "Angela",
+    "Estes",
+    "Floryn"
+   ],
+   "profileSource": "curated"
+  },
+  {
+   "name": "Barats",
+   "roles": [
+    "Tank",
+    "Fighter"
+   ],
+   "lanes": [
+    "jungle",
+    "exp"
+   ],
+   "damageType": "physical",
+   "damageProfile": "sustained",
+   "cc": 2,
+   "healing": 0,
+   "shields": 0,
+   "mobility": 1,
+   "tankiness": 3,
+   "basicAttacker": false,
+   "builds": {
+    "*": "tank_exp"
+   },
+   "strongAgainst": [
+    "Lancelot",
+    "Ling",
+    "Fanny"
+   ],
+   "weakAgainst": [
+    "Karrie",
+    "Diggie",
+    "Valir"
+   ],
+   "synergy": [
+    "Pharsa",
+    "Odette",
+    "Yve"
+   ],
+   "profileSource": "curated"
+  },
+  {
+   "name": "Brody",
+   "roles": [
+    "Marksman"
+   ],
+   "lanes": [
+    "gold"
+   ],
+   "damageType": "physical",
+   "damageProfile": "burst",
+   "cc": 1,
+   "healing": 0,
+   "shields": 0,
+   "mobility": 1,
+   "tankiness": 0,
+   "basicAttacker": true,
+   "builds": {
+    "gold": "mm_phys_burst"
+   },
+   "strongAgainst": [
+    "Miya",
+    "Layla",
+    "Wanwan",
+    "Kimmy"
+   ],
+   "weakAgainst": [
+    "Natalia",
+    "Saber",
+    "Lancelot",
+    "Helcurt"
+   ],
+   "synergy": [
+    "Tigreal",
+    "Atlas",
+    "Angela",
+    "Mathilda"
+   ],
+   "profileSource": "curated"
+  },
+  {
+   "name": "Yve",
+   "roles": [
+    "Mage"
+   ],
+   "lanes": [
+    "mid"
+   ],
+   "damageType": "magic",
+   "damageProfile": "sustained",
+   "cc": 2,
+   "healing": 0,
+   "shields": 0,
+   "mobility": 0,
+   "tankiness": 0,
+   "basicAttacker": false,
+   "builds": {
+    "*": "mage_dps"
+   },
+   "strongAgainst": [
+    "Tigreal",
+    "Franco",
+    "Khufra",
+    "Akai"
+   ],
+   "weakAgainst": [
+    "Saber",
+    "Natalia",
+    "Lancelot",
+    "Helcurt"
+   ],
+   "synergy": [
+    "Tigreal",
+    "Atlas",
+    "Minotaur",
+    "Khufra"
+   ],
+   "profileSource": "curated"
+  },
+  {
+   "name": "Mathilda",
+   "roles": [
+    "Support",
+    "Assassin"
+   ],
+   "lanes": [
+    "roam"
+   ],
+   "damageType": "magic",
+   "damageProfile": "burst",
+   "cc": 1,
+   "healing": 0,
+   "shields": 1,
+   "mobility": 2,
+   "tankiness": 0,
+   "basicAttacker": false,
+   "builds": {
+    "*": "support_heal"
+   },
+   "strongAgainst": [
+    "Pharsa",
+    "Kagura",
+    "Miya",
+    "Layla"
+   ],
+   "weakAgainst": [
+    "Saber",
+    "Natalia",
+    "Kaja"
+   ],
+   "synergy": [
+    "Ling",
+    "Fanny",
+    "Lancelot",
+    "Gusion",
+    "Hayabusa"
+   ],
+   "profileSource": "curated"
+  },
+  {
+   "name": "Paquito",
+   "roles": [
+    "Fighter"
+   ],
+   "lanes": [
+    "exp"
+   ],
+   "damageType": "physical",
+   "damageProfile": "burst",
+   "cc": 1,
+   "healing": 0,
+   "shields": 1,
+   "mobility": 2,
+   "tankiness": 1,
+   "basicAttacker": false,
+   "builds": {
+    "exp": "fighter_burst"
+   },
+   "strongAgainst": [
+    "Layla",
+    "Miya",
+    "Lancelot"
+   ],
+   "weakAgainst": [
+    "Kaja",
+    "Ruby",
+    "Chou",
+    "Franco"
+   ],
+   "synergy": [
+    "Angela",
+    "Estes",
+    "Floryn"
+   ],
+   "profileSource": "curated"
+  },
+  {
+   "name": "Gloo",
+   "roles": [
+    "Tank"
+   ],
+   "lanes": [
+    "exp",
+    "roam"
+   ],
+   "damageType": "magic",
+   "damageProfile": "sustained",
+   "cc": 2,
+   "healing": 0,
+   "shields": 0,
+   "mobility": 1,
+   "tankiness": 3,
+   "basicAttacker": false,
+   "builds": {
+    "exp": "tank_exp",
+    "roam": "tank_roam"
+   },
+   "strongAgainst": [
+    "Ling",
+    "Fanny",
+    "Lancelot",
+    "Gusion"
+   ],
+   "weakAgainst": [
+    "Karrie",
+    "Dyrroth",
+    "Valir"
+   ],
+   "synergy": [
+    "Pharsa",
+    "Odette",
+    "Yve"
+   ],
+   "profileSource": "curated"
+  },
+  {
+   "name": "Beatrix",
+   "roles": [
+    "Marksman"
+   ],
+   "lanes": [
+    "gold"
+   ],
+   "damageType": "physical",
+   "damageProfile": "burst",
+   "cc": 0,
+   "healing": 0,
+   "shields": 0,
+   "mobility": 1,
+   "tankiness": 0,
+   "basicAttacker": true,
+   "builds": {
+    "gold": "mm_phys_burst"
+   },
+   "strongAgainst": [
+    "Miya",
+    "Layla",
+    "Pharsa",
+    "Tigreal"
+   ],
+   "weakAgainst": [
+    "Natalia",
+    "Saber",
+    "Lancelot",
+    "Helcurt"
+   ],
+   "synergy": [
+    "Tigreal",
+    "Atlas",
+    "Angela",
+    "Mathilda"
+   ],
+   "profileSource": "curated"
+  },
+  {
+   "name": "Phoveus",
+   "roles": [
+    "Fighter"
+   ],
+   "lanes": [
+    "exp"
+   ],
+   "damageType": "magic",
+   "damageProfile": "sustained",
+   "cc": 1,
+   "healing": 0,
+   "shields": 0,
+   "mobility": 2,
+   "tankiness": 1,
+   "basicAttacker": false,
+   "builds": {
+    "exp": "fighter_exp"
+   },
+   "strongAgainst": [
+    "Fanny",
+    "Ling",
+    "Lancelot",
+    "Chou",
+    "Wanwan"
+   ],
+   "weakAgainst": [
+    "Baxia",
+    "Karrie",
+    "Dyrroth"
+   ],
+   "synergy": [
+    "Angela",
+    "Estes",
+    "Floryn"
+   ],
+   "profileSource": "curated"
+  },
+  {
+   "name": "Natan",
+   "roles": [
+    "Marksman"
+   ],
+   "lanes": [
+    "gold"
+   ],
+   "damageType": "magic",
+   "damageProfile": "sustained",
+   "cc": 0,
+   "healing": 0,
+   "shields": 0,
+   "mobility": 1,
+   "tankiness": 0,
+   "basicAttacker": true,
+   "builds": {
+    "*": "mm_magic"
+   },
+   "strongAgainst": [
+    "Miya",
+    "Layla",
+    "Tigreal"
+   ],
+   "weakAgainst": [
+    "Natalia",
+    "Saber",
+    "Lancelot",
+    "Helcurt"
+   ],
+   "synergy": [
+    "Tigreal",
+    "Atlas",
+    "Angela"
+   ],
+   "profileSource": "curated"
+  },
+  {
+   "name": "Aulus",
+   "roles": [
+    "Fighter"
+   ],
+   "lanes": [
+    "exp",
+    "jungle"
+   ],
+   "damageType": "physical",
+   "damageProfile": "sustained",
+   "cc": 0,
+   "healing": 0,
+   "shields": 0,
+   "mobility": 1,
+   "tankiness": 1,
+   "basicAttacker": true,
+   "builds": {
+    "exp": "fighter_exp",
+    "jungle": "fighter_jungle"
+   },
+   "strongAgainst": [
+    "Layla",
+    "Miya",
+    "Pharsa"
+   ],
+   "weakAgainst": [
+    "Kaja",
+    "Chou",
+    "Diggie",
+    "Franco"
+   ],
+   "synergy": [
+    "Angela",
+    "Estes",
+    "Floryn"
+   ],
+   "profileSource": "curated"
+  },
+  {
+   "name": "Aamon",
+   "roles": [
+    "Assassin"
+   ],
+   "lanes": [
+    "jungle"
+   ],
+   "damageType": "magic",
+   "damageProfile": "burst",
+   "cc": 0,
+   "healing": 0,
+   "shields": 0,
+   "mobility": 3,
+   "tankiness": 0,
+   "basicAttacker": false,
+   "builds": {
+    "*": "mage_burst"
+   },
+   "strongAgainst": [
+    "Pharsa",
+    "Miya",
+    "Layla",
+    "Kagura"
+   ],
+   "weakAgainst": [
+    "Kaja",
+    "Chou",
+    "Khufra",
+    "Franco"
+   ],
+   "synergy": [
+    "Tigreal",
+    "Atlas",
+    "Mathilda"
+   ],
+   "profileSource": "curated"
+  },
+  {
+   "name": "Valentina",
+   "roles": [
+    "Mage"
+   ],
+   "lanes": [
+    "mid"
+   ],
+   "damageType": "magic",
+   "damageProfile": "burst",
+   "cc": 1,
+   "healing": 0,
+   "shields": 0,
+   "mobility": 1,
+   "tankiness": 0,
+   "basicAttacker": false,
+   "builds": {
+    "*": "mage_burst"
+   },
+   "strongAgainst": [
+    "Pharsa",
+    "Odette",
+    "Lunox",
+    "Kagura"
+   ],
+   "weakAgainst": [
+    "Saber",
+    "Natalia",
+    "Lancelot"
+   ],
+   "synergy": [
+    "Tigreal",
+    "Atlas",
+    "Mathilda"
+   ],
+   "profileSource": "curated"
+  },
+  {
+   "name": "Edith",
+   "roles": [
+    "Tank",
+    "Marksman"
+   ],
+   "lanes": [
+    "exp",
+    "roam"
+   ],
+   "damageType": "physical",
+   "damageProfile": "mixed",
+   "cc": 3,
+   "healing": 0,
+   "shields": 0,
+   "mobility": 1,
+   "tankiness": 3,
+   "basicAttacker": false,
+   "builds": {
+    "exp": "tank_exp",
+    "roam": "tank_roam"
+   },
+   "strongAgainst": [
+    "Ling",
+    "Fanny",
+    "Lancelot",
+    "Gusion"
+   ],
+   "weakAgainst": [
+    "Diggie",
+    "Valir",
+    "Karrie"
+   ],
+   "synergy": [
+    "Pharsa",
+    "Odette",
+    "Yve"
+   ],
+   "profileSource": "role-default"
+  },
+  {
+   "name": "Floryn",
+   "roles": [
+    "Support"
+   ],
+   "lanes": [
+    "roam"
+   ],
+   "damageType": "magic",
+   "damageProfile": "sustained",
+   "cc": 1,
+   "healing": 3,
+   "shields": 0,
+   "mobility": 0,
+   "tankiness": 0,
+   "basicAttacker": false,
+   "builds": {
+    "*": "support_heal"
+   },
+   "strongAgainst": [
+    "Pharsa",
+    "Kagura",
+    "Lunox"
+   ],
+   "weakAgainst": [
+    "Saber",
+    "Natalia",
+    "Baxia",
+    "Helcurt"
+   ],
+   "synergy": [
+    "Ruby",
+    "Alucard",
+    "Moskov",
+    "Yu Zhong",
+    "Karrie"
+   ],
+   "profileSource": "curated"
+  },
+  {
+   "name": "Yin",
+   "roles": [
+    "Fighter",
+    "Assassin"
+   ],
+   "lanes": [
+    "exp",
+    "jungle"
+   ],
+   "damageType": "physical",
+   "damageProfile": "burst",
+   "cc": 1,
+   "healing": 0,
+   "shields": 0,
+   "mobility": 2,
+   "tankiness": 0,
+   "basicAttacker": false,
+   "builds": {
+    "exp": "fighter_burst",
+    "jungle": "fighter_jungle"
+   },
+   "strongAgainst": [
+    "Layla",
+    "Miya",
+    "Pharsa",
+    "Beatrix"
+   ],
+   "weakAgainst": [
+    "Diggie",
+    "Kaja",
+    "Chou",
+    "Franco"
+   ],
+   "synergy": [
+    "Tigreal",
+    "Atlas",
+    "Angela"
+   ],
+   "profileSource": "curated"
+  },
+  {
+   "name": "Melissa",
+   "roles": [
+    "Marksman"
+   ],
+   "lanes": [
+    "gold"
+   ],
+   "damageType": "physical",
+   "damageProfile": "sustained",
+   "cc": 0,
+   "healing": 0,
+   "shields": 0,
+   "mobility": 1,
+   "tankiness": 0,
+   "basicAttacker": true,
+   "builds": {
+    "gold": "mm_atkspd"
+   },
+   "strongAgainst": [
+    "Ling",
+    "Lancelot",
+    "Gusion",
+    "Hayabusa",
+    "Fanny"
+   ],
+   "weakAgainst": [
+    "Natalia",
+    "Saber",
+    "Helcurt"
+   ],
+   "synergy": [
+    "Tigreal",
+    "Atlas",
+    "Angela",
+    "Mathilda"
+   ],
+   "profileSource": "curated"
+  },
+  {
+   "name": "Xavier",
+   "roles": [
+    "Mage"
+   ],
+   "lanes": [
+    "mid"
+   ],
+   "damageType": "magic",
+   "damageProfile": "burst",
+   "cc": 1,
+   "healing": 0,
+   "shields": 0,
+   "mobility": 0,
+   "tankiness": 0,
+   "basicAttacker": false,
+   "builds": {
+    "*": "mage_poke"
+   },
+   "strongAgainst": [
+    "Tigreal",
+    "Franco",
+    "Khufra"
+   ],
+   "weakAgainst": [
+    "Saber",
+    "Natalia",
+    "Lancelot",
+    "Helcurt"
+   ],
+   "synergy": [
+    "Tigreal",
+    "Atlas",
+    "Minotaur"
+   ],
+   "profileSource": "curated"
+  },
+  {
+   "name": "Julian",
+   "roles": [
+    "Fighter",
+    "Mage"
+   ],
+   "lanes": [
+    "jungle",
+    "exp"
+   ],
+   "damageType": "magic",
+   "damageProfile": "burst",
+   "cc": 1,
+   "healing": 0,
+   "shields": 0,
+   "mobility": 2,
+   "tankiness": 0,
+   "basicAttacker": false,
+   "builds": {
+    "jungle": "fighter_jungle",
+    "exp": "fighter_burst"
+   },
+   "strongAgainst": [
+    "Layla",
+    "Miya",
+    "Pharsa"
+   ],
+   "weakAgainst": [
+    "Kaja",
+    "Chou",
+    "Ruby",
+    "Franco"
+   ],
+   "synergy": [
+    "Tigreal",
+    "Atlas",
+    "Angela"
+   ],
+   "profileSource": "curated"
+  },
+  {
+   "name": "Fredrinn",
+   "roles": [
+    "Tank",
+    "Fighter"
+   ],
+   "lanes": [
+    "jungle",
+    "exp"
+   ],
+   "damageType": "physical",
+   "damageProfile": "sustained",
+   "cc": 2,
+   "healing": 0,
+   "shields": 1,
+   "mobility": 1,
+   "tankiness": 3,
+   "basicAttacker": false,
+   "builds": {
+    "jungle": "tank_exp",
+    "exp": "tank_exp"
+   },
+   "strongAgainst": [
+    "Lancelot",
+    "Ling",
+    "Fanny",
+    "Benedetta"
+   ],
+   "weakAgainst": [
+    "Karrie",
+    "Dyrroth",
+    "Baxia",
+    "Valir"
+   ],
+   "synergy": [
+    "Pharsa",
+    "Odette",
+    "Yve",
+    "Moskov"
+   ],
+   "profileSource": "curated"
+  },
+  {
+   "name": "Joy",
+   "roles": [
+    "Assassin"
+   ],
+   "lanes": [
+    "jungle"
+   ],
+   "damageType": "magic",
+   "damageProfile": "burst",
+   "cc": 0,
+   "healing": 0,
+   "shields": 0,
+   "mobility": 3,
+   "tankiness": 0,
+   "basicAttacker": false,
+   "builds": {
+    "*": "mage_burst"
+   },
+   "strongAgainst": [
+    "Pharsa",
+    "Miya",
+    "Layla",
+    "Kagura"
+   ],
+   "weakAgainst": [
+    "Kaja",
+    "Chou",
+    "Minsitthar",
+    "Franco"
+   ],
+   "synergy": [
+    "Tigreal",
+    "Atlas",
+    "Mathilda"
+   ],
+   "profileSource": "curated"
+  },
+  {
+   "name": "Novaria",
+   "roles": [
+    "Mage"
+   ],
+   "lanes": [
+    "mid"
+   ],
+   "damageType": "magic",
+   "damageProfile": "burst",
+   "cc": 1,
+   "healing": 0,
+   "shields": 0,
+   "mobility": 0,
+   "tankiness": 0,
+   "basicAttacker": false,
+   "builds": {
+    "*": "mage_poke"
+   },
+   "strongAgainst": [
+    "Pharsa",
+    "Miya",
+    "Layla",
+    "Granger"
+   ],
+   "weakAgainst": [
+    "Saber",
+    "Natalia",
+    "Lancelot",
+    "Helcurt"
+   ],
+   "synergy": [
+    "Tigreal",
+    "Atlas",
+    "Minotaur"
+   ],
+   "profileSource": "curated"
+  },
+  {
+   "name": "Arlott",
+   "roles": [
+    "Fighter",
+    "Assassin"
+   ],
+   "lanes": [
+    "exp",
+    "roam",
+    "jungle"
+   ],
+   "damageType": "physical",
+   "damageProfile": "burst",
+   "cc": 2,
+   "healing": 0,
+   "shields": 0,
+   "mobility": 3,
+   "tankiness": 1,
+   "basicAttacker": false,
+   "builds": {
+    "exp": "fighter_burst",
+    "roam": "tank_roam",
+    "jungle": "fighter_jungle"
+   },
+   "strongAgainst": [
+    "Lancelot",
+    "Ling",
+    "Fanny",
+    "Benedetta"
+   ],
+   "weakAgainst": [
+    "Kaja",
+    "Chou",
+    "Ruby",
+    "Baxia"
+   ],
+   "synergy": [
+    "Pharsa",
+    "Odette",
+    "Kagura",
+    "Tigreal"
+   ],
+   "profileSource": "curated"
+  },
+  {
+   "name": "Ixia",
+   "roles": [
+    "Marksman"
+   ],
+   "lanes": [
+    "gold"
+   ],
+   "damageType": "physical",
+   "damageProfile": "sustained",
+   "cc": 0,
+   "healing": 1,
+   "shields": 0,
+   "mobility": 0,
+   "tankiness": 0,
+   "basicAttacker": true,
+   "builds": {
+    "gold": "mm_atkspd"
+   },
+   "strongAgainst": [
+    "Tigreal",
+    "Franco",
+    "Gloo",
+    "Uranus"
+   ],
+   "weakAgainst": [
+    "Natalia",
+    "Saber",
+    "Lancelot",
+    "Helcurt"
+   ],
+   "synergy": [
+    "Tigreal",
+    "Atlas",
+    "Mathilda",
+    "Angela"
+   ],
+   "profileSource": "curated"
+  },
+  {
+   "name": "Nolan",
+   "roles": [
+    "Assassin"
+   ],
+   "lanes": [
+    "jungle"
+   ],
+   "damageType": "physical",
+   "damageProfile": "burst",
+   "cc": 0,
+   "healing": 0,
+   "shields": 0,
+   "mobility": 3,
+   "tankiness": 0,
+   "basicAttacker": false,
+   "builds": {
+    "*": "assassin_phys"
+   },
+   "strongAgainst": [
+    "Pharsa",
+    "Miya",
+    "Layla",
+    "Kagura"
+   ],
+   "weakAgainst": [
+    "Kaja",
+    "Chou",
+    "Khufra",
+    "Franco"
+   ],
+   "synergy": [
+    "Tigreal",
+    "Atlas",
+    "Mathilda"
+   ],
+   "profileSource": "curated"
+  },
+  {
+   "name": "Cici",
+   "roles": [
+    "Fighter"
+   ],
+   "lanes": [
+    "exp"
+   ],
+   "damageType": "physical",
+   "damageProfile": "sustained",
+   "cc": 1,
+   "healing": 0,
+   "shields": 0,
+   "mobility": 2,
+   "tankiness": 1,
+   "basicAttacker": false,
+   "builds": {
+    "exp": "fighter_sustain"
+   },
+   "strongAgainst": [
+    "Lancelot",
+    "Ling",
+    "Fanny"
+   ],
+   "weakAgainst": [
+    "Kaja",
+    "Chou",
+    "Ruby",
+    "Franco"
+   ],
+   "synergy": [
+    "Angela",
+    "Estes",
+    "Floryn"
+   ],
+   "profileSource": "curated"
+  },
+  {
+   "name": "Chip",
+   "roles": [
+    "Tank",
+    "Support"
+   ],
+   "lanes": [
+    "roam"
+   ],
+   "damageType": "physical",
+   "damageProfile": "mixed",
+   "cc": 3,
+   "healing": 0,
+   "shields": 0,
+   "mobility": 1,
+   "tankiness": 3,
+   "basicAttacker": false,
+   "builds": {
+    "*": "tank_roam"
+   },
+   "strongAgainst": [
+    "Ling",
+    "Fanny",
+    "Lancelot",
+    "Wanwan"
+   ],
+   "weakAgainst": [
+    "Diggie",
+    "Kaja",
+    "Valir"
+   ],
+   "synergy": [
+    "Pharsa",
+    "Odette",
+    "Yve",
+    "Moskov"
+   ],
+   "profileSource": "role-default"
+  },
+  {
+   "name": "Zhuxin",
+   "roles": [
+    "Mage"
+   ],
+   "lanes": [
+    "mid"
+   ],
+   "damageType": "magic",
+   "damageProfile": "sustained",
+   "cc": 2,
+   "healing": 0,
+   "shields": 0,
+   "mobility": 1,
+   "tankiness": 0,
+   "basicAttacker": false,
+   "builds": {
+    "*": "mage_dps"
+   },
+   "strongAgainst": [
+    "Tigreal",
+    "Franco",
+    "Khufra",
+    "Fanny"
+   ],
+   "weakAgainst": [
+    "Saber",
+    "Natalia",
+    "Lancelot",
+    "Helcurt"
+   ],
+   "synergy": [
+    "Tigreal",
+    "Atlas",
+    "Minotaur"
+   ],
+   "profileSource": "curated"
+  },
+  {
+   "name": "Suyou",
+   "roles": [
+    "Assassin",
+    "Fighter"
+   ],
+   "lanes": [
+    "jungle",
+    "exp"
+   ],
+   "damageType": "physical",
+   "damageProfile": "burst",
+   "cc": 1,
+   "healing": 0,
+   "shields": 0,
+   "mobility": 3,
+   "tankiness": 0,
+   "basicAttacker": false,
+   "builds": {
+    "jungle": "fighter_jungle",
+    "exp": "fighter_burst"
+   },
+   "strongAgainst": [
+    "Pharsa",
+    "Miya",
+    "Layla",
+    "Kagura"
+   ],
+   "weakAgainst": [
+    "Kaja",
+    "Chou",
+    "Ruby",
+    "Franco"
+   ],
+   "synergy": [
+    "Tigreal",
+    "Atlas",
+    "Mathilda"
+   ],
+   "profileSource": "role-default"
+  },
+  {
+   "name": "Lukas",
+   "roles": [
+    "Fighter"
+   ],
+   "lanes": [
+    "exp",
+    "jungle"
+   ],
+   "damageType": "physical",
+   "damageProfile": "mixed",
+   "cc": 1,
+   "healing": 1,
+   "shields": 0,
+   "mobility": 2,
+   "tankiness": 1,
+   "basicAttacker": false,
+   "builds": {
+    "exp": "fighter_sustain"
+   },
+   "strongAgainst": [
+    "Layla",
+    "Miya",
+    "Pharsa",
+    "Lancelot"
+   ],
+   "weakAgainst": [
+    "Kaja",
+    "Chou",
+    "Baxia",
+    "Karrie"
+   ],
+   "synergy": [
+    "Angela",
+    "Estes",
+    "Floryn"
+   ],
+   "profileSource": "role-default"
+  },
+  {
+   "name": "Kalea",
+   "roles": [
+    "Support",
+    "Fighter"
+   ],
+   "lanes": [
+    "roam"
+   ],
+   "damageType": "magic",
+   "damageProfile": "sustained",
+   "cc": 1,
+   "healing": 1,
+   "shields": 1,
+   "mobility": 1,
+   "tankiness": 1,
+   "basicAttacker": false,
+   "builds": {
+    "*": "tank_roam"
+   },
+   "strongAgainst": [
+    "Saber",
+    "Natalia",
+    "Lancelot"
+   ],
+   "weakAgainst": [
+    "Diggie",
+    "Kaja",
+    "Valir"
+   ],
+   "synergy": [
+    "Pharsa",
+    "Odette",
+    "Yve"
+   ],
+   "profileSource": "role-default"
+  },
+  {
+   "name": "Zetian",
+   "roles": [
+    "Mage"
+   ],
+   "lanes": [
+    "mid"
+   ],
+   "damageType": "magic",
+   "damageProfile": "burst",
+   "cc": 2,
+   "healing": 0,
+   "shields": 0,
+   "mobility": 1,
+   "tankiness": 0,
+   "basicAttacker": false,
+   "builds": {
+    "*": "mage_poke"
+   },
+   "strongAgainst": [
+    "Tigreal",
+    "Franco",
+    "Khufra"
+   ],
+   "weakAgainst": [
+    "Saber",
+    "Natalia",
+    "Lancelot",
+    "Helcurt"
+   ],
+   "synergy": [
+    "Tigreal",
+    "Atlas",
+    "Minotaur"
+   ],
+   "profileSource": "role-default"
+  },
+  {
+   "name": "Obsidia",
+   "roles": [
+    "Marksman"
+   ],
+   "lanes": [
+    "gold"
+   ],
+   "damageType": "physical",
+   "damageProfile": "sustained",
+   "cc": 1,
+   "healing": 0,
+   "shields": 0,
+   "mobility": 1,
+   "tankiness": 0,
+   "basicAttacker": true,
+   "builds": {
+    "gold": "mm_crit"
+   },
+   "strongAgainst": [
+    "Miya",
+    "Layla",
+    "Tigreal"
+   ],
+   "weakAgainst": [
+    "Natalia",
+    "Saber",
+    "Lancelot",
+    "Helcurt"
+   ],
+   "synergy": [
+    "Tigreal",
+    "Atlas",
+    "Angela"
+   ],
+   "profileSource": "role-default"
+  },
+  {
+   "name": "Sora",
+   "roles": [
+    "Fighter"
+   ],
+   "lanes": [
+    "exp",
+    "jungle"
+   ],
+   "damageType": "physical",
+   "damageProfile": "mixed",
+   "cc": 1,
+   "healing": 1,
+   "shields": 0,
+   "mobility": 2,
+   "tankiness": 1,
+   "basicAttacker": false,
+   "builds": {
+    "exp": "fighter_burst",
+    "jungle": "fighter_jungle"
+   },
+   "strongAgainst": [
+    "Layla",
+    "Miya",
+    "Pharsa"
+   ],
+   "weakAgainst": [
+    "Kaja",
+    "Chou",
+    "Ruby"
+   ],
+   "synergy": [
+    "Angela",
+    "Estes",
+    "Floryn"
+   ],
+   "profileSource": "role-default"
+  },
+  {
+   "name": "Marcel",
+   "roles": [
+    "Tank",
+    "Support"
+   ],
+   "lanes": [
+    "roam"
+   ],
+   "damageType": "physical",
+   "damageProfile": "mixed",
+   "cc": 3,
+   "healing": 0,
+   "shields": 0,
+   "mobility": 1,
+   "tankiness": 3,
+   "basicAttacker": false,
+   "builds": {
+    "*": "tank_roam"
+   },
+   "strongAgainst": [
+    "Ling",
+    "Fanny",
+    "Lancelot"
+   ],
+   "weakAgainst": [
+    "Diggie",
+    "Kaja",
+    "Valir"
+   ],
+   "synergy": [
+    "Pharsa",
+    "Odette",
+    "Yve"
+   ],
+   "profileSource": "role-default"
+  },
+  {
+   "name": "Hirara",
+   "roles": [
+    "Assassin"
+   ],
+   "lanes": [
+    "jungle",
+    "exp"
+   ],
+   "damageType": "physical",
+   "damageProfile": "burst",
+   "cc": 1,
+   "healing": 0,
+   "shields": 0,
+   "mobility": 3,
+   "tankiness": 0,
+   "basicAttacker": false,
+   "builds": {
+    "*": "hirara"
+   },
+   "strongAgainst": [
+    "Pharsa",
+    "Miya",
+    "Layla",
+    "Kagura"
+   ],
+   "weakAgainst": [
+    "Phoveus",
+    "Minsitthar",
+    "Kalea",
+    "Saber",
+    "Odette",
+    "Bruno"
+   ],
+   "synergy": [
+    "Tigreal",
+    "Atlas",
+    "Marcel",
+    "Khufra"
+   ],
+   "profileSource": "role-default"
+  }
+ ]
+}

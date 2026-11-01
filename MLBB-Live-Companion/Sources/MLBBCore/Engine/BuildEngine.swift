@@ -174,12 +174,22 @@ public struct BuildEngine: Sendable {
         }
 
         // 4. Mandatory answers: anti-heal against heavy healing, penetration against stacked defence.
+        // Damage dealers get these from a damage item (e.g. Sea Halberd), not from a tank item.
+        let dealer = archetype != .tank && archetype != .support
         func ensure(tag: String, when needed: Bool) {
-            guard needed, !(core + picks.map(\.item)).contains(where: { $0.has(tag: tag) }) else { return }
-            let options = db.items.filter { $0.has(tag: tag) && $0.isUsable(by: archetype) && !chosenIDs.contains($0.id) && $0.category != .boots }
+            guard needed else { return }
+            let counts: (Item) -> Bool = { $0.has(tag: tag) && (!dealer || !$0.isDefensive) }
+            guard !(core + picks.map(\.item)).contains(where: counts) else { return }
+            let options = db.items.filter {
+                counts($0) && $0.isUsable(by: archetype) && !chosenIDs.contains($0.id) && $0.category != .boots
+            }
             guard let add = options.max(by: { score($0, threat.values) < score($1, threat.values) }) else { return }
             let newPick = (item: add, score: score(add, threat.values) + 0.5, fromTemplate: false)
-            if picks.count < slots {
+            if let same = picks.firstIndex(where: { $0.item.has(tag: tag) }) {
+                // A defensive item with the same tag was picked: swap it for the damage version.
+                chosenIDs.remove(picks[same].item.id)
+                picks[same] = newPick
+            } else if picks.count < slots {
                 picks.append(newPick)
             } else if let idx = picks.indices.min(by: { lhs, rhs in
                 // Replace the weakest pick, preferring non-template picks.
@@ -190,7 +200,6 @@ public struct BuildEngine: Sendable {
             }
             chosenIDs.insert(add.id)
         }
-        let dealer = archetype != .tank && archetype != .support
         ensure(tag: "antiHeal", when: threat[.healing] >= antiHealThreshold)
         let penTag = archetype.isMagic ? "magicPenetration" : "penetration"
         ensure(tag: penTag, when: dealer && threat[.tanky] >= penetrationThreshold)

@@ -13,3 +13,6 @@
 
 ## הרצה
 אתר סטטי, בלי שלב build: `python3 -m http.server` מתוך התיקייה. באייפון: Safari ← שיתוף ← "הוסף למסך הבית".
+
+## כתובת
+https://cptnuru9-commits.github.io/New/mlbb/

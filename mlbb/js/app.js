@@ -76,8 +76,8 @@ function renderTier() {
     list = list.filter((h) => h.metaTier);
     list.forEach((h) => (h._v = TIER_META_SCORE[h.metaTier] + (h.stats ? h.stats.win / 1000 : 0)));
     hint.textContent = state.live
-      ? "הערכת מטא קהילתית (עריכה ידנית, לא נתונים חיים)."
-      : "⚠️ אין כרגע חיבור לנתונים החיים, ולכן מוצגת הערכת מטא קהילתית בלבד (בלי אחוזים). ראה לשונית 'מקורות והגדרות'.";
+      ? `הערכת מטא קהילתית (${META_INFO.patch}, עודכן ${META_INFO.updated}) לפי mlbbhub, timesaver, mlbbdex ו-elitedias.`
+      : `⚠️ אין כרגע חיבור לנתונים החיים, ולכן מוצג טיר לפי הסכמה בין אתרי הסטטיסטיקה הגדולים (${META_INFO.patch}, עודכן ${META_INFO.updated}), בלי אחוזים. פרטים בלשונית 'מקורות והגדרות'.`;
   }
   const sorted = live ? assignTiers(list) : list.sort((a, b) => b._v - a._v).map((h) => ((h._tier = h.metaTier), h));
   const out = $("#tier-out");
@@ -146,6 +146,7 @@ function openHero(name) {
       <div class="box"><h4>⚔️ הוא חזק נגד</h4>${miniList(strong)}</div>
       <div class="box"><h4>🤝 סינרגיה — עובדים טוב איתו</h4>${miniList(syn)}</div>
     </div>
+    <div class="box"><h4>🔗 הדמות באתרי הסטטיסטיקה</h4><div class="mini">${extLinks(h)}</div></div>
     <p class="src">קאונטרים וסינרגיות למעלה: מאגר ערוך לפי ידע קהילתי (קבוע, לא מתעדכן לבד).</p>
     <div class="cols" id="live-rel"><div class="box loading">${s && s.id != null ? "טוען קאונטרים וסינרגיות מהנתונים החיים…" : "קאונטרים וסינרגיות חיים לא זמינים (אין חיבור ל-API)."}</div></div>
     ${lanes.length ? `<h3>🧰 בילד מומלץ לפי ליין</h3><div class="chips" id="build-lanes">${lanes.map((l, i) => `<button class="chip ${i ? "" : "on"}" data-bl="${l}">${LANE_HE[l]}</button>`).join("")}</div><div id="build-out"></div>` : ""}
@@ -157,6 +158,13 @@ function openHero(name) {
     renderBuild(h, b.dataset.bl);
   });
   if (s && s.id != null) loadLiveRelations(h);
+}
+function extLinks(h) {
+  const slug = h.name.toLowerCase().replace(/['.]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+  const wiki = encodeURIComponent(h.name.replace(/ /g, "_"));
+  return [["mlbbhub", `https://mlbbhub.com/heroes/${slug}`], ["mlbb.io", `https://mlbb.io/en/hero/${slug}`],
+    ["Liquipedia", `https://liquipedia.net/mobilelegends/${wiki}`]]
+    .map(([t, u]) => `<a class="mh" href="${u}" target="_blank" rel="noopener">${t} ↗</a>`).join("");
 }
 function renderBuild(h, lane) {
   const b = buildFor(h, lane);
@@ -269,9 +277,11 @@ function renderSources() {
     (אותם נתונים שמוצגים באתר הרשמי <code>m.mobilelegends.com</code>). הם נטענים דרך ה-API הקהילתי הפתוח
     <code>mlbb-stats.ridwaanhall.com</code>. הדפדפן שלך טוען אותם ישירות, והם נשמרים במטמון ל-6 שעות.
     אפשר לסנן לפי דרגה ותקופה בראש הדף.</p>
-    <p><b>🧠 ליינים, קאונטרים, סינרגיות, בילדים והערכת מטא:</b> מאגר ערוך לפי ידע קהילתי (מדריכים, טורנירי MPL/MSC ודיונים בקהילה).
+    <p><b>🧠 ליינים, קאונטרים, סינרגיות ובילדים:</b> מאגר ערוך לפי ידע קהילתי (מדריכים, טורנירי MPL/MSC ודיונים בקהילה).
     הוא <u>לא</u> מתעדכן לבד. דמויות חדשות שעדיין לא נמצאות בו יופיעו בטיר ליסט מהנתונים החיים, אבל בלי בילד או קאונטרים ערוכים.</p>
-    <p><b>מומלץ להצליב גם עם:</b> mlbbhub.com (סטטיסטיקה יומית), Liquipedia (מטא תחרותי), r/MobileLegendsGame ודיסקורד הקהילה.</p>
+    <p><b>🗂️ הערכת המטא (${META_INFO.patch}, עודכן ${META_INFO.updated}):</b> הסכמה בין אתרי הסטטיסטיקה הגדולים, בדומה ל-mlbb.gg:</p>
+    <ul>${META_INFO.sources.map(([t, u]) => `<li><a href="${u}" target="_blank" rel="noopener">${esc(t)}</a></li>`).join("")}</ul>
+    <p>בכל דף דמות יש קישורים ישירים לדמות ב-mlbbhub, ב-mlbb.io וב-Liquipedia, לבדיקת המספרים העדכניים ביותר.</p>
     <h3>מצב החיבור</h3>
     <p>${state.live ? `✅ מחובר. נטענו ${state.live.length} דמויות.` : `❌ לא מחובר${state.liveError ? ` (${esc(state.liveError)})` : ""}. ייתכן שה-API חסום ברשת שלך או שאינו זמין כרגע. אפשר להגדיר כתובת חלופית (מראה/פרוקסי) למטה.`}</p>
     <h3>הגדרות</h3>

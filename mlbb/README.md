@@ -6,7 +6,10 @@
 
 ## מקורות
 - **סטטיסטיקה חיה:** נתוני הדירוג הרשמיים של Moonton דרך ה-API הקהילתי `mlbb-stats.ridwaanhall.com`. הדפדפן טוען אותם ישירות.
-- **קאונטרים, סינרגיות, בילדים והערכת מטא:** מאגר ערוך ב-`js/heroes.js` וב-`js/builds.js`. הוא לא מתעדכן לבד.
+- **הערכת מטא (Season 42, Patch 2.2.16a):** הסכמה בין mlbbhub, timesaver, mlbbdex ו-elitedias. הרשימה ב-`META_INFO` בקובץ `js/heroes.js`.
+- **קאונטרים, סינרגיות ובילדים:** מאגר ערוך ב-`js/heroes.js` וב-`js/builds.js`. הוא לא מתעדכן לבד.
+
+
 
 ## הרצה
 אתר סטטי, בלי שלב build: `python3 -m http.server` מתוך התיקייה. באייפון: Safari ← שיתוף ← "הוסף למסך הבית".

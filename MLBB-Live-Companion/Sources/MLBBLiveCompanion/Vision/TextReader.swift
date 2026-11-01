@@ -2,10 +2,13 @@ import CoreGraphics
 import MLBBCore
 import Vision
 
+/// Vision (macOS 15+) has its own `NormalizedRect`; always mean ours here.
+typealias CoreRect = MLBBCore.NormalizedRect
+
 struct OCRLine: Sendable {
     let text: String
     /// Normalised, top-left origin, relative to the image that was read.
-    let box: NormalizedRect
+    let box: CoreRect
     let confidence: Float
 }
 
@@ -23,11 +26,11 @@ enum TextReader {
             return []
         }
         let observations = request.results ?? []
-        return observations.compactMap { obs in
+        return observations.compactMap { (obs: VNRecognizedTextObservation) -> OCRLine? in
             guard let top = obs.topCandidates(1).first else { return nil }
             let b = obs.boundingBox   // normalised, bottom-left origin
             return OCRLine(text: top.string,
-                           box: NormalizedRect(x: Double(b.minX), y: Double(1 - b.maxY), width: Double(b.width), height: Double(b.height)),
+                           box: CoreRect(x: Double(b.minX), y: Double(1 - b.maxY), width: Double(b.width), height: Double(b.height)),
                            confidence: top.confidence)
         }
     }

@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#0b1020">
+<title>MLBB Meta — טיר ליסט, קאונטרים ובילדים</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<header class="top">
+  <div class="brand">⚔️ <b>MLBB Meta</b></div>
+  <div class="filters">
+    <label>דרגה
+      <select id="f-rank">
+        <option value="all">כל הדרגות</option><option value="epic">Epic</option><option value="legend">Legend</option>
+        <option value="mythic" selected>Mythic</option><option value="honor">Mythical Honor</option><option value="glory">Mythical Glory+</option>
+      </select></label>
+    <label>תקופה
+      <select id="f-days"><option value="1">יום</option><option value="3">3 ימים</option><option value="7" selected>7 ימים</option><option value="15">15 ימים</option><option value="30">30 ימים</option></select></label>
+    <span id="live-status" class="status">טוען…</span>
+  </div>
+</header>
+
+<nav class="tabs">
+  <button data-tab="tier" class="active">🏆 טיר ליסט</button>
+  <button data-tab="heroes">🦸 דמויות</button>
+  <button data-tab="team">🧩 בונה קבוצה</button>
+  <button data-tab="sources">ℹ️ מקורות והגדרות</button>
+</nav>
+
+<main>
+  <section id="tab-tier" class="tab active">
+    <div class="toolbar">
+      <div class="chips" id="tier-lanes"></div>
+      <label>מיון לפי
+        <select id="tier-sort">
+          <option value="score">ציון משוקלל</option><option value="win">ווין רייט</option>
+          <option value="pick">פיק רייט</option><option value="ban">באן רייט</option><option value="meta">הערכת מטא קהילתית</option>
+        </select></label>
+      <label class="switch"><input type="checkbox" id="tier-table"> תצוגת טבלה</label>
+    </div>
+    <p class="hint" id="tier-hint"></p>
+    <div id="tier-out"></div>
+  </section>
+
+  <section id="tab-heroes" class="tab">
+    <div class="toolbar">
+      <input id="hero-search" type="search" placeholder="חיפוש דמות…">
+      <div class="chips" id="hero-roles"></div>
+    </div>
+    <div id="hero-grid" class="grid"></div>
+  </section>
+
+  <section id="tab-team" class="tab">
+    <div class="team-wrap">
+      <div class="panel">
+        <h3>הקבוצה שלי</h3>
+        <div id="ally-slots" class="slots"></div>
+        <h3>היריבים <small>(לא חובה)</small></h3>
+        <div id="enemy-slots" class="slots"></div>
+        <button id="team-clear" class="btn ghost">איפוס</button>
+      </div>
+      <div class="panel grow">
+        <h3>ניתוח הרכב</h3>
+        <div id="team-analysis"></div>
+        <h3>המלצות לפי ליין</h3>
+        <div id="team-recs"></div>
+      </div>
+    </div>
+    <div class="panel">
+      <h3>צמדים חזקים במטא</h3>
+      <div id="duos"></div>
+    </div>
+  </section>
+
+  <section id="tab-sources" class="tab">
+    <div class="panel prose" id="sources"></div>
+  </section>
+</main>
+
+<div id="modal" class="modal hidden" role="dialog" aria-modal="true">
+  <div class="modal-card">
+    <button class="close" id="modal-close" aria-label="סגור">✕</button>
+    <div id="modal-body"></div>
+  </div>
+</div>
+
+<datalist id="hero-names"></datalist>
+<script src="js/heroes.js"></script>
+<script src="js/builds.js"></script>
+<script src="js/api.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

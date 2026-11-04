@@ -208,6 +208,7 @@
     <!-- LIBRARY -->
     <div id="p-library" class="panel" role="tabpanel" hidden>
       <div id="libFilter" class="lib-filter" aria-label="סינון לפי שריר"></div>
+      <p class="mus-key"><span><i class="k1"></i>שריר עיקרי שעובד בתרגיל</span><span><i class="k2"></i>שריר משני</span></p>
       <div id="libGrid" class="lib-grid"></div>
     </div>
 
@@ -274,6 +275,7 @@
       <div id="dlgFig" class="fig-big"></div>
       <div class="dlg-ctrl">
         <span id="dlgView" class="view-tag"></span>
+        <span class="mus-key"><span><i class="k1"></i>שריר עיקרי</span><span><i class="k2"></i>שריר משני</span></span>
         <button type="button" class="ghost sm" id="dlgSlow" aria-pressed="false">הילוך איטי</button>
         <button type="button" class="ghost sm" id="dlgPlay">עצור</button>
       </div>
@@ -292,7 +294,7 @@
       <div id="dlgLog" class="log">
         <h3>רישום לשבוע <span id="logWeek" class="num"></span></h3>
         <form id="logForm" class="log-form">
-          <label class="field"><span>משקל (ק״ג)</span><input id="logW" type="number" step="0.5" inputmode="decimal" placeholder="ריק = משקל גוף"></label>
+          <label class="field"><span>משקל (ק״ג)</span><input id="logW" type="number" step="0.5" inputmode="decimal" placeholder="ריק למשקל גוף"></label>
           <label class="field"><span>חזרות</span><input id="logR" type="number" inputmode="numeric" min="1" max="100"></label>
           <button type="submit" class="btn">שמירה</button>
         </form>

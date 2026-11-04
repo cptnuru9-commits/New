@@ -12,17 +12,17 @@
     FBC: ['גוף מלא C', [['squat', 'S', 1], ['hpush', 'S', 1], ['hpull', 'M', 1], ['fly', 'I'], ['rear', 'I'], ['ham', 'I'], ['triceps', 'I', 1]]],
     UA: ['פלג גוף עליון A', [['hpush', 'M'], ['hpull', 'M'], ['vpush', 'S'], ['vpull', 'S'], ['lateral', 'I'], ['triceps', 'I'], ['biceps', 'I']]],
     LA: ['פלג גוף תחתון A', [['squat', 'M'], ['hinge', 'S'], ['single', 'S'], ['quad', 'I'], ['ham', 'I'], ['calf', 'I']]],
-    UB: ['פלג גוף עליון B', [['hpush', 'S', 1], ['vpull', 'M', 1], ['hpull', 'S', 1], ['fly', 'I'], ['rear', 'I'], ['biceps', 'I', 1], ['triceps', 'I', 1]]],
-    LB: ['פלג גוף תחתון B', [['hinge', 'M', 1], ['squat', 'S', 1], ['glute', 'S'], ['ham', 'I'], ['quad', 'I'], ['calf', 'I'], ['core', 'I']]],
-    PU: ['דחיפה', [['vpush', 'M'], ['hpush', 'S', 1], ['dip', 'S'], ['fly', 'I'], ['lateral', 'I'], ['triceps', 'I', 1]]],
+    UB: ['פלג גוף עליון B', [['incl', 'S'], ['vpull', 'M', 1], ['hpull', 'S', 1], ['fly', 'I'], ['rear', 'I'], ['biceps', 'I', 1], ['triceps', 'I', 1]]],
+    LB: ['פלג גוף תחתון B', [['hinge', 'M', 1], ['squat', 'S', 1], ['glute', 'S'], ['ham', 'I', 1], ['quad', 'I'], ['calf', 'I'], ['core', 'I']]],
+    PU: ['דחיפה', [['vpush', 'M'], ['incl', 'S'], ['dip', 'S'], ['fly', 'I'], ['lateral', 'I', 1], ['triceps', 'I', 1]]],
     PL: ['משיכה', [['vpull', 'M', 1], ['hpull', 'M', 1], ['rear', 'I'], ['biceps', 'I'], ['biceps', 'I', 1], ['core', 'I']]],
-    LG: ['רגליים', [['hinge', 'M', 1], ['squat', 'S', 1], ['glute', 'S'], ['ham', 'I'], ['quad', 'I'], ['calf', 'I']]],
-    PUA: ['דחיפה A', [['hpush', 'M'], ['vpush', 'S'], ['fly', 'I'], ['lateral', 'I'], ['triceps', 'I'], ['triceps', 'I', 1]]],
+    LG: ['רגליים', [['hinge', 'M', 1], ['squat', 'S', 1], ['glute', 'S'], ['ham', 'I', 1], ['quad', 'I'], ['calf', 'I']]],
+    PUA: ['דחיפה A', [['hpush', 'M'], ['incl', 'S'], ['vpush', 'S'], ['fly', 'I'], ['lateral', 'I'], ['triceps', 'I'], ['triceps', 'I', 1]]],
     PLA: ['משיכה A', [['vpull', 'M'], ['hpull', 'S'], ['rear', 'I'], ['biceps', 'I'], ['biceps', 'I', 1]]],
     LGA: ['רגליים A', [['squat', 'M'], ['hinge', 'S'], ['single', 'S'], ['ham', 'I'], ['calf', 'I'], ['core', 'I']]],
-    PUB: ['דחיפה B', [['vpush', 'M'], ['hpush', 'S', 1], ['dip', 'S'], ['lateral', 'I'], ['triceps', 'I']]],
+    PUB: ['דחיפה B', [['vpush', 'M'], ['hpush', 'S', 1], ['dip', 'S'], ['fly', 'I', 1], ['lateral', 'I', 1], ['triceps', 'I']]],
     PLB: ['משיכה B', [['hpull', 'M'], ['vpull', 'S', 1], ['rear', 'I', 1], ['biceps', 'I', 1], ['core', 'I', 1]]],
-    LGB: ['רגליים B', [['hinge', 'M', 1], ['squat', 'S', 1], ['glute', 'S'], ['quad', 'I'], ['ham', 'I'], ['calf', 'I']]]
+    LGB: ['רגליים B', [['hinge', 'M', 1], ['squat', 'S', 1], ['glute', 'S'], ['quad', 'I'], ['ham', 'I', 1], ['calf', 'I']]]
   };
 
   const SPLITS = {

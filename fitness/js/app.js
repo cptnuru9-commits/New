@@ -235,7 +235,7 @@
           const ex = EX.X[e.id], f = PROG.forWeek(e, S.week, p.level), pr = presc(f);
           const lg = (S.logs[e.id] || {})[S.week];
           return `<li><button type="button" class="ex-row" data-ex="${e.id}" data-s="${si}" data-e="${ei}">
-            <span class="thumb" data-anim="${ex.a}"></span>
+            <span class="thumb" data-ex="${e.id}"></span>
             <span class="ex-name"><b>${esc(ex.n)}</b><small>${ex.en}${e.role === 'M' ? ' · תרגיל מרכזי' : ''}${lg ? ` · נרשם: ${lg.w || 0}×${lg.r}` : ''}</small></span>
             <span class="ex-sr"><span class="num">${pr.sets} × ${f.time ? '30–60s' : f.reps[0] + '–' + f.reps[1]}</span>${f.lastToFailure ? '<em>סט אחרון לכשל</em>' : ''}</span>
             <span class="ex-rir num">${pr.rir}</span>
@@ -243,7 +243,7 @@
           </button></li>`;
         }).join('')}</ol>
       </article>`).join('');
-    $$('#sessions .thumb').forEach((el) => Figure.mount(el, el.dataset.anim, { speed: 0.9 }));
+    $$('#sessions .thumb').forEach((el) => mountEx(el, el.dataset.ex, { speed: 0.9 }));
     Figure.sweep();
     volumeChart();
   }
@@ -257,6 +257,11 @@
     const s = PR.sessions[+b.dataset.s], row = s.list[+b.dataset.e];
     openEx(b.dataset.ex, row);
   });
+
+  function mountEx(el, id, o) {
+    const ex = EX.X[id];
+    return Figure.mount(el, ex.a, Object.assign({ m: ex.m, s: ex.s, label: ex.n }, o || {}));
+  }
 
   // ---------- exercise dialog ----------
   const dlg = $('#exDlg');
@@ -279,7 +284,7 @@
         <div><small>מנוחה</small><b>${pr.rest}</b></div>
       </div>`;
     }
-    $('#dlgPres').innerHTML = pres + `<p class="fine">קצב: ירידה מבוקרת של 2–3 שניות, עלייה חזקה ומהירה בשליטה. האיור מדגים את המסלול. החלקים באדום הם השרירים שעובדים.</p>`;
+    $('#dlgPres').innerHTML = pres + `<p class="fine">קצב: ירידה מבוקרת של 2–3 שניות, עלייה חזקה ומהירה בשליטה. האיור מדגים את מסלול התנועה.</p>`;
     $('#dlgCues').innerHTML = ex.cues.map((c) => `<li>${esc(c)}</li>`).join('');
     $('#dlgErr').innerHTML = ex.err.map((c) => `<li>${esc(c)}</li>`).join('');
     // log
@@ -303,7 +308,7 @@
       logBox.dataset.id = id;
     } else logBox.hidden = true;
     if (dlgFig) dlgFig.destroy();
-    dlgFig = Figure.mount($('#dlgFig'), ex.a, { label: ex.n });
+    dlgFig = mountEx($('#dlgFig'), id);
     $('#dlgPlay').textContent = Figure.reduce ? 'הפעל' : 'עצור';
     $('#dlgSlow').setAttribute('aria-pressed', 'false');
     if (typeof dlg.showModal === 'function') dlg.showModal(); else dlg.setAttribute('open', '');
@@ -403,15 +408,15 @@
 
   // ---------- library ----------
   function renderLibrary() {
-    const groups = [['all', 'הכול']].concat(Object.keys(EX.MUSCLES).map((k) => [k, EX.MUSCLES[k]]));
+    const groups = [['all', 'הכול'], ['mach', 'מכונות']].concat(Object.keys(EX.MUSCLES).map((k) => [k, EX.MUSCLES[k]]));
     $('#libFilter').innerHTML = groups.map(([k, n]) => `<button type="button" aria-pressed="${S.lib === k}" data-m="${k}">${n}</button>`).join('');
-    const ids = Object.keys(EX.X).filter((id) => S.lib === 'all' || EX.X[id].m.includes(S.lib));
+    const ids = Object.keys(EX.X).filter((id) => S.lib === 'all' || (S.lib === 'mach' ? EX.X[id].mach : EX.X[id].m.includes(S.lib)));
     const EQ = { gym: 'חדר כושר', db: 'משקולות', home: 'בבית', bar: 'מוט מתח' };
     $('#libGrid').innerHTML = ids.map((id) => {
       const ex = EX.X[id];
-      return `<button type="button" class="lib-card" data-ex="${id}"><span class="thumb lg" data-anim="${ex.a}"></span><b>${esc(ex.n)}</b><small>${ex.m.map((m) => EX.MUSCLES[m]).join(' · ')} · ${EQ[ex.eq]}</small></button>`;
+      return `<button type="button" class="lib-card" data-ex="${id}"><span class="thumb lg" data-ex="${id}"></span><b>${esc(ex.n)}</b><small>${ex.m.map((m) => EX.MUSCLES[m]).join(' · ')} · ${ex.mach ? 'מכונה' : EQ[ex.eq]}</small></button>`;
     }).join('');
-    $$('#libGrid .thumb').forEach((el) => Figure.mount(el, el.dataset.anim));
+    $$('#libGrid .thumb').forEach((el) => mountEx(el, el.dataset.ex));
     Figure.sweep();
   }
   $('#libFilter').addEventListener('click', (e) => { const b = e.target.closest('button[data-m]'); if (!b) return; S.lib = b.dataset.m; renderLibrary(); });

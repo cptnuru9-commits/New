@@ -1,0 +1,313 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>מסה · בונה תוכנית</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="בונה תוכניות אימון ותזונה לעלייה במסת שריר לפי גובה, משקל וניסיון, עם אנימציות של כל תרגיל.">
+<meta name="theme-color" content="#16191d">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;700;800&family=IBM+Plex+Mono:wght@500;600&family=Secular+One&display=swap">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<header class="top">
+  <div class="wrap top-in">
+    <a class="brand" href="#" aria-label="מסה, לראש העמוד"><span class="brand-mark" aria-hidden="true"></span>מסה</a>
+    <span class="top-tag">תוכניות לעלייה במסת שריר · מבוסס מחקר</span>
+  </div>
+</header>
+
+<main>
+  <section class="intro wrap">
+    <div class="intro-copy">
+      <p class="eyebrow">אימון · תזונה · מעקב</p>
+      <h1>תוכנית מסה שנבנית לפי הגוף שלך</h1>
+      <p class="lead">מכניסים גובה, משקל וכמה פעמים בשבוע אפשר להתאמן. מקבלים תוכנית אימונים מחזורית ל-12 שבועות עם אנימציה לכל תרגיל, סטים, חזרות ומנוחה, וגם תפריט יומי שמגיע בדיוק ליעד הקלורי והחלבון.</p>
+      <ul class="facts">
+        <li><b class="num">10–20</b><span>סטים לשריר בשבוע</span></li>
+        <li><b class="num">1.6–2.2</b><span>גרם חלבון לק״ג</span></li>
+        <li><b class="num">0.25–0.5%</b><span>עלייה במשקל בשבוע</span></li>
+      </ul>
+    </div>
+
+    <form id="profileForm" class="card form" novalidate>
+      <h2 class="form-title">הנתונים שלך</h2>
+      <fieldset class="seg"><legend>מין</legend>
+        <label><input type="radio" name="sex" value="m" id="sex-m"><span>גבר</span></label>
+        <label><input type="radio" name="sex" value="f" id="sex-f"><span>אישה</span></label>
+      </fieldset>
+      <div class="grid3">
+        <label class="field"><span>גיל</span><input id="age" name="age" type="number" inputmode="numeric" min="14" max="80" required></label>
+        <label class="field"><span>גובה (ס״מ)</span><input id="height" name="height" type="number" inputmode="numeric" min="140" max="220" required></label>
+        <label class="field"><span>משקל (ק״ג)</span><input id="weight" name="weight" type="number" inputmode="decimal" step="0.1" min="35" max="200" required></label>
+      </div>
+      <div class="grid2">
+        <label class="field"><span>משקל יעד <small>(רשות)</small></span><input id="goal" name="goal" type="number" inputmode="decimal" step="0.5" min="35" max="220"></label>
+        <label class="field"><span>שגרה יומית מחוץ לאימונים</span>
+          <select id="activity" name="activity">
+            <option value="1.25">יושבני (משרד, מעט הליכה)</option>
+            <option value="1.4">מעט תנועה (5–8 אלף צעדים)</option>
+            <option value="1.55">פעיל (עבודה על הרגליים)</option>
+            <option value="1.7">פעיל מאוד (עבודה פיזית)</option>
+          </select></label>
+      </div>
+      <fieldset class="seg"><legend>ניסיון באימוני כוח</legend>
+        <label><input type="radio" name="level" value="beg" id="lv-beg"><span>מתחיל</span></label>
+        <label><input type="radio" name="level" value="int" id="lv-int"><span>1–3 שנים</span></label>
+        <label><input type="radio" name="level" value="adv" id="lv-adv"><span>3+ שנים</span></label>
+      </fieldset>
+      <fieldset class="seg"><legend>אימונים בשבוע</legend>
+        <label><input type="radio" name="days" value="2" id="d2"><span>2</span></label>
+        <label><input type="radio" name="days" value="3" id="d3"><span>3</span></label>
+        <label><input type="radio" name="days" value="4" id="d4"><span>4</span></label>
+        <label><input type="radio" name="days" value="5" id="d5"><span>5</span></label>
+        <label><input type="radio" name="days" value="6" id="d6"><span>6</span></label>
+      </fieldset>
+      <fieldset class="seg"><legend>איפה מתאמנים</legend>
+        <label><input type="radio" name="equip" value="gym" id="eq-gym"><span>חדר כושר</span></label>
+        <label><input type="radio" name="equip" value="db" id="eq-db"><span>משקולות בבית</span></label>
+        <label><input type="radio" name="equip" value="home" id="eq-home"><span>בלי ציוד</span></label>
+      </fieldset>
+      <label class="check" id="barRow"><input type="checkbox" name="bar" id="bar"><span>יש לי מוט מתח</span></label>
+      <div class="grid2">
+        <label class="field"><span>זמן לאימון</span>
+          <select id="minutes" name="minutes"><option value="45">45 דקות</option><option value="60">60 דקות</option><option value="75">75 דקות</option><option value="90">90 דקות</option></select></label>
+        <label class="field"><span>ארוחות ביום</span>
+          <select id="mealsPerDay" name="meals"><option value="3">3 ארוחות</option><option value="4">4 ארוחות</option><option value="5">5 ארוחות</option><option value="6">6 ארוחות</option></select></label>
+      </div>
+      <fieldset class="seg"><legend>קצב עלייה</legend>
+        <label><input type="radio" name="pace" value="lean" id="pc-lean"><span>מסה נקייה</span></label>
+        <label><input type="radio" name="pace" value="std" id="pc-std"><span>מאוזן</span></label>
+        <label><input type="radio" name="pace" value="fast" id="pc-fast"><span>מהיר</span></label>
+      </fieldset>
+      <fieldset class="seg"><legend>תזונה</legend>
+        <label><input type="radio" name="diet" value="all" id="dt-all"><span>הכול</span></label>
+        <label><input type="radio" name="diet" value="veg" id="dt-veg"><span>צמחוני</span></label>
+      </fieldset>
+      <p id="formError" class="form-error" role="alert" hidden></p>
+      <div class="form-actions">
+        <button type="submit" class="btn">בנה לי תוכנית</button>
+        <button type="button" class="ghost" id="resetExample">מילוי לדוגמה</button>
+      </div>
+    </form>
+  </section>
+
+  <section id="results" class="wrap" aria-label="התוכנית שלך">
+    <div class="summary card">
+      <div class="sum-head">
+        <div>
+          <p class="eyebrow">יעד יומי <span id="exampleBadge" class="badge">פרופיל לדוגמה · 24, 178 ס״מ, 68 ק״ג</span></p>
+          <p class="kcal"><b id="sumKcal" class="num">0</b> <span>קלוריות ביום</span></p>
+          <p class="gain"><b id="sumGain">—</b> <span id="sumRate"></span></p>
+        </div>
+        <div class="proj">
+          <p class="eyebrow">צפי משקל · 12 שבועות</p>
+          <div id="projChart" class="chart"></div>
+        </div>
+      </div>
+      <div id="sumMacros" class="macros"></div>
+      <p id="sumEq" class="energy"></p>
+      <p id="sumNotes" class="notes"></p>
+    </div>
+
+    <div class="tabs" role="tablist" aria-label="חלקי התוכנית">
+      <button type="button" role="tab" data-tab="train" aria-selected="true">אימונים</button>
+      <button type="button" role="tab" data-tab="food" aria-selected="false">תפריט</button>
+      <button type="button" role="tab" data-tab="track" aria-selected="false">מעקב</button>
+      <button type="button" role="tab" data-tab="library" aria-selected="false">ספריית תרגילים</button>
+      <button type="button" role="tab" data-tab="science" aria-selected="false">המדע</button>
+    </div>
+
+    <!-- TRAINING -->
+    <div id="p-train" class="panel" role="tabpanel">
+      <div class="split-head">
+        <div><p class="eyebrow">החלוקה השבועית</p><h2 id="splitName"></h2><p id="splitWhy" class="muted"></p></div>
+        <div id="splitMeta" class="meta"></div>
+      </div>
+      <div class="wk-wrap"><div id="weekStrip" class="week-strip" aria-label="בחירת שבוע"></div></div>
+      <p id="weekNote" class="week-note"></p>
+      <div id="schedule" class="schedule"></div>
+      <div id="sessions" class="sessions"></div>
+
+      <div class="two">
+        <section class="card pad">
+          <p class="eyebrow">נפח שבועי לכל שריר</p>
+          <h3>סטים בשבוע הנבחר</h3>
+          <div id="volChart" class="vol"></div>
+        </section>
+        <section class="card pad rules">
+          <p class="eyebrow">איך מתקדמים</p>
+          <h3>התקדמות כפולה</h3>
+          <ol>
+            <li>בוחרים משקל שמאפשר את מינימום החזרות בטווח, עם מספר החזרות ברזרבה (RIR) של השבוע.</li>
+            <li>בכל אימון מנסים להוסיף חזרה אחת באותו משקל.</li>
+            <li>כשכל הסטים מגיעים לקצה העליון של הטווח, מעלים משקל: 2.5 ק״ג בפלג עליון, 5 ק״ג ברגליים, וחוזרים לתחתית הטווח.</li>
+            <li>חימום לפני תרגיל מרכזי: 2–3 סטים קלים, 50% ואחר כך 75% מהמשקל, 5 ו-3 חזרות.</li>
+            <li>כל שבוע שישי הוא דילואוד: חצי מהסטים. זה מה שמאפשר להמשיך להתקדם במחזור הבא.</li>
+          </ol>
+          <p class="fine"><b>RIR</b> פירושו כמה חזרות נשארו "במיכל" בסוף הסט. RIR 2 אומר שהייתם יכולים לעשות עוד 2 חזרות טובות.</p>
+        </section>
+      </div>
+    </div>
+
+    <!-- FOOD -->
+    <div id="p-food" class="panel" role="tabpanel" hidden>
+      <div id="foodTargets" class="food-targets"></div>
+      <div class="day-strip" id="dayStrip" aria-label="בחירת יום"></div>
+      <div id="meals" class="meals"></div>
+      <p id="dayTotal" class="day-total"></p>
+      <div class="two">
+        <details class="card pad shop">
+          <summary><span class="eyebrow">לשבוע שלם</span><h3>רשימת קניות</h3></summary>
+          <ul id="shopList" class="shop-list"></ul>
+          <p class="fine">כמויות של מזון מבושל או אפוי. אורז ופסטה מתנפחים פי 2.5–3 בבישול, ובשר מאבד כ-25% ממשקלו.</p>
+        </details>
+        <section class="card pad">
+          <p class="eyebrow">מה באמת משנה</p>
+          <h3>כללי התזונה למסה</h3>
+          <ul class="tips">
+            <li><b>סך הקלוריות והחלבון ביום</b> קובעים כמעט הכול. תזמון הארוחות משני.</li>
+            <li><b>חלבון בכל ארוחה:</b> 0.4 ג׳ לק״ג, 4–5 פעמים ביום, מפזרים את החלבון לאורך היום.</li>
+            <li><b>לפני ואחרי אימון</b> (בטווח של כ-2 שעות): ארוחה עם חלבון ופחמימה.</li>
+            <li><b>לפני שינה:</b> מוצר חלב עשיר בקזאין (קוטג׳, גבינה לבנה, יוגורט חלבון).</li>
+            <li><b>קשה לאכול מספיק?</b> שייק נוזלי, חמאת בוטנים, תמרים, שמן זית על הסלט. קלוריות צפופות בלי להרגיש מפוצצים.</li>
+            <li><b>תוספים עם הוכחות:</b> קריאטין מונוהידרט 3–5 ג׳ ביום כל יום. אבקת חלבון כשנוח. קפאין לפני אימון אם רוצים. BCAA מיותר כשהחלבון מספיק.</li>
+            <li><b>שינה:</b> 7–9 שעות. מחסור בשינה פוגע בבניית השריר ובביצועים.</li>
+          </ul>
+        </section>
+      </div>
+    </div>
+
+    <!-- TRACK -->
+    <div id="p-track" class="panel" role="tabpanel" hidden>
+      <div class="two track">
+        <section class="card pad">
+          <p class="eyebrow">משקל גוף</p>
+          <h3>מעקב שבועי</h3>
+          <form id="wForm" class="w-form">
+            <label class="field"><span>תאריך</span><input type="date" id="wDate" required></label>
+            <label class="field"><span>משקל (ק״ג)</span><input type="number" id="wVal" step="0.1" inputmode="decimal" required></label>
+            <button type="submit" class="btn">שמירה</button>
+          </form>
+          <p id="advice" class="advice"></p>
+          <ul id="wList" class="w-list"></ul>
+        </section>
+        <section class="card pad">
+          <p class="eyebrow">המשקל שלך מול היעד</p>
+          <div id="trackChart" class="chart wide"></div>
+          <p class="fine">הנתונים נשמרים רק בדפדפן הזה. משקל הגוף קופץ ביום-יומיים בגלל מים, מלח ופחמימות, לכן מסתכלים על המגמה של שבועיים ולא על שקילה בודדת. את משקלי התרגילים רושמים בחלון של כל תרגיל, בלשונית האימונים.</p>
+        </section>
+      </div>
+    </div>
+
+    <!-- LIBRARY -->
+    <div id="p-library" class="panel" role="tabpanel" hidden>
+      <div id="libFilter" class="lib-filter" aria-label="סינון לפי שריר"></div>
+      <div id="libGrid" class="lib-grid"></div>
+    </div>
+
+    <!-- SCIENCE -->
+    <div id="p-science" class="panel" role="tabpanel" hidden>
+      <div class="science">
+        <section class="card pad">
+          <p class="eyebrow">העקרונות שעליהם התוכנית בנויה</p>
+          <h3>מה המחקר אומר, ואיך זה מיושם כאן</h3>
+          <dl class="principles">
+            <dt>נפח</dt><dd>יותר סטים שבועיים מביאים ליותר היפרטרופיה, עד בערך 10–20 סטים לשריר בשבוע. התוכנית מתחילה נמוך ומוסיפה סטים לאורך כל מחזור. <cite>Schoenfeld 2017</cite></dd>
+            <dt>תדירות</dt><dd>אימון כל שריר פעמיים בשבוע עדיף על פעם אחת כשהנפח שווה. בכל החלוקות כאן כל שריר מאומן לפחות פעמיים. <cite>Schoenfeld 2016</cite></dd>
+            <dt>מאמץ</dt><dd>סטים צריכים להגיע קרוב לכשל (0–3 חזרות ברזרבה). כשל מלא בכל סט לא נדרש. למתחילים RIR 2–3 מספיק. <cite>Refalo 2023</cite></dd>
+            <dt>טווח חזרות</dt><dd>כל טווח בין 5 ל-30 חזרות בונה שריר כשמגיעים קרוב לכשל. תרגילים מרכזיים ב-5–10, בידוד ב-10–20. באימון בלי ציוד משתמשים בטווחים הגבוהים. <cite>Schoenfeld 2017b</cite></dd>
+            <dt>מנוחה</dt><dd>2–3 דקות בתרגילים מורכבים נותנות יותר נפח איכותי מדקה אחת. <cite>Schoenfeld 2016b</cite></dd>
+            <dt>עודף קלורי</dt><dd>עודף מתון של 250–500 קק״ל ועלייה של 0.25–0.5% ממשקל הגוף בשבוע. מתחילים בקצה העליון, מתקדמים בתחתון. <cite>Iraki 2019 · Slater 2019</cite></dd>
+            <dt>חלבון</dt><dd>התועלת מגיעה לרוויה סביב 1.6 ג׳ לק״ג, והמלצת הביטחון היא עד 2.2. התוכנית מכוונת ל-2.0. <cite>Morton 2018 · Jäger 2017</cite></dd>
+            <dt>חישוב קלוריות</dt><dd>חילוף חומרים בסיסי לפי נוסחת Mifflin–St Jeor, כפול רמת הפעילות היומית, ועוד עלות האימונים. זו נקודת פתיחה, ואת הכיול עושים לפי המשקל בפועל בלשונית המעקב. <cite>Mifflin 1990</cite></dd>
+          </dl>
+        </section>
+        <section class="card pad">
+          <p class="eyebrow">תוכניות שמהן נלקחו המבנים</p>
+          <h3>השראה מהתוכניות המוערכות ביותר</h3>
+          <ul class="programs">
+            <li><b>Starting Strength / StrongLifts 5×5</b>: גוף מלא 3 פעמים בשבוע עם התקדמות לינארית. המבנה של תוכנית ה-3 ימים כאן, עם יותר נפח להיפרטרופיה.</li>
+            <li><b>PHUL (Power Hypertrophy Upper Lower)</b>: פיצול עליון/תחתון של 4 ימים, הבסיס לתוכנית ה-4 ימים.</li>
+            <li><b>Reddit PPL (Metallicadpa)</b>: דחיפה/משיכה/רגליים 6 ימים, הבסיס לתוכנית ה-6 ימים.</li>
+            <li><b>Jeff Nippard: Fundamentals ו-Ultimate PPL</b>: התקדמות כפולה, RIR ובחירת תרגילים לפי מתיחה וטווח תנועה.</li>
+            <li><b>Renaissance Periodization (ד״ר מייק ישראטל)</b>: מחזורים עם נפח עולה ודילואוד, ונקודות ייחוס לנפח לכל שריר.</li>
+            <li><b>The Muscle &amp; Strength Pyramid (אריק הלמס)</b>: סדר העדיפויות: עקביות ← נפח ומאמץ ← התקדמות ← בחירת תרגילים ← טמפו ומנוחה.</li>
+          </ul>
+        </section>
+        <section class="card pad refs">
+          <p class="eyebrow">מקורות</p>
+          <h3>מחקרים ועמדות רשמיות</h3>
+          <ol>
+            <li>Schoenfeld BJ, Ogborn D, Krieger JW. Dose-response relationship between weekly resistance training volume and increases in muscle mass. <i>J Sports Sci</i> 2017. <a href="https://doi.org/10.1080/02640414.2016.1210197" target="_blank" rel="noopener">doi</a></li>
+            <li>Schoenfeld BJ, Ogborn D, Krieger JW. Effects of resistance training frequency on measures of muscle hypertrophy: a systematic review and meta-analysis. <i>Sports Med</i> 2016. <a href="https://doi.org/10.1007/s40279-016-0543-8" target="_blank" rel="noopener">doi</a></li>
+            <li>Refalo MC et al. Influence of resistance training proximity-to-failure on skeletal muscle hypertrophy: a systematic review with meta-analysis. <i>Sports Med</i> 2023. <a href="https://doi.org/10.1007/s40279-022-01784-y" target="_blank" rel="noopener">doi</a></li>
+            <li>Schoenfeld BJ et al. Strength and hypertrophy adaptations between low- vs. high-load resistance training: a systematic review and meta-analysis. <i>J Strength Cond Res</i> 2017. <a href="https://doi.org/10.1519/JSC.0000000000002200" target="_blank" rel="noopener">doi</a></li>
+            <li>Schoenfeld BJ et al. Longer interset rest periods enhance muscle strength and hypertrophy in resistance-trained men. <i>J Strength Cond Res</i> 2016. <a href="https://doi.org/10.1519/JSC.0000000000001272" target="_blank" rel="noopener">doi</a></li>
+            <li>Morton RW et al. A systematic review, meta-analysis and meta-regression of the effect of protein supplementation on resistance training-induced gains in muscle mass and strength. <i>Br J Sports Med</i> 2018. <a href="https://doi.org/10.1136/bjsports-2017-097608" target="_blank" rel="noopener">doi</a></li>
+            <li>Jäger R et al. ISSN position stand: protein and exercise. <i>J Int Soc Sports Nutr</i> 2017. <a href="https://doi.org/10.1186/s12970-017-0177-8" target="_blank" rel="noopener">doi</a></li>
+            <li>Schoenfeld BJ, Aragon AA. How much protein can the body use in a single meal for muscle-building? <i>J Int Soc Sports Nutr</i> 2018. <a href="https://doi.org/10.1186/s12970-018-0215-1" target="_blank" rel="noopener">doi</a></li>
+            <li>Iraki J, Fitschen P, Espinar S, Helms E. Nutrition recommendations for bodybuilders in the off-season: a narrative review. <i>Sports</i> 2019. <a href="https://doi.org/10.3390/sports7070154" target="_blank" rel="noopener">doi</a></li>
+            <li>Slater GJ et al. Is an energy surplus required to maximize skeletal muscle hypertrophy associated with resistance training? <i>Front Nutr</i> 2019. <a href="https://doi.org/10.3389/fnut.2019.00131" target="_blank" rel="noopener">doi</a></li>
+            <li>Kreider RB et al. ISSN position stand: safety and efficacy of creatine supplementation. <i>J Int Soc Sports Nutr</i> 2017. <a href="https://doi.org/10.1186/s12970-017-0173-z" target="_blank" rel="noopener">doi</a></li>
+            <li>Mifflin MD et al. A new predictive equation for resting energy expenditure in healthy individuals. <i>Am J Clin Nutr</i> 1990. <a href="https://doi.org/10.1093/ajcn/51.2.241" target="_blank" rel="noopener">doi</a></li>
+            <li>American College of Sports Medicine. Progression models in resistance training for healthy adults. <i>Med Sci Sports Exerc</i> 2009. <a href="https://doi.org/10.1249/MSS.0b013e3181915670" target="_blank" rel="noopener">doi</a></li>
+          </ol>
+        </section>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="foot wrap">
+  <p>המידע כאן כללי ואינו מחליף ייעוץ רפואי או תזונתי אישי. במקרה של מחלה, פציעה, הריון או גיל מתחת ל-16, התייעצו עם רופא לפני שמתחילים. הכמויות בתפריט מבוססות על ערכים תזונתיים ממוצעים (USDA ותוויות מוצרים בישראל).</p>
+</footer>
+
+<dialog id="exDlg" aria-labelledby="dlgTitle">
+  <div class="dlg">
+    <div class="dlg-fig">
+      <div id="dlgFig" class="fig-big"></div>
+      <div class="dlg-ctrl">
+        <span id="dlgView" class="view-tag"></span>
+        <button type="button" class="ghost sm" id="dlgSlow" aria-pressed="false">הילוך איטי</button>
+        <button type="button" class="ghost sm" id="dlgPlay">עצור</button>
+      </div>
+    </div>
+    <div class="dlg-body">
+      <div class="dlg-top">
+        <div><h2 id="dlgTitle"></h2><p id="dlgEn" class="muted en"></p></div>
+        <button type="button" class="close" id="dlgClose" aria-label="סגירה">×</button>
+      </div>
+      <div id="dlgMuscles" class="chips"></div>
+      <div id="dlgPres"></div>
+      <h3>איך מבצעים</h3>
+      <ol id="dlgCues" class="cues"></ol>
+      <h3>טעויות נפוצות</h3>
+      <ul id="dlgErr" class="errs"></ul>
+      <div id="dlgLog" class="log">
+        <h3>רישום לשבוע <span id="logWeek" class="num"></span></h3>
+        <form id="logForm" class="log-form">
+          <label class="field"><span>משקל (ק״ג)</span><input id="logW" type="number" step="0.5" inputmode="decimal" placeholder="ריק = משקל גוף"></label>
+          <label class="field"><span>חזרות</span><input id="logR" type="number" inputmode="numeric" min="1" max="100"></label>
+          <button type="submit" class="btn">שמירה</button>
+        </form>
+        <p id="logHint" class="fine"></p>
+      </div>
+    </div>
+  </div>
+</dialog>
+
+<div id="toast" class="toast" role="status" hidden></div>
+
+<script src="js/figure.js"></script>
+<script src="js/exercises.js"></script>
+<script src="js/program.js"></script>
+<script src="js/nutrition.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#05030a">
+<title>Modem 2027 · הספירה לאחור</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍄</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;500;800&family=Orbitron:wght@500;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#05030a;
+    --neon1:#b14bff;   /* violet */
+    --neon2:#2bf5c9;   /* acid teal */
+    --neon3:#ff3fa4;   /* magenta */
+    --text:#ece6ff;
+    --muted:#9a8fb8;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:"Rubik",system-ui,sans-serif;
+    overflow:hidden;
+    display:flex;align-items:center;justify-content:center;
+    min-height:100svh;
+  }
+
+  /* ---------- background layers ---------- */
+  .aurora{position:fixed;inset:-20%;z-index:0;filter:blur(80px);opacity:.55;pointer-events:none}
+  .aurora span{position:absolute;border-radius:50%;mix-blend-mode:screen;animation:drift 22s ease-in-out infinite alternate}
+  .aurora span:nth-child(1){width:55vmax;height:55vmax;background:var(--neon1);top:5%;left:0%}
+  .aurora span:nth-child(2){width:45vmax;height:45vmax;background:var(--neon2);bottom:0;right:5%;animation-duration:28s;opacity:.6}
+  .aurora span:nth-child(3){width:35vmax;height:35vmax;background:var(--neon3);top:40%;left:40%;animation-duration:18s;opacity:.5}
+  @keyframes drift{
+    0%{transform:translate(0,0) scale(1)}
+    50%{transform:translate(8vw,-6vh) scale(1.15)}
+    100%{transform:translate(-6vw,8vh) scale(.9)}
+  }
+  #stars{position:fixed;inset:0;z-index:1;pointer-events:none}
+  .vignette{position:fixed;inset:0;z-index:2;pointer-events:none;
+    background:radial-gradient(ellipse at center,transparent 35%,rgba(5,3,10,.85) 100%)}
+  .grain{position:fixed;inset:0;z-index:3;pointer-events:none;opacity:.07;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+
+  /* sacred-geometry mandala behind the timer */
+  .mandala{position:fixed;z-index:2;width:min(120vmin,900px);aspect-ratio:1;
+    top:50%;left:50%;transform:translate(-50%,-50%);opacity:.18;pointer-events:none}
+  .mandala svg{width:100%;height:100%;animation:spin 120s linear infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
+
+  /* ---------- content ---------- */
+  main{position:relative;z-index:5;text-align:center;padding:2rem 1.25rem;width:100%;max-width:1000px}
+
+  .eyebrow{
+    font-family:"Orbitron",sans-serif;font-size:clamp(.7rem,1.8vw,.9rem);
+    letter-spacing:.5em;text-transform:uppercase;color:var(--neon2);
+    direction:ltr;margin-bottom:1rem;opacity:.9
+  }
+  h1{
+    font-family:"Orbitron",sans-serif;font-weight:800;direction:ltr;
+    font-size:clamp(3rem,13vw,8.5rem);line-height:.95;letter-spacing:.06em;
+    background:linear-gradient(100deg,var(--neon2),var(--neon1) 45%,var(--neon3));
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+    filter:drop-shadow(0 0 22px rgba(177,75,255,.55));
+    animation:pulse 4s ease-in-out infinite;
+  }
+  @keyframes pulse{50%{filter:drop-shadow(0 0 38px rgba(43,245,201,.55))}}
+  .sub{margin-top:.9rem;font-size:clamp(1rem,3vw,1.35rem);font-weight:300;color:var(--muted)}
+  .sub b{color:var(--text);font-weight:500}
+
+  .timer{
+    display:grid;grid-template-columns:repeat(4,1fr);gap:clamp(.5rem,2vw,1.25rem);
+    margin:clamp(2rem,6vh,3.5rem) auto 0;max-width:820px;direction:ltr;
+  }
+  .unit{
+    position:relative;padding:clamp(1rem,3vw,1.75rem) .25rem;
+    border-radius:20px;
+    background:linear-gradient(160deg,rgba(255,255,255,.07),rgba(255,255,255,.015));
+    border:1px solid rgba(255,255,255,.1);
+    backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+    box-shadow:0 10px 40px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.08);
+    overflow:hidden;
+  }
+  .unit::before{ /* neon edge */
+    content:"";position:absolute;inset:0;border-radius:inherit;padding:1px;
+    background:linear-gradient(140deg,var(--neon2),transparent 40%,transparent 60%,var(--neon3));
+    -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
+    -webkit-mask-composite:xor;mask-composite:exclude;opacity:.7
+  }
+  .num{
+    display:block;font-family:"Orbitron",sans-serif;font-weight:800;
+    font-size:clamp(2rem,8.5vw,4.6rem);line-height:1;
+    font-variant-numeric:tabular-nums;color:#fff;
+    text-shadow:0 0 18px rgba(177,75,255,.8),0 0 40px rgba(177,75,255,.35);
+  }
+  .num.tick{animation:tick .45s ease-out}
+  @keyframes tick{0%{transform:translateY(-12%);opacity:.3;color:var(--neon2)}100%{transform:none;opacity:1}}
+  .label{display:block;margin-top:.6rem;font-size:clamp(.75rem,2.2vw,1rem);color:var(--muted);direction:rtl;letter-spacing:.05em}
+
+  .meta{margin-top:clamp(2rem,5vh,3rem);display:flex;flex-wrap:wrap;gap:.6rem;justify-content:center}
+  .chip{
+    font-size:.85rem;padding:.45rem .95rem;border-radius:999px;
+    border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.04);color:var(--muted)
+  }
+  .chip strong{color:var(--neon2);font-weight:500}
+
+  .done h1{animation:pulse 1s ease-in-out infinite}
+
+  @media (max-width:520px){
+    .timer{grid-template-columns:repeat(2,1fr)}
+  }
+  @media (prefers-reduced-motion:reduce){
+    *{animation:none!important}
+  }
+</style>
+</head>
+<body>
+  <div class="aurora"><span></span><span></span><span></span></div>
+  <canvas id="stars"></canvas>
+
+  <div class="mandala" aria-hidden="true">
+    <svg viewBox="-100 -100 200 200" fill="none" stroke="#e4d7ff" stroke-width=".35">
+      <g id="petals"></g>
+      <circle r="95"/><circle r="70"/><circle r="45"/><circle r="20"/>
+    </svg>
+  </div>
+
+  <div class="vignette"></div>
+  <div class="grain"></div>
+
+  <main id="app">
+    <p class="eyebrow">Korana Canyon · Croatia</p>
+    <h1>MODEM</h1>
+    <p class="sub">החבר'ה טסים לקרואטיה · <b>2 באוגוסט 2027</b></p>
+
+    <section class="timer" aria-live="polite">
+      <div class="unit"><span class="num" id="d">--</span><span class="label">ימים</span></div>
+      <div class="unit"><span class="num" id="h">--</span><span class="label">שעות</span></div>
+      <div class="unit"><span class="num" id="m">--</span><span class="label">דקות</span></div>
+      <div class="unit"><span class="num" id="s">--</span><span class="label">שניות</span></div>
+    </section>
+
+    <div class="meta">
+      <span class="chip">עוד <strong id="weeks">–</strong> שבועות</span>
+      <span class="chip">עוד <strong id="sleeps">–</strong> לילות שינה</span>
+    </div>
+  </main>
+
+<script>
+  // 2 באוגוסט 2027, חצות לפי שעון קרואטיה (CEST, UTC+2)
+  const TARGET = new Date("2027-08-02T00:00:00+02:00").getTime();
+
+  const el = id => document.getElementById(id);
+  const els = { d:el("d"), h:el("h"), m:el("m"), s:el("s") };
+  const pad = n => String(n).padStart(2, "0");
+
+  function set(key, value){
+    const node = els[key];
+    if (node.textContent !== value){
+      node.textContent = value;
+      node.classList.remove("tick"); void node.offsetWidth; node.classList.add("tick");
+    }
+  }
+
+  function tick(){
+    let diff = Math.max(0, TARGET - Date.now());
+    const d = Math.floor(diff / 864e5);
+    const h = Math.floor(diff / 36e5) % 24;
+    const m = Math.floor(diff / 6e4) % 60;
+    const s = Math.floor(diff / 1e3) % 60;
+
+    set("d", String(d)); set("h", pad(h)); set("m", pad(m)); set("s", pad(s));
+    el("weeks").textContent = Math.floor(d / 7);
+    el("sleeps").textContent = Math.ceil(diff / 864e5);
+
+    if (diff === 0){
+      document.body.classList.add("done");
+      document.querySelector(".sub").innerHTML = "<b>הגענו! 🔥 נתראה על הרחבה</b>";
+      return;
+    }
+    setTimeout(tick, 1000 - (Date.now() % 1000));
+  }
+  tick();
+
+  // ---- mandala petals ----
+  const petals = el("petals");
+  for (let i = 0; i < 12; i++){
+    const a = i * 30;
+    petals.insertAdjacentHTML("beforeend",
+      `<ellipse rx="22" ry="70" transform="rotate(${a})"/>` +
+      `<circle cx="0" cy="-58" r="10" transform="rotate(${a + 15})"/>`);
+  }
+
+  // ---- floating star / firefly particles ----
+  const cv = el("stars"), ctx = cv.getContext("2d");
+  let W, H, P = [];
+  const DPR = Math.min(window.devicePixelRatio || 1, 2);
+  function resize(){
+    W = cv.width = innerWidth * DPR; H = cv.height = innerHeight * DPR;
+    cv.style.width = innerWidth + "px"; cv.style.height = innerHeight + "px";
+    const count = Math.round((innerWidth * innerHeight) / 9000);
+    P = Array.from({length: count}, () => ({
+      x: Math.random() * W, y: Math.random() * H,
+      r: (Math.random() * 1.4 + .3) * DPR,
+      vy: -(Math.random() * .25 + .05) * DPR,
+      vx: (Math.random() - .5) * .15 * DPR,
+      t: Math.random() * Math.PI * 2,
+      hue: [275, 165, 325][Math.floor(Math.random() * 3)]
+    }));
+  }
+  function draw(){
+    ctx.clearRect(0, 0, W, H);
+    for (const p of P){
+      p.x += p.vx; p.y += p.vy; p.t += .02;
+      if (p.y < -10){ p.y = H + 10; p.x = Math.random() * W; }
+      const a = .35 + Math.sin(p.t) * .3;
+      ctx.beginPath();
+      ctx.fillStyle = `hsla(${p.hue},100%,75%,${a})`;
+      ctx.shadowColor = `hsl(${p.hue},100%,65%)`;
+      ctx.shadowBlur = 8 * DPR;
+      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    requestAnimationFrame(draw);
+  }
+  addEventListener("resize", resize);
+  resize();
+  if (!matchMedia("(prefers-reduced-motion: reduce)").matches) draw();
+</script>
+</body>
+</html>

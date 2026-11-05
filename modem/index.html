@@ -33,18 +33,8 @@
   .vignette{position:fixed;inset:0;z-index:2;pointer-events:none;
     background:radial-gradient(ellipse at center,transparent 35%,rgba(0,0,0,.95) 100%)}
   /* ---------- old-TV static ---------- */
-  #static{position:fixed;inset:-384px;z-index:3;pointer-events:none;
-    opacity:.16;image-rendering:pixelated;background-size:384px 384px;will-change:transform,opacity;
-    animation:snow .5s steps(1) infinite,flicker .18s steps(2) infinite}
-  @keyframes snow{
-    0%{transform:translate(0,0)}            10%{transform:translate(-171px,113px)}
-    20%{transform:translate(149px,-203px)}  30%{transform:translate(-263px,-47px)}
-    40%{transform:translate(53px,271px)}    50%{transform:translate(-109px,-293px)}
-    60%{transform:translate(287px,77px)}    70%{transform:translate(-41px,181px)}
-    80%{transform:translate(211px,-113px)}  90%{transform:translate(-301px,229px)}
-    100%{transform:translate(0,0)}
-  }
-  @keyframes flicker{50%{opacity:.12}}
+  #static{position:fixed;inset:0;width:100%;height:100%;z-index:3;pointer-events:none;
+    opacity:.16;image-rendering:pixelated}
   .scanlines{position:fixed;inset:0;z-index:4;pointer-events:none;opacity:.35;
     background:repeating-linear-gradient(to bottom,rgba(0,0,0,.55) 0 1px,transparent 1px 3px)}
   .roll{position:fixed;top:0;left:0;right:0;height:22vh;will-change:transform;z-index:4;pointer-events:none;
@@ -71,7 +61,6 @@
     font-size:clamp(3rem,13vw,8.5rem);line-height:.95;letter-spacing:.06em;
     background:linear-gradient(180deg,#fff 30%,#6e6e6e);
     -webkit-background-clip:text;background-clip:text;color:transparent;
-    filter:drop-shadow(0 0 18px rgba(255,255,255,.18));
   }
   .sub{margin-top:.9rem;font-size:clamp(1rem,3vw,1.35rem);font-weight:300;color:var(--muted)}
   .sub b{color:var(--text);font-weight:500}
@@ -84,15 +73,9 @@
     position:relative;padding:clamp(1rem,3vw,1.75rem) .25rem;
     border-radius:20px;
     background:linear-gradient(160deg,rgba(22,22,22,.82),rgba(8,8,8,.82));
-    border:1px solid rgba(255,255,255,.1);
+    border:1px solid rgba(255,255,255,.16);
     box-shadow:0 10px 40px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.08);
     overflow:hidden;
-  }
-  .unit::before{ /* neon edge */
-    content:"";position:absolute;inset:0;border-radius:inherit;padding:1px;
-    background:linear-gradient(140deg,rgba(255,255,255,.55),transparent 40%,transparent 60%,rgba(255,255,255,.15));
-    -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
-    -webkit-mask-composite:xor;mask-composite:exclude;opacity:.7
   }
   .num{
     display:block;font-family:"Orbitron",sans-serif;font-weight:800;
@@ -100,8 +83,6 @@
     font-variant-numeric:tabular-nums;color:#fff;
     text-shadow:0 0 14px rgba(255,255,255,.35);
   }
-  .num.tick{animation:tick .45s ease-out}
-  @keyframes tick{0%{transform:translateY(-12%);opacity:.3;color:var(--neon2)}100%{transform:none;opacity:1}}
   .label{display:block;margin-top:.6rem;font-size:clamp(.75rem,2.2vw,1rem);color:var(--muted);direction:rtl;letter-spacing:.05em}
 
   .meta{margin-top:clamp(2rem,5vh,3rem);display:flex;flex-wrap:wrap;gap:.6rem;justify-content:center}
@@ -111,7 +92,7 @@
   }
   .chip strong{color:#fff;font-weight:500}
 
-  .done h1{filter:drop-shadow(0 0 30px rgba(255,255,255,.45))}
+  .done h1{opacity:1}
 
   @media (max-width:520px){
     .timer{grid-template-columns:repeat(2,1fr)}
@@ -131,7 +112,7 @@
   </div>
 
   <div class="vignette"></div>
-  <div id="static"></div>
+  <canvas id="static"></canvas>
   <div class="scanlines"></div>
   <div class="roll"></div>
 
@@ -165,7 +146,7 @@
     const node = els[key];
     if (node.textContent !== value){
       node.textContent = value;
-      node.classList.remove("tick"); void node.offsetWidth; node.classList.add("tick");
+      node.animate([{opacity:.35},{opacity:1}], {duration:350, easing:"ease-out"});
     }
   }
 
@@ -199,14 +180,45 @@
       `<circle cx="0" cy="-58" r="10" transform="rotate(${a + 15})"/>`);
   }
 
-  // ---- old-TV static: one noise tile, moved by CSS (GPU only) ----
+  // ---- old-TV static: small canvas, 8 pre-rendered frames cycled at ~20fps ----
   (() => {
-    const t = document.createElement("canvas"); t.width = t.height = 192;
-    const g = t.getContext("2d"), im = g.createImageData(192, 192), b = new Uint32Array(im.data.buffer);
-    for (let i = 0; i < b.length; i++){ const v = (Math.random() * 255) | 0; b[i] = 0xff000000 | (v << 16) | (v << 8) | v; }
-    g.putImageData(im, 0, 0);
-    el("static").style.backgroundImage = `url(${t.toDataURL()})`;
+    const cv = el("static"), g = cv.getContext("2d");
+    const SCALE = 2, FRAMES = 8;
+    let frames = [];
+    function build(){
+      const w = Math.ceil(innerWidth / SCALE), h = Math.ceil(innerHeight / SCALE);
+      cv.width = w; cv.height = h;
+      frames = Array.from({length: FRAMES}, () => {
+        const c = document.createElement("canvas"); c.width = w; c.height = h;
+        const x = c.getContext("2d"), im = x.createImageData(w, h), b = new Uint32Array(im.data.buffer);
+        for (let i = 0; i < b.length; i++){ const v = (Math.random() * 255) | 0; b[i] = 0xff000000 | (v << 16) | (v << 8) | v; }
+        x.putImageData(im, 0, 0);
+        return c;
+      });
+      g.drawImage(frames[0], 0, 0);
+    }
+    let rt; addEventListener("resize", () => { clearTimeout(rt); rt = setTimeout(build, 200); });
+    build();
+    if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    let last = 0, k = 0;
+    (function loop(t){
+      if (t - last >= 50){ last = t; k = (k + 1 + ((Math.random() * (FRAMES - 1)) | 0)) % FRAMES; g.drawImage(frames[k], 0, 0); }
+      requestAnimationFrame(loop);
+    })(0);
   })();
+
+  // ---- ?debug: on-screen frame stats, to diagnose stutter on a real phone ----
+  if (location.search.includes("debug")){
+    const box = document.createElement("div");
+    box.style.cssText = "position:fixed;top:8px;left:8px;z-index:99;font:12px monospace;color:#0f0;background:#000a;padding:4px 6px;direction:ltr";
+    document.body.appendChild(box);
+    let prev = performance.now(), n = 0, worst = 0, t0 = prev;
+    (function f(t){
+      worst = Math.max(worst, t - prev); prev = t; n++;
+      if (t - t0 >= 1000){ box.textContent = `fps ${n}  worst ${worst.toFixed(0)}ms`; n = 0; worst = 0; t0 = t; }
+      requestAnimationFrame(f);
+    })(prev);
+  }
 </script>
 </body>
 </html>
